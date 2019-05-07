@@ -275,14 +275,14 @@ namespace Netx.Service
                 case ReturnTypeMode.Null:
                     if (runType == 0)
                     {
-                        service.Method.Invoke(controller, args);
+                        service.Method.Execute(controller, args);
                         return;
                     }
                     break;
                 case ReturnTypeMode.Task:
                     if (runType == 1)
                     {
-                        await (Task)service.Method.Invoke(controller, args);
+                        await service.Method.ExecuteAsync(controller, args);
                         await SendResult(id);
                         return;
                     }
@@ -290,7 +290,7 @@ namespace Netx.Service
                 case ReturnTypeMode.TaskValue:
                     if (runType == 2)
                     {
-                        var ret_value = await (dynamic)service.Method.Invoke(controller, args);
+                        var ret_value = (object) await service.Method.ExecuteAsync(controller, args);
                       
                         switch (ret_value)
                         {

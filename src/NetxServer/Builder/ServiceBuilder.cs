@@ -226,7 +226,7 @@ namespace Netx.Service.Builder
             if (Provider is null)
             {
                 Container.TryAdd(ServiceDescriptor.Singleton<ActorRun>(p => new ActorRun(p)));
-                Container.TryAdd(ServiceDescriptor.Singleton<IActorGet,ActorRun>());
+                Container.TryAdd(ServiceDescriptor.Singleton<IActorGet, ActorRun>());
                 Container.TryAdd(ServiceDescriptor.Singleton<NetxService>(p => new NetxService(p)));
                 Container.Replace(ServiceDescriptor.Singleton<ConcurrentDictionary<int, MethodRegister>>(AsyncServicesRegisterDict));
                 Provider = Container.BuildServiceProvider();

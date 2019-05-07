@@ -10,11 +10,14 @@ namespace ActorTest
 {
     class Program
     {
+       static  IServiceCollection Container = new ServiceCollection();
         static async Task Main(string[] args)
         {
-            IServiceCollection Container = new ServiceCollection();
+
+          
             Container.AddSingleton<IIds, DefaultMakeIds>();
             Container.AddSingleton<ActorController, TestActorController>();
+            Container.AddSingleton<ActorController, NextActorController>();
             Container.AddSingleton<ActorRun>(p => new ActorRun(p));
             Container.AddLogging(p =>
             {
@@ -25,7 +28,7 @@ namespace ActorTest
             var build= Container.BuildServiceProvider();
 
             var Actor=  build.GetRequiredService<ActorRun>();
-
+       
             var server= Actor.Get<ICallServer>();
 
 
@@ -33,18 +36,18 @@ namespace ActorTest
 
             var x = 0;
 
-            Parallel.For(0, 1000000, async i =>
-              {
-                   x = await server.Add(i,x);
+            //Parallel.For(0, 1000000, async i =>
+            //  {
+            //      x = await server.Add(i, x);
 
-              });
+            //  });
 
-           
 
-            //for (int i = 0; i < 1000000; i++)
-            //{
-            //     x = await server.Add(i, x);
-            //}
+
+            for (int i = 0; i < 1000000; i++)
+            {
+                x = await server.Add(i, x);
+            }
 
 
             var t = await server.GetV();           
@@ -56,5 +59,7 @@ namespace ActorTest
          
             Console.ReadLine();
         }
+
+      
     }
 }

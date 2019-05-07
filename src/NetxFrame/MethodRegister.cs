@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Internal;
 
 namespace Netx
 {
@@ -11,7 +12,7 @@ namespace Netx
     {
         public Type InstanceType { get; }
 
-        public MethodInfo Method { get; }
+        public ObjectMethodExecutor Method { get; }
 
         public Type[] ArgsType { get; }
 
@@ -25,9 +26,9 @@ namespace Netx
         public MethodRegister(Type instenceType, MethodInfo method)
         {
             this.InstanceType = instenceType;
-            this.Method = method;
+            this.Method = ObjectMethodExecutor.Create(method,instenceType.GetTypeInfo());
 
-            ArgsType = (from p in Method.GetParameters()
+            ArgsType = (from p in method.GetParameters()
                         select p.ParameterType).ToArray();
 
             ReturnType = method.ReturnType;
@@ -46,10 +47,10 @@ namespace Netx
             str.Append(" ");
             str.Append(InstanceType.FullName);
             str.Append(".");
-            str.Append(Method.Name + "(");
+            str.Append(Method.MethodInfo.Name + "(");
 
             int i = 0;
-            foreach (var item in Method.GetParameters())
+            foreach (var item in Method.MethodInfo.GetParameters())
             {
                 str.Append(item.ParameterType.Name);
                 str.Append(" ");

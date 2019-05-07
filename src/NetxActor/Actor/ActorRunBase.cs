@@ -15,7 +15,7 @@ namespace Netx.Actor
         {
             Container = container;
             this.LoggerFactory = container.GetRequiredService<ILoggerFactory>();
-            Log = new DefaultLog(container.GetRequiredService<ILogger<ActorRun>>());
+            Log = new DefaultLog(LoggerFactory.CreateLogger("Actor Run->"));
             IdsManager = container.GetRequiredService<IIds>();
         }
 

@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 namespace Netx.Actor
 {
 
-    public class ActorRun : ActorRunFodyInstance, IActorGet, IDisposable
+    public class ActorRun<R> : ActorRunFodyInstance, IActorGet, IDisposable where R:class
     {
 
-        private readonly Lazy<ConcurrentDictionary<int, Actor<dynamic>>> actorCollect;
+        private readonly Lazy<ConcurrentDictionary<int, Actor<R>>> actorCollect;
 
-        public ConcurrentDictionary<int, Actor<dynamic>> ActorCollect { get => actorCollect.Value; }
+        public ConcurrentDictionary<int, Actor<R>> ActorCollect { get => actorCollect.Value; }
 
+        public event EventHandler<ActorMessage> CompletedEvent;
 
         public ActorRun(IServiceProvider container)
             : base(container)
         {
-            actorCollect = new Lazy<ConcurrentDictionary<int, Actor<dynamic>>>(true);
+            actorCollect = new Lazy<ConcurrentDictionary<int, Actor<R>>>(true);
             Load();
         }
 
@@ -25,10 +26,16 @@ namespace Netx.Actor
         {
             foreach (var controller in Container.GetServices<ActorController>())
             {
-                var actor = new Actor<dynamic>(Container,this, controller);
+                var actor = new Actor<R>(Container,this, controller);
+                actor.CompletedEvent += Actor_CompletedEvent;
                 foreach (int cmd in actor.CmdDict.Keys)
                     ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);
             }
+        }
+
+        private void Actor_CompletedEvent(object sender, ActorMessage e)
+        {
+            CompletedEvent?.Invoke(sender, e);
         }
 
         public MethodRegister GetCmdService(int cmd)
@@ -59,12 +66,12 @@ namespace Netx.Actor
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        public async Task<dynamic> CallAsyncFunc(long id, int cmd, params object[] args)
+        public async Task<R> CallAsyncFunc(long id, int cmd, params object[] args)
         {
             if (ActorCollect.ContainsKey(cmd))
                 return await ActorCollect[cmd].AsyncFunc(id, cmd, args);
             else
-                return GetErrorResult($"not find actor service cmd:{cmd}", id);
+                throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
         protected override Task SendAsyncAction(int cmdTag, long Id, object[] args)
@@ -117,6 +124,13 @@ namespace Netx.Actor
             }
 
             ActorCollect.Clear();
+        }
+    }
+
+    public class ActorRun : ActorRun<dynamic>
+    {
+        public ActorRun(IServiceProvider container) : base(container)
+        {
         }
     }
 }

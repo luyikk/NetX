@@ -2,9 +2,6 @@
 using Netx;
 using Netx.Actor;
 using Netx.Loggine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ActorTest
@@ -18,12 +15,13 @@ namespace ActorTest
             Log = new DefaultLog(logger);
         }
 
-        int xa = 0;
+        public int xa { get; private set; }
                
 
         [TAG(2000)]
         public Task<int> Add(int a, int b)
         {
+
             xa+= a + b;
             return Task.FromResult(a + b);
         }
@@ -32,6 +30,16 @@ namespace ActorTest
         public Task<int> GetV()
         {           
             return Task.FromResult(xa);
+        }
+
+
+        [TAG(2010)]
+        public async Task<int> Add2(int a, int b)
+        {
+            var x= await Get<ICallServer>().AddX();         
+
+            xa = a + b - x;
+            return a + b;
         }
     }
 }

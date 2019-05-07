@@ -23,9 +23,9 @@ namespace Netx.Actor
 
         public Dictionary<int,MethodRegister> CmdDict { get; }
 
-        private readonly Lazy<ConcurrentQueue<SingleActorItem<R>>> actorRunQueue;
+        private readonly Lazy<ConcurrentQueue<ActorMessage<R>>> actorRunQueue;
 
-        public ConcurrentQueue<SingleActorItem<R>> ActorRunQueue { get => actorRunQueue.Value; }
+        public ConcurrentQueue<ActorMessage<R>> ActorRunQueue { get => actorRunQueue.Value; }
 
         public ILog Log { get; }
 
@@ -37,6 +37,8 @@ namespace Netx.Actor
 
         public int QueueCount => ActorRunQueue.Count;
 
+        internal event EventHandler<ActorMessage> CompletedEvent;
+
 
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorController instance)
@@ -47,7 +49,7 @@ namespace Netx.Actor
             ActorController.Status = this;
             this.Container = container;
            
-            actorRunQueue = new Lazy<ConcurrentQueue<SingleActorItem<R>>>();
+            actorRunQueue = new Lazy<ConcurrentQueue<ActorMessage<R>>>();
             this.CmdDict = LoadRegister(instance.GetType());
             Log = new DefaultLog(container.GetRequiredService<ILoggerFactory>().CreateLogger($"Actor-{instance.GetType().Name}"));
         }
@@ -90,7 +92,7 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this Actor is Close");
 
-            var sa = new SingleActorItem<R>(id,cmd,args);
+            var sa = new ActorMessage<R>(id,cmd,args);
             ActorRunQueue.Enqueue(sa);
             Runing();
         }
@@ -100,7 +102,7 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this Actor is Close");
 
-            var sa = new SingleActorItem<R>(id, cmd, args);
+            var sa = new ActorMessage<R>(id, cmd, args);
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);          
             Runing();
@@ -117,7 +119,7 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this Actor is Close");
 
-            var sa = new SingleActorItem<R>(id, cmd, args);
+            var sa = new ActorMessage<R>(id, cmd, args);
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);
 
@@ -131,7 +133,7 @@ namespace Netx.Actor
         }
 
 
-        private async Task<R> GetResult(SingleActorItem<R> actorItem)
+        private async Task<R> GetResult(ActorMessage<R> actorItem)
         {
             return await actorItem.Awaiter;
         }
@@ -146,26 +148,32 @@ namespace Netx.Actor
 
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
-                Task.Factory.StartNew(async () =>
-                {
+               ThreadPool.QueueUserWorkItem(async (a) =>
+               {
 
-                    while (ActorRunQueue.TryDequeue(out SingleActorItem<R> reuslt))
-                    {
-                        var res = await Call_runing(reuslt);
-                        reuslt.Awaiter.Completed(res);
-                        if (status == Disposed)
-                            break;
-                    }
+                   while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
+                   {
+                       var res = await Call_runing(msg);
+
+                       //当前容器的线程去触发外部事件已达到安全访问的目的,让用户自定义保存控制器中的数据和当前事件,已达到事件回溯
+                       //请确保控制器里面的数据属性 是 {public get;private set;} 已保证在容器外的安全目的
+                       CompletedEvent(ActorController, msg);
+
+                       msg.Awaiter.Completed(res);
+
+                       if (status == Disposed)
+                           break;
+                   }
 
 
-                    Interlocked.CompareExchange(ref status, Idle, Open);
+                   Interlocked.CompareExchange(ref status, Idle, Open);
 
-                });
+               });
             }
 
         }
 
-        private async Task<R> Call_runing(SingleActorItem<R> result)
+        private async Task<R> Call_runing(ActorMessage<R> result)
         {
             var cmd = result.Cmd;
             var args = result.Args;
@@ -182,17 +190,17 @@ namespace Netx.Actor
                     {
                         case ReturnTypeMode.Null:
                             {
-                                service.Method.Invoke(ActorController, args);
+                                service.Method.Execute(ActorController, args);
                                 return null;
                             }                           
                         case ReturnTypeMode.Task:
                             {
-                                await (Task)service.Method.Invoke(ActorController, args);
+                                await service.Method.ExecuteAsync(ActorController, args);
                                 return null;
                             }                           
                         case ReturnTypeMode.TaskValue:
                             {
-                                return await (dynamic)service.Method.Invoke(ActorController, args);
+                                return (dynamic)  await service.Method.ExecuteAsync(ActorController, args);
                             }
                         default:
                             {

@@ -5,25 +5,34 @@ using System.Threading.Tasks;
 
 namespace Netx.Actor
 {
-    public class SingleActorItem<T>
+    public class ActorMessage
     {
         public long Id { get; }
-    
+
         public int Cmd { get; }
 
         public object[] Args { get; }
 
         public long PushTime { get; }
 
-        public ActorResultAwaiter<T> Awaiter { get; }
-
-        public SingleActorItem(long id,int cmd,object[] args)
+        public ActorMessage(long id, int cmd, object[] args)
         {
-            Id = id;           
+            Id = id;
             Cmd = cmd;
             Args = args;
-            Awaiter = new ActorResultAwaiter<T>();
             PushTime = TimeHelper.GetTime();
+        }
+    }
+
+    public class ActorMessage<T>: ActorMessage
+    {
+
+        internal ActorResultAwaiter<T> Awaiter { get; }
+
+        public ActorMessage(long id, int cmd, object[] args)
+            :base(id,cmd,args)
+        {
+            Awaiter = new ActorResultAwaiter<T>();
         }
     }
 }
