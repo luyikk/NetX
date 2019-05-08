@@ -14,5 +14,8 @@ namespace TestNetxClient
 
         [TAG(1000)]
         Task<int> Add(int a, int b);
+
+        [TAG(3000)]
+        void RunMsg();
     }
 }

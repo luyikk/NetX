@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.Internal
                 }
             }
 
-            info = default(CoercedAwaitableInfo);
+            info = default;
             return false;
         }
     }

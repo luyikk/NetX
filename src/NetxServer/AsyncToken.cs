@@ -18,9 +18,7 @@ namespace Netx.Service
 
         private readonly Lazy<Dictionary<Type, AsyncController>> asyncControllerInstanceDict;
 
-        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict { get => asyncControllerInstanceDict.Value; }
-
-        private List<IMemoryOwner<byte>> MemDisposableList { get; } = new List<IMemoryOwner<byte>>();
+        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict { get => asyncControllerInstanceDict.Value; }     
 
         public ActorRun @ActorRun { get; }
 
@@ -114,34 +112,20 @@ namespace Netx.Service
                     if (argslen == service.ArgsLen)
                     {
                         object[] args = new object[argslen];
+                        List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
+
                         for (int i = 0; i < argslen; i++)
                         {
                             var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
                             args[i] = arg;
                             if (owner != null)
-                                MemDisposableList.Add(owner);
+                                mem_disposetable.Add(owner);
                         }
 
-                        try
-                        {
-                            RunCall(service, cmd.Value, id, runtype, args);
-                            return true;
-                        }
-                        catch (Exception er)
-                        {
-                            Log.ErrorFormat("{0} call async service:{1} err:\r\n{2}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, cmd.Value, NetxException.GetExceptionToString(er));
-                            await SendError(id, $"call async service:{cmd.Value} err:\r\n{NetxException.GetExceptionToString(er)}", ErrorType.CallErr);
-                            return true;
-                        }
-                        finally
-                        {
-                            if (MemDisposableList.Count > 0)
-                            {
-                                foreach (var mem in MemDisposableList)
-                                    mem.Dispose();
-                                MemDisposableList.Clear();
-                            }
-                        }
+
+                        RunCall(service, cmd.Value, id, runtype, mem_disposetable,args);
+                        return true;
+
                     }
                     else
                     {
@@ -160,36 +144,22 @@ namespace Netx.Service
                         if (argslen == service.ArgsLen)
                         {
                             object[] args = new object[argslen];
+
+                            List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
                             for (int i = 0; i < argslen; i++)
                             {
                                 var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
                                 args[i] = arg;
                                 if (owner != null)
-                                    MemDisposableList.Add(owner);
+                                    mem_disposetable.Add(owner);
                             }
 
-                            try
-                            {
-                               
-                                RunActor(cmdTag, id, runtype, args);
-                                
-                                return true;
-                            }
-                            catch (Exception er)
-                            {
-                                Log.ErrorFormat("{0} call actor service:{1} err:\r\n{2}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, cmd.Value, NetxException.GetExceptionToString(er));
-                                await SendError(id, $"call actor service:{cmd.Value} err:\r\n{NetxException.GetExceptionToString(er)}", ErrorType.CallErr);
-                                return true;
-                            }
-                            finally
-                            {
-                                if (MemDisposableList.Count > 0)
-                                {
-                                    foreach (var mem in MemDisposableList)
-                                        mem.Dispose();
-                                    MemDisposableList.Clear();
-                                }
-                            }
+
+                            RunActor(cmdTag, id, runtype, mem_disposetable, args);
+
+                            return true;
+
+
                         }
                         else
                         {
@@ -217,57 +187,96 @@ namespace Netx.Service
 
         }
 
-        protected virtual async void RunActor(int cmd,long id,int runtype,params object[] args)
+        protected virtual async void RunActor(int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
-            switch(runtype)
+            try
             {
-                case 0:
-                    {
-                        ActorRun.CallAction(id, cmd, args);                        
-                    }
-                    break;
-                case 1:
-                    {
-                        await (Task)ActorRun.CallAsyncAction(id, cmd, args);
-                        await SendResult(id);                        
-                    }
-                    break;
-                case 2:
-                    {
-                        var ret_value = await ActorRun.CallAsyncFunc(id, cmd, args);
-
-                        switch (ret_value)
+                switch (runtype)
+                {
+                    case 0:
                         {
-                            case Result result:
-                                {
-                                    result.Id = id;
-                                    await SendResult(result);
-                                    
-                                }
-                                break;
-                            default:
-                                {                                  
-                                    await SendResult(id, ret_value);
-                                }
-                                break;
+                            ActorRun.CallAction(id, cmd, args);
+                            Dispose_table(memoryOwners);
                         }
-                    }
-                    break;
+                        break;
+                    case 1:
+                        {
+                            await (Task)ActorRun.CallAsyncAction(id, cmd, args);
+                            Dispose_table(memoryOwners);
+                            await SendResult(id);
+                        }
+                        break;
+                    case 2:
+                        {
+                            var ret_value = await ActorRun.CallAsyncFunc(id, cmd, args);
+                            Dispose_table(memoryOwners);
+                            switch (ret_value)
+                            {
+                                case Result result:
+                                    {
+                                        result.Id = id;
+                                        await SendResult(result);
 
+                                    }
+                                    break;
+                                default:
+                                    {
+                                        await SendResult(id, ret_value);
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+
+                }
+
+              
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+
+            }
+            catch (Exception er)
+            {
+                Log.Error(er);
+                await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
-
-        protected virtual async void RunCall(MethodRegister service, int cmd, long id, int runtype, params object[] args)
+    
+        private void Dispose_table(List<IMemoryOwner<byte>> memDisposableList)
         {
-            var controller = await GetInstance(id, cmd, service.InstanceType);
-
-            if (controller != null)
-                await RunControllerService(service, controller, id, runtype, args);
-
+            if (memDisposableList.Count > 0)
+            {
+                foreach (var mem in memDisposableList)
+                    mem.Dispose();
+                memDisposableList.Clear();
+            }
         }
 
-        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller, long id, int runType, params object[] args)
+        protected virtual async void RunCall(MethodRegister service, int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners,  params object[] args)
+        {
+            try
+            {
+                var controller = await GetInstance(id, cmd, service.InstanceType);
+
+           
+                if (controller != null)
+                    await RunControllerService(service, controller, id, runtype, memoryOwners, args);
+
+            }
+            catch(System.Net.Sockets.SocketException)
+            {
+
+            }
+            catch (Exception er)
+            {
+                Log.Error(er);
+                await SendError(id, $"Async Server Err:{er.Message}", ErrorType.CallErr);
+            }
+        }
+
+        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller, long id, int runType, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
             switch (service.ReturnMode)
             {
@@ -276,6 +285,7 @@ namespace Netx.Service
                     if (runType == 0)
                     {
                         service.Method.Execute(controller, args);
+                        Dispose_table(memoryOwners);
                         return;
                     }
                     break;
@@ -283,6 +293,7 @@ namespace Netx.Service
                     if (runType == 1)
                     {
                         await service.Method.ExecuteAsync(controller, args);
+                        Dispose_table(memoryOwners);
                         await SendResult(id);
                         return;
                     }
@@ -291,7 +302,7 @@ namespace Netx.Service
                     if (runType == 2)
                     {
                         var ret_value = (object) await service.Method.ExecuteAsync(controller, args);
-                      
+                        Dispose_table(memoryOwners);
                         switch (ret_value)
                         {
                             case Result result:
@@ -306,8 +317,6 @@ namespace Netx.Service
                                     await SendResult(id, ret_value);                                   
                                     return;
                                 }
-
-
 
                         }
                     }

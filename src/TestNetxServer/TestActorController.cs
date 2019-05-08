@@ -21,11 +21,16 @@ namespace TestNetxServer
                
 
         [TAG(2000)]
-        public Task<int> Add(int a, int b)
+        public  Task<int> Add(int a, int b)
+        {            
+           
+            return Task.FromResult(a + b);
+        }
+
+        [TAG(3000)]
+        public void Run()
         {
            
-           // Log.Info("my is actor");
-            return Task.FromResult(a + b);
         }
     }
 }

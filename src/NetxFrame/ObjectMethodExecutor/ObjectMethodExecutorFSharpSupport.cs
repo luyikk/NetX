@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.Internal
     /// </remarks>
     public static class ObjectMethodExecutorFSharpSupport
     {
-        private static object _fsharpValuesCacheLock = new object();
+        private static readonly object _fsharpValuesCacheLock = new object();
         private static Assembly _fsharpCoreAssembly;
         private static MethodInfo _fsharpAsyncStartAsTaskGenericMethod;
         private static PropertyInfo _fsharpOptionOfTaskCreationOptionsNoneProperty;

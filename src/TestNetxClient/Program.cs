@@ -20,13 +20,13 @@ namespace TestNetxClient
 
             var server = client.Get<IServer>();
 
-            //var c = await server.AddActor(1, 2);
+             server.RunMsg();
             //Console.WriteLine(c);
           
 
             for (int i = 0; i < 1000; i++)
             {
-                var c = await server.Add(i, 0);
+                var c = await server.AddActor(i, 0);
                 Console.WriteLine(c);
             }
           

@@ -87,14 +87,22 @@ namespace Netx.Actor
 
 
 
-        public void Action(long id,int cmd, params object[] args)
+        public void Action(long id, int cmd, params object[] args)
         {
+
             if (status == Disposed)
                 throw new ObjectDisposedException("this Actor is Close");
 
-            var sa = new ActorMessage<R>(id,cmd,args);
+            var sa = new ActorMessage<R>(id, cmd, args);
             ActorRunQueue.Enqueue(sa);
-            Runing();
+            try
+            {
+                Runing().Wait();
+            }
+            catch (Exception er)
+            {                
+                Log.Error(er);
+            }
         }
 
         public async ValueTask AsyncAction(long id, int cmd, params object[] args)
@@ -104,8 +112,8 @@ namespace Netx.Actor
 
             var sa = new ActorMessage<R>(id, cmd, args);
             var task = GetResult(sa);
-            ActorRunQueue.Enqueue(sa);          
-            Runing();
+            ActorRunQueue.Enqueue(sa);
+            await Runing();
 
             if (sa.Awaiter.IsCompleted)
                 return;
@@ -123,7 +131,7 @@ namespace Netx.Actor
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);
 
-            Runing();
+            await Runing();
 
             if (sa.Awaiter.IsCompleted)
                 return sa.Awaiter.GetResult();
@@ -141,36 +149,45 @@ namespace Netx.Actor
 
 
 
-        private void Runing()
+        private Task Runing()
         {
             if (status == Disposed)
                 throw new ObjectDisposedException("this Actor is Close");
 
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
-               ThreadPool.QueueUserWorkItem(async (a) =>
-               {
+                 async Task RunNext()
+                 {
+                    try
+                    {
+                        while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
+                        {
 
-                   while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
-                   {
-                       var res = await Call_runing(msg);
+                            var res = await Call_runing(msg);
 
-                       //当前容器的线程去触发外部事件已达到安全访问的目的,让用户自定义保存控制器中的数据和当前事件,已达到事件回溯
-                       //请确保控制器里面的数据属性 是 {public get;private set;} 已保证在容器外的安全目的
-                       CompletedEvent(ActorController, msg);
+                            //当前容器的线程去触发外部事件已达到安全访问的目的,让用户自定义保存控制器中的数据和当前事件,已达到事件回溯
+                            //请确保控制器里面的数据属性 是 {public get;private set;} 已保证在容器外的安全目的
+                            CompletedEvent(ActorController, msg);
 
-                       msg.Awaiter.Completed(res);
-
-                       if (status == Disposed)
-                           break;
-                   }
+                            msg.Awaiter.Completed(res);
 
 
-                   Interlocked.CompareExchange(ref status, Idle, Open);
+                            if (status == Disposed)
+                                break;
+                        }
+                    }
+                    finally
+                    {
+                        Interlocked.CompareExchange(ref status, Idle, Open);
+                    }
+                };
 
-               });
+                return RunNext();
+
+               
             }
 
+            return Task.CompletedTask;
         }
 
         private async Task<R> Call_runing(ActorMessage<R> result)
@@ -190,7 +207,7 @@ namespace Netx.Actor
                     {
                         case ReturnTypeMode.Null:
                             {
-                                service.Method.Execute(ActorController, args);
+                                service.Method.Execute(ActorController, args.Length==0?null:args);
                                 return null;
                             }                           
                         case ReturnTypeMode.Task:

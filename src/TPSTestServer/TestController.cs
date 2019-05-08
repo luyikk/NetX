@@ -22,8 +22,7 @@ namespace TestServer
 
         [TAG(999)]
         public Task<int> Add(int a)
-        {
-           
+        {           
             return Task.FromResult<int>(++a);
         }
 

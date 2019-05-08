@@ -19,8 +19,8 @@ namespace TestNetxServer
         }
 
         [TAG(1000)]
-        public Task<int> Add(int a,int b)
-        {               
+        public  Task<int> Add(int a,int b)
+        {
             return Task.FromResult(a + b);
         }
     }

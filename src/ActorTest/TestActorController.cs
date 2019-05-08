@@ -15,19 +15,19 @@ namespace ActorTest
             Log = new DefaultLog(logger);
         }
 
-        public int xa { get; private set; }
+        public long xa { get; private set; }
                
 
         [TAG(2000)]
         public Task<int> Add(int a, int b)
         {
 
-            xa+= a + b;
+            xa++;
             return Task.FromResult(a + b);
         }
 
         [TAG(2001)]
-        public Task<int> GetV()
+        public Task<long> GetV()
         {           
             return Task.FromResult(xa);
         }

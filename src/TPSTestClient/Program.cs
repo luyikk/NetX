@@ -17,7 +17,7 @@ namespace TestClient
         static async Task Main(string[] args)
         {
 
-            int clientCout =  Environment.ProcessorCount*4;
+            int clientCout = 12;// Environment.ProcessorCount*4;
 
 
             var clientBuilder = new NetxSClientBuilder()

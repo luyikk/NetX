@@ -13,7 +13,7 @@ namespace ActorTest
         Task<int> Add(int a, int b);
 
         [TAG(2001)]
-        Task<int> GetV();
+        Task<long> GetV();
 
         [TAG(3001)]
         Task<int> GetX();
