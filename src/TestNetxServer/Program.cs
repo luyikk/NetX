@@ -16,8 +16,7 @@ namespace TestNetxServer
                     p.MaxConnectCout = 100;
                     p.Port = 1006;
 
-                })
-                .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))
+                })        
                 .Build();
 
             service.Start();

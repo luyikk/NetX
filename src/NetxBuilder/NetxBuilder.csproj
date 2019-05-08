@@ -5,6 +5,7 @@
     <Version>1.0.0</Version>
     <Authors>luyikk</Authors>
     <PackageId>NetxBuilder</PackageId>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
 </Project>

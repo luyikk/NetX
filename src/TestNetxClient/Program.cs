@@ -11,6 +11,7 @@ namespace TestNetxClient
             var client = new NetxSClientBuilder()
              .ConfigConnection(p =>
              {
+                 p.Host = "127.0.0.1";
                  p.Port = 1006;
              })
              .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
