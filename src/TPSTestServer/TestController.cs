@@ -28,8 +28,7 @@ namespace TestServer
 
         [TAG(1005)]
         public void Message(string msg)
-        {
-           
+        {           
             Log.Info(msg);
         }
     }

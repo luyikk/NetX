@@ -9,6 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace TestNetxServer
 {
+    /// <summary>
+    /// 我们可以定义一个事件类,用来接收所有Actor容器的完成事件
+    /// 我们可以当Actor完成后保存他的 属性,以及当前的消息
+    /// 把他们存入到数据库,那么 我们就可以事件回溯了
+    /// </summary>
     public class ActorEvent1 : ActorEventBase
     {
         private ILog Log { get; }
@@ -24,6 +29,9 @@ namespace TestNetxServer
         }
     }
 
+    /// <summary>
+    /// 我们可以绑定多个Actor事件
+    /// </summary>
     public class ActorEvent2 : ActorEventBase
     {
         private ILog Log { get; }

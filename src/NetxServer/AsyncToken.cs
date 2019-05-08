@@ -163,9 +163,7 @@ namespace Netx.Service
 
 
                             RunActor(cmdTag, id, runtype, mem_disposetable, args);
-
                             return true;
-
 
                         }
                         else

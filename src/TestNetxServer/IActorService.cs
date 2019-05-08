@@ -8,7 +8,8 @@ namespace TestNetxServer
 {
     public enum ActorCmdTag
     {
-        Add=2000
+        Add=2000,
+        ShowMsg=3000
     }
 
     [Build]
@@ -16,5 +17,8 @@ namespace TestNetxServer
     {
         [TAG(ActorCmdTag.Add)]
         Task<int> Add(int a, int b);
+
+        [TAG(ActorCmdTag.ShowMsg)]
+        void Show(string a);
     }
 }

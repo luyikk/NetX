@@ -15,6 +15,9 @@ namespace TestNetxClient
         Msg=3000
     }
 
+    /// <summary>
+    /// 我们再客户端上面 定义一个 这样的接口,内容随便,关键是 TAG 和参数,你懂的
+    /// </summary>
     [Build]
     interface IServer
     {
