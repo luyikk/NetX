@@ -20,5 +20,10 @@ namespace Netx
         {
             this.CmdTag = cmdTag;
         }
+
+        public TAG(object cmdTag)
+        {
+            this.CmdTag = (int)cmdTag;
+        }
     }
 }

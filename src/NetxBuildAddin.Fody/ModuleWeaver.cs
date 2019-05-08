@@ -128,9 +128,19 @@ public partial class ModuleWeaver : BaseModuleWeaver
         var tag = irpc.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG");
         if (tag is null)
             return;
-        var cmd = (int)tag.ConstructorArguments.First().Value;
+        var cmdx =tag.ConstructorArguments.First().Value;
+        var cmd = 0;
+        switch (cmdx)
+        {
+            case Mono.Cecil.CustomAttributeArgument args:
+                cmd =(int) args.Value;
+                break;
+            default:
+                cmd = (int)cmdx;
+                break;                
+        }
 
-
+       
         var method = new MethodDefinition(irpc.Name, MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final, irpc.ReturnType);
 
         var il = method.Body.GetILProcessor();

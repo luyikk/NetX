@@ -6,19 +6,28 @@ using System.Threading.Tasks;
 
 namespace TestNetxClient
 {
+  
+    public enum CmdTagDef
+    {
+        AddActor=2000,
+        Add=1000,
+        RotueToActorAdd=1001,
+        Msg=3000
+    }
+
     [Build]
     interface IServer
     {
-        [TAG(2000)]
+        [TAG(CmdTagDef.AddActor)]
         Task<int> AddActor(int a, int b);
 
-        [TAG(1000)]
+        [TAG(CmdTagDef.Add)]
         Task<int> Add(int a, int b);
 
-        [TAG(1001)]
+        [TAG(CmdTagDef.RotueToActorAdd)]
         Task<int> RotueToAddActor(int a, int b);
 
-        [TAG(3000)]
+        [TAG(CmdTagDef.Msg)]
         void RunMsg(string msg);
     }
 }

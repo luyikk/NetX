@@ -1,4 +1,5 @@
-﻿using Netx.Client;
+﻿using Netx;
+using Netx.Client;
 using System;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace TestNetxClient
     {
         static async Task Main(string[] args)
         {
+          
             var client = new NetxSClientBuilder()
              .ConfigConnection(p =>
              {

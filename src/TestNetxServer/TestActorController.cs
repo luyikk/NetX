@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestNetxServer
 {
-    [ActorOption(1000)] //限制最大列队数为1000,不设置此标签标示不限制
+    [ActorOption(1000)] //限制最大列队数为1000,不设置此标签表示不限制
     public class TestActorController:ActorController
     {
         public ILog Log { get; }

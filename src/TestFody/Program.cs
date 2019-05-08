@@ -7,7 +7,7 @@ namespace TestFody
     {
         static void Main(string[] args)
         {
-            string assemblyPath = "TestClient.dll";
+            string assemblyPath =Environment.CurrentDirectory+ "\\TestNetxClient.dll";
             new ModuleWeaver().ExecuteTestRun(assemblyPath, false);
         }
     }

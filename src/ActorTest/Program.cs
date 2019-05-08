@@ -13,7 +13,7 @@ namespace ActorTest
        static  IServiceCollection Container = new ServiceCollection();
         static async Task Main(string[] args)
         {
-
+         
           
             Container.AddSingleton<IIds, DefaultMakeIds>();
             Container.AddSingleton<ActorController, TestActorController>();

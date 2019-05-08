@@ -32,6 +32,7 @@ namespace Netx
         /// <returns></returns>
         protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
         {
+           
             if (!IsConnect)
                 if(!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
@@ -114,7 +115,7 @@ namespace Netx
                 throw new NetxException(res.ErrorMsg, res.ErrorId);
             }
         }
-
+         
 
         protected abstract bool ConnectIt();
 

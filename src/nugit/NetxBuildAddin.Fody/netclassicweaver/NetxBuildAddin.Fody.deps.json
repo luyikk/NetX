@@ -1,27 +1,31 @@
 {
   "runtimeTarget": {
     "name": ".NETStandard,Version=v2.0/",
-    "signature": "46ef52753c01958367c1ff559fda1acfe68803af"
+    "signature": "dce57252adeb240fcea75d0f5130a3644d716294"
   },
   "compilationOptions": {},
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "NetxBuildAddin.Fody/1.0.0": {
+      "NetxBuildAddin.Fody/1.0.3": {
         "dependencies": {
-          "FodyHelpers": "5.0.2",
+          "FodyHelpers": "4.2.1",
           "NETStandard.Library": "2.0.3",
-          "NetxBuilder": "1.0.0"
+          "NetxBuilder": "1.0.1"
         },
         "runtime": {
           "NetxBuildAddin.Fody.dll": {}
         }
       },
-      "FodyHelpers/5.0.2": {
+      "FodyHelpers/4.2.1": {
         "runtime": {
           "lib/netstandard2.0/FodyHelpers.dll": {
-            "assemblyVersion": "5.0.2.0",
-            "fileVersion": "5.0.2.0"
+            "assemblyVersion": "4.2.1.0",
+            "fileVersion": "4.2.1.0"
+          },
+          "lib/netstandard2.0/Mono.Cecil.Mdb.dll": {
+            "assemblyVersion": "0.11.0.0",
+            "fileVersion": "0.11.0.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Pdb.dll": {
             "assemblyVersion": "0.11.0.0",
@@ -43,7 +47,7 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "NetxBuilder/1.0.0": {
+      "NetxBuilder/1.0.1": {
         "runtime": {
           "NetxBuilder.dll": {}
         }
@@ -51,17 +55,17 @@
     }
   },
   "libraries": {
-    "NetxBuildAddin.Fody/1.0.0": {
+    "NetxBuildAddin.Fody/1.0.3": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "FodyHelpers/5.0.2": {
+    "FodyHelpers/4.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-GLSaeZL4mReGaE+LTniHgcKrhFZTpDJo/sBl/KhxSMDxQ4bL32+hgcstm5ZvuX4ek0gokCQfPlecnFbxKcMs3Q==",
-      "path": "fodyhelpers/5.0.2",
-      "hashPath": "fodyhelpers.5.0.2.nupkg.sha512"
+      "sha512": "sha512-gorsknoR2W6dwi121JkkVPXrfal5e4GtYLhCGXqgHeQ3QACtuei3p1O3x9vvRv4AjYHSJ1Vo8LxBNZIdJGYb2w==",
+      "path": "fodyhelpers/4.2.1",
+      "hashPath": "fodyhelpers.4.2.1.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",
@@ -77,7 +81,7 @@
       "path": "netstandard.library/2.0.3",
       "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     },
-    "NetxBuilder/1.0.0": {
+    "NetxBuilder/1.0.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
