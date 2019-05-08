@@ -15,7 +15,10 @@ namespace TestNetxClient
         [TAG(1000)]
         Task<int> Add(int a, int b);
 
+        [TAG(1001)]
+        Task<int> RotueToAddActor(int a, int b);
+
         [TAG(3000)]
-        void RunMsg();
+        void RunMsg(string msg);
     }
 }

@@ -23,5 +23,12 @@ namespace TestNetxServer
         {
             return Task.FromResult(a + b);
         }
+
+        [TAG(1001)]
+        public Task<int> Add2(int a,int b)
+        {
+            //测试 去掉用ACTOR 的ADD 
+            return Actor<IActorService>().Add(a, b);
+        }
     }
 }

@@ -31,6 +31,14 @@ namespace Netx.Service
             asyncControllerInstanceDict = new Lazy<Dictionary<Type, AsyncController>>();
         }
 
+        public T Actor<T>()
+        {
+            return ActorRun.Get<T>();
+        }
+        
+
+
+
         protected override bool ConnectIt()
         {
             return false;
