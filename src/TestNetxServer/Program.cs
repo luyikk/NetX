@@ -10,7 +10,9 @@ namespace TestNetxServer
         static void Main(string[] args)
         {
             var service = new Netx.Service.Builder.NetxServBuilder()
-                .RegisterService(Assembly.GetExecutingAssembly())                         
+                .AddActorEvent<ActorEvent1>()
+                .AddActorEvent<ActorEvent2>()
+                .RegisterService(Assembly.GetExecutingAssembly())
                 .ConfigServer(p =>
                 {
                     p.MaxConnectCout = 100;
@@ -19,6 +21,7 @@ namespace TestNetxServer
                 })        
                 .Build();
 
+          
             service.Start();
 
             Console.ReadLine();

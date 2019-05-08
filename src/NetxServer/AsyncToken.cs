@@ -34,8 +34,7 @@ namespace Netx.Service
         public T Actor<T>()
         {
             return ActorRun.Get<T>();
-        }
-        
+        }       
 
 
 
@@ -243,6 +242,12 @@ namespace Netx.Service
             catch (System.Net.Sockets.SocketException)
             {
 
+            }
+            catch (NetxException er)
+            {
+                if(er.ErrorType!=ErrorType.ActorQueueMaxErr)
+                    Log.Error(er);
+                await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {

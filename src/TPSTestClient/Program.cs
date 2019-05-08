@@ -84,7 +84,7 @@ namespace TestClient
             while (i < xcount)
             {
                 int c = i+1;
-                i = await server.AddOne(i);
+                i = await server.AddOneActor(i);
 
                 Debug.Equals(c, i);
 

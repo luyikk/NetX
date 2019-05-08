@@ -12,7 +12,7 @@ using ZYSocket.Share;
 
 namespace Netx.Service.Builder
 {
-    public interface INetxServBuilder:IDisposable
+    public interface INetxServBuilder : IDisposable
     {
         IServiceCollection Container { get; }
         IServiceProvider Provider { get; }
@@ -31,6 +31,7 @@ namespace Netx.Service.Builder
         INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null);
         INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null);
         INetxServBuilder ConfigSSL(Action<SslOption> config = null);
+        INetxServBuilder AddActorEvent<T>() where T : ActorEventBase;
         INetxServBuilder RegisterService(Assembly assembly);
         INetxServBuilder RegisterService(Type controller_instance_type);
         INetxServBuilder RegisterDescriptors(Action<IServiceCollection> serviceDescriptors);

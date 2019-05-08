@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestNetxServer
 {
+    [ActorOption(1000)] //限制最大列队数为1000,不设置此标签标示不限制
     public class TestActorController:ActorController
     {
         public ILog Log { get; }
@@ -19,16 +20,19 @@ namespace TestNetxServer
         }
 
                
+        public int UseCount { get; private set; }
 
         [TAG(2000)]
         public  Task<int> Add(int a, int b)
-        {
+        {         
+            UseCount++;
             return Task.FromResult(a + b);
         }
 
         [TAG(3000)]
         public void Run(string msg)
         {
+            UseCount++;
             Log.Info(msg);
         }
     }

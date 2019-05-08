@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Netx.Actor;
 using Netx.Loggine;
 using System;
 using System.Threading.Tasks;
@@ -26,15 +27,16 @@ namespace Netx.Service
 
 
         public ServiceBase(IServiceProvider container)
-        {          
+        {
             LoggerFactory = container.GetRequiredService<ILoggerFactory>();
             Log = new DefaultLog(LoggerFactory.CreateLogger("NetxService"));
             SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
             Container = container;
+
+            var actor_run = container.GetRequiredService<ActorRun>();
+            foreach (var @event in container.GetServices<ActorEventBase>())            
+                actor_run.CompletedEvent += @event.ActorCompletedEvent;            
         }
-
-
-
 
 
         protected Task SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")

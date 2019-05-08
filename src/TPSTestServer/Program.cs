@@ -18,14 +18,14 @@ namespace TestServer
                 // {
                 //     p.IsUse = true;
                 //     p.Certificate = certificate;
-                // })
+                // })              
                 .ConfigServer(p =>
                 {
                     p.MaxConnectCout = 100;
                     p.Port = 1005;
 
                 })
-                .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))
+                .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            
                 .Build();
 
             service.Start();

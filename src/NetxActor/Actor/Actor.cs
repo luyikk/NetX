@@ -39,6 +39,8 @@ namespace Netx.Actor
 
         public int QueueCount => ActorRunQueue.Count;
 
+        public ActorOptionAttribute Option { get; }
+
         internal event EventHandler<ActorMessage> CompletedEvent;
 
 
@@ -48,6 +50,19 @@ namespace Netx.Actor
             this.ActorScheduler = actorScheduler;
             this.ActorGet = actorGet;
             this.ActorController = instance;
+
+            var options= instance.GetType().GetCustomAttributes(typeof(ActorOptionAttribute), false);
+
+            if (options != null) {
+                foreach (var attr in options)
+                    if (attr is ActorOptionAttribute option)
+                        Option = option;
+            }
+            else
+                Option = new ActorOptionAttribute();
+            
+           
+            
             ActorController.ActorGet = ActorGet;
             ActorController.Status = this;
             this.Container = container;
@@ -94,7 +109,11 @@ namespace Netx.Actor
         {
 
             if (status == Disposed)
-                throw new ObjectDisposedException("this Actor is Close");
+                throw new ObjectDisposedException("this actor is dispose");
+
+            if (Option?.MaxQueueCount > 0)
+                if (ActorRunQueue.Count > Option.MaxQueueCount)
+                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, args);
             ActorRunQueue.Enqueue(sa);
@@ -111,7 +130,11 @@ namespace Netx.Actor
         public async ValueTask AsyncAction(long id, int cmd, params object[] args)
         {
             if (status == Disposed)
-                throw new ObjectDisposedException("this Actor is Close");
+                throw new ObjectDisposedException("this actor is dispose");
+
+            if (Option?.MaxQueueCount > 0)
+                if (ActorRunQueue.Count > Option.MaxQueueCount)
+                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, args);
             var task = GetResult(sa);
@@ -128,7 +151,11 @@ namespace Netx.Actor
         {
           
             if (status == Disposed)
-                throw new ObjectDisposedException("this Actor is Close");
+                throw new ObjectDisposedException("this actor is dispose");
+
+            if(Option?.MaxQueueCount>0)
+                if(ActorRunQueue.Count>Option.MaxQueueCount)
+                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}",ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, args);
             var task = GetResult(sa);
@@ -155,7 +182,7 @@ namespace Netx.Actor
         private Task Runing()
         {
             if (status == Disposed)
-                throw new ObjectDisposedException("this Actor is Close");
+                throw new ObjectDisposedException("the Actor is Close");
 
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Netx.Actor;
 using System;
 using System.Threading.Tasks;
 using ZYSocket;
@@ -23,6 +24,7 @@ namespace Netx.Service
             SocketServer.BinaryInput = new BinaryInputHandler(BinaryInputHandler);
             SocketServer.Connetions = new ConnectionFilter(ConnectionFilter);
             SocketServer.MessageInput = new DisconnectHandler(DisconnectHandler);
+           
         }
 
         public void Dispose()

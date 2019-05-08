@@ -230,6 +230,11 @@ namespace Netx.Service.Builder
             return this;
         }
 
+        public INetxServBuilder AddActorEvent<T>() where T : ActorEventBase
+        {
+            Container.AddSingleton<ActorEventBase,T>();
+            return this;
+        }
 
 
 
@@ -237,7 +242,7 @@ namespace Netx.Service.Builder
         {
             if (Provider is null)
             {
-                Container.TryAdd(ServiceDescriptor.Singleton<ActorRun>(p => new ActorRun(p)));
+                Container.TryAdd(ServiceDescriptor.Singleton<ActorRun, ActorRun>());
                 Container.TryAdd(ServiceDescriptor.Singleton<IActorGet, ActorRun>());
                 Container.TryAdd(ServiceDescriptor.Singleton<NetxService>(p => new NetxService(p)));
                 Container.Replace(ServiceDescriptor.Singleton<ConcurrentDictionary<int, MethodRegister>>(AsyncServicesRegisterDict));
