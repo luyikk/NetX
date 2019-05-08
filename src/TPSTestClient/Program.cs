@@ -17,7 +17,7 @@ namespace TestClient
         static async Task Main(string[] args)
         {
 
-            int clientCout = 12;// Environment.ProcessorCount*4;
+            int clientCout =  Environment.ProcessorCount*4;
 
 
             var clientBuilder = new NetxSClientBuilder()
@@ -79,10 +79,17 @@ namespace TestClient
             int count = 10000;
 
             var x = System.Diagnostics.Stopwatch.StartNew();
-            int i = 0;
-            while (i < count)
+            int i = new Random().Next(-10000, 10000);
+            int xcount = i + count;
+            while (i < xcount)
             {
-                i = await server.AddOneActor(i);
+                int c = i+1;
+                i = await server.AddOne(i);
+
+                Debug.Equals(c, i);
+
+                if (c != i)
+                    throw new Exception("error value");
             }
 
             x.Stop();

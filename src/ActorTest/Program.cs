@@ -30,7 +30,7 @@ namespace ActorTest
             var Actor=  build.GetRequiredService<ActorRun>();
        
             var server= Actor.Get<ICallServer>();
-
+            await server.Add(0, 0);
 
            var stop = System.Diagnostics.Stopwatch.StartNew();
 

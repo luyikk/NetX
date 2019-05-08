@@ -213,12 +213,24 @@ namespace Netx.Service.Builder
             return this;
         }
 
+        public INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null)
+        {
+            if (func is null)
+                Container.AddSingleton<ActorScheduler>(_=> ActorScheduler.LineByLine);
+            else
+                Container.AddSingleton<ActorScheduler>(func);
+
+            return this;
+        }
+
         public INetxServBuilder ConfigSSL(Action<SslOption> config=null)
         {
             if (config != null)
                 Container.Configure<SslOption>(config);
             return this;
         }
+
+
 
 
         public NetxService Build()
@@ -240,5 +252,7 @@ namespace Netx.Service.Builder
             if (Provider is IDisposable disposable)
                 disposable.Dispose();
         }
+
+     
     }
 }

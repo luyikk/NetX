@@ -17,6 +17,8 @@ namespace Netx.Actor
         public const int Disposed = 2;
 
 
+        public ActorScheduler ActorScheduler { get; }
+
         public IServiceProvider Container { get; }
 
         public ActorController @ActorController { get; }
@@ -41,8 +43,9 @@ namespace Netx.Actor
 
 
 
-        public Actor(IServiceProvider container, IActorGet actorGet, ActorController instance)
-        {           
+        public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
+        {
+            this.ActorScheduler = actorScheduler;
             this.ActorGet = actorGet;
             this.ActorController = instance;
             ActorController.ActorGet = ActorGet;
@@ -182,9 +185,8 @@ namespace Netx.Actor
                     }
                 };
 
-                return RunNext();
+               return  ActorScheduler.Scheduler(RunNext);
 
-               
             }
 
             return Task.CompletedTask;

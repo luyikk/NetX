@@ -26,7 +26,7 @@ namespace Netx.Actor
         {
             foreach (var controller in Container.GetServices<ActorController>())
             {
-                var actor = new Actor<R>(Container,this, controller);
+                var actor = new Actor<R>(Container,this,ActorScheduler, controller);
                 actor.CompletedEvent += Actor_CompletedEvent;
                 foreach (int cmd in actor.CmdDict.Keys)
                     ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);

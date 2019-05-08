@@ -23,7 +23,8 @@ namespace Netx
 
         public DefaultMakeIds()
         {
-            //Id =  DateTime.Now.Ticks;         
+            string tick= (DateTime.Now.Ticks / 1000000).ToString();
+            Id =long.Parse(new Random().Next(-9000000, 9000000) + tick);         
         }       
 
 

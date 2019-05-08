@@ -19,7 +19,7 @@ namespace Netx
 
             if (AsyncResultDict.ContainsKey(ids))
             {
-               var asyncback= AsyncResultDict[ids];
+                var asyncback = AsyncResultDict[ids];
 
                 if (AsyncResultDict.Remove(ids))
                 {
@@ -31,7 +31,23 @@ namespace Netx
                 }
             }
             else
-                Log.ErrorFormat("not find back ruest id:{0}", result.Id);
+            {
+                if (result.IsError)
+                {
+                    try
+                    {
+                        Log.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                    }
+                    catch
+                    {
+                        Log.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                    }
+                }
+                else
+                {
+                    Log.ErrorFormat("not find back ruest id:{0}", result.Id);
+                }
+            }
         }
       
     }
