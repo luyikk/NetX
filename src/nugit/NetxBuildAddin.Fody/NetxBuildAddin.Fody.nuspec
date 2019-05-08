@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>NetxBuildAddin.Fody</id>
-    <version>1.0.1</version>
+    <version>1.0.4</version>
     <title>NetxBuildAddin.Fody with Netx build netstandard2.0</title>
     <authors>luyikk</authors>
     <owners>luyikk</owners>
@@ -16,8 +16,7 @@
     <tags>Netx</tags>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="Fody" version="4.0.2" />
-        <dependency id="NetxBuilder" version="1.0.1" />
+        <dependency id="Fody" version="5.0.5"/>
       </group>
     </dependencies>
   </metadata>
@@ -26,11 +25,8 @@
     <file src="netclassicweaver\FodyWeavers.xml" target="netclassicweaver\FodyWeavers.xml" />
     <file src="netclassicweaver\NetxBuildAddin.Fody.deps.json" target="netclassicweaver\NetxBuildAddin.Fody.deps.json" />
     <file src="netclassicweaver\NetxBuildAddin.Fody.dll" target="netclassicweaver\NetxBuildAddin.Fody.dll" />
-    <file src="netclassicweaver\NetxBuilder.dll" target="netclassicweaver\NetxBuilder.dll" />
     <file src="netstandardweaver\FodyWeavers.xml" target="netstandardweaver\FodyWeavers.xml" />
     <file src="netstandardweaver\NetxBuildAddin.Fody.deps.json" target="netstandardweaver\NetxBuildAddin.Fody.deps.json" />
     <file src="netstandardweaver\NetxBuildAddin.Fody.dll" target="netstandardweaver\NetxBuildAddin.Fody.dll" />
-    <file src="netstandardweaver\NetxBuilder.dll" target="netstandardweaver\NetxBuilder.dll" />
-    <file src="netstandardweaver\NetxBuilder.pdb" target="netstandardweaver\NetxBuilder.pdb" />
   </files>
 </package>
