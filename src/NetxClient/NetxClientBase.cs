@@ -8,6 +8,8 @@ using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Netx.Interface;
 using ZYSocket.Interface;
+using ZYSocket.FiberStream;
+using ZYSocket;
 
 namespace Netx.Client
 {
@@ -49,6 +51,123 @@ namespace Netx.Client
             IWrite.Write(ConnectOption.VerifyKey??"");
             IWrite.Write(Session.GetSessionId());
             return IWrite.Flush();
+        }
+
+
+     
+
+        /// <summary>
+        /// 发送错误
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="msg"></param>
+        /// <param name="errorType"></param>
+        /// <returns></returns>
+        protected virtual Task SendError(long id, string msg, ErrorType errorType)
+        {
+
+            if (IWrite != null)
+            {
+
+                IWrite.Write(2500);
+                IWrite.Write(id);
+                IWrite.Write(true);
+                IWrite.Write((int)errorType);
+                IWrite.Write(msg);
+                return IWrite.Flush();
+                
+            }
+            else
+                throw new NullReferenceException("IWrite is null!");
+        }
+
+        /// <summary>
+        /// 发送结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        protected virtual Task SendResult(long id, object argument)
+        {
+            if (IWrite != null)
+            {
+
+                IWrite.Write(2500);
+                IWrite.Write(id);
+                IWrite.Write(false);
+                IWrite.Write(1);
+                IWrite.Write(SerializationPacker.PackSingleObject(argument));
+                return IWrite.Flush();
+
+            }
+            else
+                throw new NullReferenceException("IWrite is null!");
+
+        }
+
+        /// <summary>
+        /// 发送结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        protected virtual Task SendResult(long id, byte[][] arguments = null)
+        {
+            if (IWrite != null)
+            {
+                IWrite.Write(2500);
+                IWrite.Write(id);
+
+                IWrite.Write(false);
+
+                if (arguments is null)
+                    IWrite.Write(0);
+                else
+                {
+                    IWrite.Write(arguments.Length);
+                    foreach (var item in arguments)
+                        IWrite.Write(item);
+                }
+
+                return IWrite.Flush();
+
+            }
+            else
+                throw new NullReferenceException("IWrite is null!");
+
+        }
+
+        /// <summary>
+        /// 发送结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        protected virtual Task SendResult(Result result)
+        {
+            if (IWrite != null)
+            {
+
+                IWrite.Write(2500);
+                IWrite.Write(result.Id);
+
+                if (result.IsError)
+                {
+                    IWrite.Write(true);
+                    IWrite.Write(result.ErrorId);
+                    IWrite.Write(result.ErrorMsg);
+                }
+                else
+                {
+                    IWrite.Write(false);
+                    IWrite.Write(result.Arguments.Count);
+                    foreach (var item in result.Arguments)
+                        IWrite.Write(item);
+                }
+
+                return IWrite.Flush();
+
+            }
+            else
+                throw new NullReferenceException("IWrite is null!");
+
         }
     }
 }

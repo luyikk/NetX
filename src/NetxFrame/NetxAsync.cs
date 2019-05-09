@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Netx.Async;
+using ZYSocket.FiberStream;
 
 namespace Netx
 {
@@ -49,6 +50,42 @@ namespace Netx
                 }
             }
         }
-      
+
+        protected virtual async Task ReadResultAsync(IFiberRw fiberRw)
+        {
+            var id = await fiberRw.ReadInt64();
+
+            if (id.HasValue)
+            {
+                if ((await fiberRw.ReadBoolean()).Value) //is error
+                {
+                    AsyncBackResult(new Result()
+                    {
+                        Id = id.Value,
+                        ErrorId = (await fiberRw.ReadInt32()).Value,
+                        ErrorMsg = await fiberRw.ReadString()
+                    });
+                }
+                else
+                {
+                    var count = (await fiberRw.ReadInt32()).Value;
+                    List<byte[]> args = new List<byte[]>(count);
+                    for (int i = 0; i < count; i++)
+                        args.Add(await fiberRw.ReadArray());
+
+                    AsyncBackResult(new Result(args)
+                    {
+                        Id = id.Value
+                    });
+
+                }
+
+            }
+            else
+                throw new NetxException($"data error:2500", ErrorType.ReadErr);
+        }
+
+
+
     }
 }

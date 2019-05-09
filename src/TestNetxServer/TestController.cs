@@ -44,5 +44,34 @@ namespace TestNetxServer
             //测试 去调用ACTOR 的ADD 
             return Actor<IActorService>().Add(a, b);
         }
+
+
+        [TAG(1003)]
+        public Task<int> ToClientAddOne(int a)
+        {
+            return Get<IClientCalling>().AddOne(a);
+        }
+
+
+        [TAG(1004)]
+        public Task<int> ToClientAdd(int a,int b)
+        {
+            return Get<IClientCalling>().Add(a,b);
+        }
+
+        /// <summary>
+        /// 递归测试
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [TAG(1005)]
+        public Task<int> RecursiveTest(int a)
+        {
+            a--;
+            if (a > 0)
+                return Get<IClientCalling>().Recursive(a);
+            else
+                return Task.FromResult(a);
+        }
     }
 }

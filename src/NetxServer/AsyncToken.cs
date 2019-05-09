@@ -10,7 +10,7 @@ using ZYSocket.FiberStream;
 
 namespace Netx.Service
 {
-    public class AsyncToken : AsyncBase
+    public class AsyncToken : AsyncBuffer
     {
 
 
@@ -79,7 +79,7 @@ namespace Netx.Service
 
             switch (cmd)
             {
-                case 2500:
+                case 2400:
                     {
                         var type = await fiberRw.ReadByte();
                         switch (type)
@@ -99,7 +99,13 @@ namespace Netx.Service
                         }
 
                         return true;
+                    }               
+                case 2500: //set result
+                    {
+                        await ReadResultAsync(fiberRw);
                     }
+                    break;
+
             }
 
             return true;
@@ -128,7 +134,6 @@ namespace Netx.Service
                             if (owner != null)
                                 mem_disposetable.Add(owner);
                         }
-
 
                         RunCall(service, cmd.Value, id, runtype, mem_disposetable,args);
                         return true;
@@ -221,7 +226,6 @@ namespace Netx.Service
                                     {
                                         result.Id = id;
                                         await SendResult(result);
-
                                     }
                                     break;
                                 default:
@@ -255,15 +259,7 @@ namespace Netx.Service
         }
 
     
-        private void Dispose_table(List<IMemoryOwner<byte>> memDisposableList)
-        {
-            if (memDisposableList.Count > 0)
-            {
-                foreach (var mem in memDisposableList)
-                    mem.Dispose();
-                memDisposableList.Clear();
-            }
-        }
+       
 
         protected virtual async void RunCall(MethodRegister service, int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners,  params object[] args)
         {
@@ -340,11 +336,6 @@ namespace Netx.Service
             await SendNotRunType(service, id, runType);
         }
 
-        protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
-        {
-            Log.WarnFormat("{1} call async service:{0} not find RunType:{2} ", service, FiberRw.Async?.AcceptSocket?.RemoteEndPoint, runtype);
-            return SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);
-        }
 
         protected virtual async ValueTask<AsyncController> GetInstance(long id, int cmd, Type instanceType)
         {

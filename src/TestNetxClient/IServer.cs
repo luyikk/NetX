@@ -12,6 +12,8 @@ namespace TestNetxClient
         AddActor=2000,
         Add=1000,
         RotueToActorAdd=1001,
+        ClientAddOne=1003,
+        ClientAdd=1004,
         Msg=3000
     }
 
@@ -30,7 +32,16 @@ namespace TestNetxClient
         [TAG(CmdTagDef.RotueToActorAdd)]
         Task<int> RotueToAddActor(int a, int b);
 
+        [TAG(CmdTagDef.ClientAdd)]
+        Task<int> ClientAdd(int a, int b);
+
+        [TAG(CmdTagDef.ClientAddOne)]
+        Task<int> ClientAddOne(int a);
+
         [TAG(CmdTagDef.Msg)]
         void RunMsg(string msg);
+
+        [TAG(1005)]
+        Task<int> RecursiveTest(int a);
     }
 }

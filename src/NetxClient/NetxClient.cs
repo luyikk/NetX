@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Netx.Interface;
 using System;
 using System.Threading.Tasks;
 using ZYSocket;
@@ -9,8 +10,10 @@ namespace Netx.Client
     /// <summary>
     /// NetX 客户端
     /// </summary>
-    public class NetxSClient : NetxSslSetter,IDisposable
+    public class NetxSClient : NetxSslSetter, IDisposable, INetxSClient
     {
+        private bool Disposed=false;
+
         public SocketClient SocketClient { get; private set; }
 
         public event DisconnectHandler Disconnect;
@@ -34,7 +37,7 @@ namespace Netx.Client
             if (!result.IsSuccess)
             {
                 throw new NetxException(result.Msg, ErrorType.ConnectErr);
-            }            
+            }
         }
 
         public async Task<ConnectResult> OpenAsync(int timeout = 6000)
@@ -51,6 +54,9 @@ namespace Netx.Client
 
         protected override bool ConnectIt()
         {
+            if (Disposed)
+                return false;
+
             Init();
 
             try
@@ -130,13 +136,14 @@ namespace Netx.Client
                     client.SetConnected(false, "key error");
 
             }
-            
+
             client.ShutdownBoth(true);
         }
 
         public void Dispose()
         {
-            Close();          
+            Disposed = true;
+            Close();
         }
     }
 }

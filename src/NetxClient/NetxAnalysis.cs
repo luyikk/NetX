@@ -5,7 +5,7 @@ using ZYSocket.FiberStream;
 
 namespace Netx.Client
 {
-    public abstract class NetxAnalysis : NetxAsyncCaller
+    public abstract class NetxAnalysis : NetxClientCalling
     {
         public NetxAnalysis(IServiceProvider container)
             : base(container)
@@ -49,38 +49,14 @@ namespace Netx.Client
                         Session.SaveSessionId(sessionid);
                     }
                     break;
+                case 2400: //Call It
+                    {
+                        await Calling(fiberRw);
+                    }
+                    break;
                 case 2500: //set result
                     {
-                        var id = await fiberRw.ReadInt64();
-
-                        if (id.HasValue)
-                        {
-                            if ((await fiberRw.ReadBoolean()).Value) //is error
-                            {
-                                AsyncBackResult(new Result()
-                                {
-                                    Id = id.Value,
-                                    ErrorId = (await fiberRw.ReadInt32()).Value,
-                                    ErrorMsg = await fiberRw.ReadString()
-                                });
-                            }
-                            else
-                            {
-                                var count = (await fiberRw.ReadInt32()).Value;
-                                List<byte[]> args = new List<byte[]>(count);
-                                for (int i = 0; i < count; i++)
-                                    args.Add(await fiberRw.ReadArray());
-
-                                AsyncBackResult(new Result(args)
-                                {
-                                    Id = id.Value
-                                });                           
-
-                            }
-
-                        }
-                        else
-                            throw new NetxException($"data error:{cmd.GetValueOrDefault()}", ErrorType.ReadErr);
+                        await ReadResultAsync(fiberRw);
                     }
                     break;
                 default:

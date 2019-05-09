@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -122,6 +123,16 @@ namespace Netx
                 AsyncResultDict[ids] = asyncResult;
             }
             return asyncResult;
+        }
+
+        protected void Dispose_table(List<IMemoryOwner<byte>> memDisposableList)
+        {
+            if (memDisposableList.Count > 0)
+            {
+                foreach (var mem in memDisposableList)
+                    mem.Dispose();
+                memDisposableList.Clear();
+            }
         }
 
     }

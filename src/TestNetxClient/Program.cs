@@ -47,6 +47,29 @@ namespace TestNetxClient
                 Console.WriteLine(c);
             }
 
+            for (int i = 0; i < 1000; i++)
+            {
+                var c = await server.ClientAdd(i, 0); //调用RPC,这个服务器将请求路由到自己的控制器中 自己算 Add
+                Console.WriteLine(c);
+            }
+
+
+            try
+            {
+                await server.ClientAddOne(1); //测试异常
+            }
+            catch (NetxException er)
+            {
+                Console.WriteLine(er.ToString());
+            }
+
+            var stop = System.Diagnostics.Stopwatch.StartNew();
+            int a = await server.RecursiveTest(10000);
+            stop.Stop();
+            Console.WriteLine($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
+
+
+
             server.RunMsg("close");
 
             Console.ReadLine();

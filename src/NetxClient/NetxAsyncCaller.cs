@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace Netx.Client
 {
-    public abstract class NetxAsyncCaller : NetxClientBase
+    public abstract class NetxAsyncRegisterInstance : NetxClientBase
     {
         private readonly Lazy<Dictionary<int, InstanceRegister>> methodInstanceDict;
 
         public Dictionary<int, InstanceRegister> MethodInstanceDict { get => methodInstanceDict.Value; }
 
-        public NetxAsyncCaller(IServiceProvider container)
+        public NetxAsyncRegisterInstance(IServiceProvider container)
         : base(container)
         {
             methodInstanceDict = new Lazy<Dictionary<int, InstanceRegister>>();
@@ -31,6 +31,8 @@ namespace Netx.Client
                     foreach (var attr in method.GetCustomAttributes(typeof(TAG), true))
                         if (attr is TAG attrcmdtype)
                             IsRegisterCmd(instance, attrcmdtype.CmdTag, instancetype, method);
+
+           
         }
 
         /// <summary>

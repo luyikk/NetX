@@ -39,7 +39,7 @@ namespace Netx
 
             //数据包格式为 0 0000  00000000 0000 .....
             //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
-            IWrite.Write(2500);
+            IWrite.Write(2400);
             IWrite.Write((byte)2); 
             IWrite.Write(cmdTag);
             IWrite.Write(Id);
@@ -67,7 +67,7 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            IWrite.Write(2500);
+            IWrite.Write(2400);
             IWrite.Write((byte)0);
             IWrite.Write(cmdTag);
             IWrite.Write((long)-1);
@@ -86,13 +86,13 @@ namespace Netx
         /// <param name="Id">Id</param>
         /// <param name="args">参数</param>
         /// <returns>异步等待Task</returns>
-        protected async override Task SendAsyncAction(int cmdTag, long Id, object[] args)
+        protected async  override Task SendAsyncAction(int cmdTag, long Id, object[] args)
         {
             if (!IsConnect)
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            IWrite.Write(2500);
+            IWrite.Write(2400);
             IWrite.Write((byte)1);
             IWrite.Write(cmdTag);
             IWrite.Write(Id);
