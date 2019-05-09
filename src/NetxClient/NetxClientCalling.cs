@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using ZYSocket.FiberStream;
 
 namespace Netx.Client
@@ -14,6 +15,9 @@ namespace Netx.Client
         {
 
         }
+
+        public ILogger GetLogger(string categoryName)=> LoggerFactory.CreateLogger(categoryName);
+       
 
         protected async Task Calling(IFiberRw fiberRw)
         {
@@ -93,7 +97,7 @@ namespace Netx.Client
                         if (runType == 0)
                         {
                             if (service.Instance is IMethodController controller)
-                                controller.current = this;
+                                controller.Current = this;
 
                             service.Method.Execute(service.Instance, args);
                             Dispose_table(memoryOwners);
@@ -104,7 +108,7 @@ namespace Netx.Client
                         if (runType == 1)
                         {
                             if (service.Instance is IMethodController controller)
-                                controller.current = this;
+                                controller.Current = this;
 
                             await service.Method.ExecuteAsync(service.Instance, args);
                             Dispose_table(memoryOwners);
@@ -116,7 +120,7 @@ namespace Netx.Client
                         if (runType == 2)
                         {
                             if (service.Instance is IMethodController controller)
-                                controller.current = this;
+                                controller.Current = this;
 
                             var ret_value = (object)await service.Method.ExecuteAsync(service.Instance, args);
                             Dispose_table(memoryOwners);
@@ -164,7 +168,6 @@ namespace Netx.Client
             return SendError(id, $"call method:{service}  not find runtype:{runtype}", ErrorType.NotRunType);
         }
 
-
-
+ 
     }
 }

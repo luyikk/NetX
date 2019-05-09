@@ -34,6 +34,7 @@ namespace Netx.Client
         public NetxClientBase(IServiceProvider container)
         {
             Container = container;
+            LoggerFactory = container.GetRequiredService<ILoggerFactory>();
             Log = new DefaultLog(container.GetRequiredService<ILogger<NetxSClient>>());
             ConnectOption = container.GetRequiredService<IOptions<ConnectOption>>().Value;
             Session = container.GetRequiredService<ISessionStore>();

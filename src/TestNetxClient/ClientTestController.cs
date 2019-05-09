@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Netx;
+using Netx.Loggine;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,7 +25,9 @@ namespace TestNetxClient
         [TAG(2001)]
         public Task<int> Add(int a,int b)
         {
-            Console.WriteLine($"server request {a}+{b}");
+            ILog log =new DefaultLog(Current.GetLogger("Add"));
+            
+            log.Info($"server request {a}+{b}");
             return Task.FromResult(a+b);
         }
 

@@ -31,26 +31,26 @@ namespace TestNetxClient
             for (int i = 0; i < 1000; i++)
             {
                 var c = await server.Add(i, 0); //调用RPC
-                Console.WriteLine(c);
+                client.Log.Trace(c);
             }
 
             for (int i = 0; i < 1000; i++)
             {
                 var c = await server.AddActor(i, 0); //调用ACTOR
-                Console.WriteLine(c);
+                client.Log.Trace(c);
             }
 
 
             for (int i = 0; i < 1000; i++)
             {
                 var c = await server.RotueToAddActor(i, 0); //调用RPC TO ACTOR 路由版
-                Console.WriteLine(c);
+                client.Log.Trace(c);
             }
 
             for (int i = 0; i < 1000; i++)
             {
                 var c = await server.ClientAdd(i, 0); //调用RPC,这个服务器将请求路由到自己的控制器中 自己算 Add
-                Console.WriteLine(c);
+                client.Log.Trace(c);
             }
 
 
@@ -60,13 +60,13 @@ namespace TestNetxClient
             }
             catch (NetxException er)
             {
-                Console.WriteLine(er.ToString());
+                client.Log.Error(er);
             }
 
-            var stop = System.Diagnostics.Stopwatch.StartNew();
+            var stop = System.Diagnostics.Stopwatch.StartNew(); //测试双向递归函数
             int a = await server.RecursiveTest(10000);
             stop.Stop();
-            Console.WriteLine($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
+            client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
 
 
 
