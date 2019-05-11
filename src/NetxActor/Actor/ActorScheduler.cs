@@ -14,7 +14,7 @@ namespace Netx.Actor
 
     internal class TaskScheduler : ActorScheduler
     {
-        public override Task Scheduler(Func<Task> action) => Task.Factory.StartNew(action);
+        public override Task Scheduler(Func<Task> action) => Task.Factory.StartNew(action,TaskCreationOptions.DenyChildAttach);
 
 
     }

@@ -25,6 +25,10 @@ namespace TestServer
                     p.Port = 1005;
 
                 })
+                .ConfigBase(p=>
+                {                    
+                    p.ClearSessionTime = 5000;
+                })
                 .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            
                 .Build();
 

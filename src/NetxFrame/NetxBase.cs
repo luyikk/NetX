@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Netx.Async;
@@ -35,6 +36,17 @@ namespace Netx
         /// </summary>
         protected Dictionary<long,AsyncResultAwaiter<Result>> AsyncResultDict { get => asyncResultDict.Value; }
 
+        /// <summary>
+        /// 用来超时处理
+        /// </summary>
+        private readonly Lazy<ConcurrentQueue<RequestKeyTime>> requestOutTimeQueue = new Lazy<ConcurrentQueue<RequestKeyTime>>(true);
+
+        protected ConcurrentQueue<RequestKeyTime> RequestOutTimeQueue { get => requestOutTimeQueue.Value; }
+
+        /// <summary>
+        /// 调用超时时间
+        /// </summary>
+        public long RequestOutTime { get; protected set; }= 10000;
 
         /// <summary>
         /// 运行，不等待返回结果,不会阻止当前线程
@@ -122,6 +134,10 @@ namespace Netx
                 Log.Info($"add async back have id:{ids}");
                 AsyncResultDict[ids] = asyncResult;
             }
+
+            if(RequestOutTime>0)
+                RequestOutTimeQueue.Enqueue(new RequestKeyTime(ids, TimeHelper.GetTime()));
+
             return asyncResult;
         }
 
@@ -132,6 +148,22 @@ namespace Netx
                 foreach (var mem in memDisposableList)
                     mem.Dispose();
                 memDisposableList.Clear();
+            }
+        }
+
+
+
+
+        protected struct RequestKeyTime
+        {
+            public long Key { get;  }
+
+            public long Time { get;  }
+
+            public RequestKeyTime(long key,long time)
+            {
+                Key = key;
+                Time = time;
             }
         }
 

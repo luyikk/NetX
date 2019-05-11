@@ -53,8 +53,9 @@ namespace Netx.Service
                     return await result;
                 }
             }
-            else
+            else 
                 throw new NullReferenceException("FiberRw is null!");
+          
         }
 
         /// <summary>
@@ -99,7 +100,8 @@ namespace Netx.Service
 
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+                Log.Error("Send fail,is not fiber");
+
         }
 
         /// <summary>
@@ -131,7 +133,8 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+                Log.Error("Send fail,is not fiber");
+
         }
 
 
@@ -156,7 +159,10 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+            {
+                Log.Error("Send fail,is not fiber");
+                return Task.CompletedTask;
+            }
 
         }
 
@@ -190,7 +196,10 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+            {
+                Log.Error("Send fail,is not fiber");
+                return Task.CompletedTask;
+            }
 
         }
 
@@ -227,7 +236,10 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+            {
+                Log.Error("Send fail,is not fiber");
+                return Task.CompletedTask;
+            }
 
         }
 
@@ -256,7 +268,10 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+            {
+                Log.Error("Send fail,is not fiber");
+                return Task.CompletedTask;
+            }
         }
 
         /// <summary>
@@ -276,7 +291,10 @@ namespace Netx.Service
                 }
             }
             else
-                throw new NullReferenceException("FiberRw is null!");
+            {
+                Log.Error("Send fail,is not fiber");
+                return Task.CompletedTask;
+            }
         }
 
 

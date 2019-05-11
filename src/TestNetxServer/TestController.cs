@@ -29,6 +29,8 @@ namespace TestNetxServer
         [TAG(1000)]
         public  Task<int> Add(int a,int b)
         {
+
+
             return Task.FromResult(a + b);
         }
 
@@ -73,6 +75,15 @@ namespace TestNetxServer
             else
                 return Task.FromResult(a);
         }
+
+        [TAG(1007)]
+        public async Task<bool> TestTimeOut()
+        {
+            await Task.Delay(11000);
+            return true;
+        }
+
+
 
         [TAG(1006)]
         public void Finsh()

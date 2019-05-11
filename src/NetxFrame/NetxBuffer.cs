@@ -49,12 +49,20 @@ namespace Netx
                 WriteObj(IWrite, arg);
             }
 
-            var result = AddAsyncResult(Id);
+            var result = GetResult(AddAsyncResult(Id));
 
             await IWrite.Flush();
-          
-            return  await result;
+
+            if (result.IsCompleted)
+                return result.Result;
+            else
+                return await result;
         }      
+
+        private async ValueTask<IResult> GetResult(AsyncResultAwaiter<Result> asyncResult)
+        {
+            return await asyncResult;
+        }
 
         /// <summary>
         /// 发送调用求情
@@ -102,17 +110,21 @@ namespace Netx
                 WriteObj(IWrite, arg);
             }
 
-            var result = AddAsyncResult(Id);
+            var result = GetResult(AddAsyncResult(Id));
 
             await IWrite.Flush();
 
-          
-
-            var res= await result;
-
-            if(res.IsError)
+            if (result.IsCompleted)
             {
-                throw new NetxException(res.ErrorMsg, res.ErrorId);
+                var res = result.Result;
+                if (res.IsError)
+                    throw new NetxException(res.ErrorMsg, res.ErrorId);
+            }
+            else
+            {
+                var res = await result;
+                if (res.IsError)                
+                    throw new NetxException(res.ErrorMsg, res.ErrorId);                
             }
         }
          

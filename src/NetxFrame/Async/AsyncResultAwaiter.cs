@@ -16,7 +16,8 @@ namespace Netx.Async
         {
             result = res;
             iscompleted = true;
-            Continuation?.Invoke();
+            Continuation();
+
         }
 
         public void Reset()

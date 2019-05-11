@@ -22,7 +22,7 @@ namespace Netx.Service
         private ConcurrentQueue<TimeKey> DisconnectRemoveList { get => disconnectRemoveList.Value; }
 
 
-        protected SessionOption SessionOption { get; }
+        protected NetxOption SessionOption { get; }
 
 
       private  struct TimeKey
@@ -43,23 +43,44 @@ namespace Netx.Service
             LazyServiceTokenFactory = new Lazy<ServiceTokenFactory>(() => new ServiceTokenFactory(container),true);
             disconnectRemoveList = new Lazy<ConcurrentQueue<TimeKey>>();          
 
-            SessionOption = container.GetRequiredService<IOptions<SessionOption>>().Value;
+            SessionOption = container.GetRequiredService<IOptions<NetxOption>>().Value;
+            SessionOption.ClearCheckTime = SessionOption.ClearCheckTime <= 100 ? 100 : SessionOption.ClearCheckTime;
 
             Task.Factory.StartNew(RemoveRun);
         }
 
         private async void RemoveRun()
         {
-            while(true)
+            while (true)
             {
-                await Task.Delay(SessionOption.ClecrCheckTime);
-                Check();
+                await Task.Delay(SessionOption.ClearCheckTime);
+
+                if (SessionOption.ClearSessionTime > 0)
+                    CheckSessionTimeOut();
+
+                if (SessionOption.ClearRequestTime > 0)
+                    CheckRequestTimeOut();
             }
         }
 
-        private void Check()
+        /// <summary>
+        /// 检测Request超时
+        /// </summary>
+        private void CheckRequestTimeOut()
         {
-            var outtime = SessionOption.ChecrOutTime * 10000;
+            
+            foreach (var token in ActorTokenDict.Values)
+                token.RequestTimeOutHandle();
+        }
+
+
+
+        /// <summary>
+        /// 检测Session超时
+        /// </summary>
+        private void CheckSessionTimeOut()
+        {
+            var outtime = SessionOption.ClearSessionTime * 10000;
 
             while (DisconnectRemoveList.Count>0)
             {

@@ -44,6 +44,9 @@ namespace TestNetxClient
         [TAG(1005)]
         Task<int> RecursiveTest(int a);
 
+        [TAG(1007)]
+        Task<bool> TestTimeOut();
+
         [TAG(1006)]
         void Finsh();
     }

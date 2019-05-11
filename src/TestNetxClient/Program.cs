@@ -69,6 +69,16 @@ namespace TestNetxClient
             client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
             
 
+            try
+            {
+                await server.TestTimeOut();
+
+            }catch(NetxException er)
+            {
+                client.Log.Error(er.Message);
+            }
+
+
             server.RunMsg("close");
 
             server.Finsh();

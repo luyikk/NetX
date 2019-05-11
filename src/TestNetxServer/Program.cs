@@ -12,6 +12,10 @@ namespace TestNetxServer
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
                 .AddActorEvent<ActorEvent2>() //添加绑定事件2
+                .ConfigBase(p=>
+                {
+                    p.ClearSessionTime = 5000;
+                })
                 .RegisterService(Assembly.GetExecutingAssembly()) //注册当前DLL下面的所有控制器,包含RPC控制器和ACTOR控制器,我们都定义了一个
                 .ConfigSocketServer(p => //配置服务器SOCKET 方面的
                 {

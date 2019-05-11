@@ -40,6 +40,19 @@ namespace Netx.Client
             Session = container.GetRequiredService<ISessionStore>();
             SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
             IdsManager = container.GetRequiredService<IIds>();
+
+            Task.Factory.StartNew(RunRequestCheck);
+        }
+
+        protected async void RunRequestCheck()
+        {
+            while (true)
+            {
+                await Task.Delay(1000);
+
+                if (ConnectOption.RequestTimeOut > 0)
+                    RequestTimeOutHandle();
+            }
         }
 
         /// <summary>

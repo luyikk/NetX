@@ -86,6 +86,39 @@ namespace Netx
         }
 
 
+        /// <summary>
+        /// 处理超时请求
+        /// </summary>
+        public virtual void RequestTimeOutHandle()
+        {
+            while (RequestOutTimeQueue.Count > 0)
+            {
+                if (RequestOutTimeQueue.TryPeek(out RequestKeyTime keyTime))
+                {
+                    long outtime = RequestOutTime * 10000;
+
+                    if ((TimeHelper.GetTime() - keyTime.Time) > outtime)
+                    {
+                        if (RequestOutTimeQueue.TryDequeue(out keyTime))
+                        {
+                            if (AsyncResultDict.ContainsKey(keyTime.Key))
+                            {
+                                Task.Factory.StartNew(() =>
+                                {
+                                    AsyncBackResult(new Result() { Id = keyTime.Key, ErrorMsg = "time out", ErrorId = (int)ErrorType.TimeOut });
+                                });
+                            }
+                        }
+                    }
+                    else
+                        break;
+
+                }
+                else
+                    break;
+            }
+        }
+
 
     }
 }

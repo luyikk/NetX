@@ -29,6 +29,7 @@ namespace Netx
         ReadErr=-116,
         ActorErr=-117,
         ReturnModeErr=-118,
-        ActorQueueMaxErr=-119
+        ActorQueueMaxErr=-119,
+        TimeOut=-120
     }
 }

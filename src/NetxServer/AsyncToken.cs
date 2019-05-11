@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Netx.Actor;
 using System;
 using System.Buffers;
@@ -26,10 +27,11 @@ namespace Netx.Service
         public AsyncToken(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, ConcurrentDictionary<int, MethodRegister> asyncServicesRegisterDict, long sessionId)
             : base(container, fiberRw, sessionId)
         {
-
+            this.RequestOutTime= container.GetRequiredService<IOptions<NetxOption>>().Value.ClearRequestTime;
             ActorRun = container.GetRequiredService<ActorRun>();
             AsyncServicesRegisterDict = asyncServicesRegisterDict;
             asyncControllerInstanceDict = new Lazy<Dictionary<Type, AsyncController>>();
+           
         }
 
 

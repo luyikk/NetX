@@ -231,10 +231,10 @@ namespace Netx.Service.Builder
         }
 
 
-        public INetxServBuilder ConfigSession(Action<SessionOption> config=null)
+        public INetxServBuilder ConfigBase(Action<NetxOption> config=null)
         {
             if (config != null)
-                Container.Configure<SessionOption>(config);
+                Container.Configure<NetxOption>(config);
             return this;
         }
 

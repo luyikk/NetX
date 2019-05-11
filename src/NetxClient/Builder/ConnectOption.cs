@@ -13,6 +13,8 @@ namespace Netx.Client
         public string VerifyKey { get; set; }
 
         public int BufferSize { get; set; } = 4096;
+
+        public int RequestTimeOut { get; set; } = 10000;
     
     }
 }
