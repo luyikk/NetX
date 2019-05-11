@@ -19,7 +19,7 @@ namespace Netx.Service
 
         public long SessionId { get; }      
 
-        public DateTime DisconnectTime { get; protected set; } = DateTime.MaxValue;
+    
 
         public AsyncBase(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, long sessionId)
         {

@@ -19,7 +19,7 @@ namespace TestServer
                 //     p.IsUse = true;
                 //     p.Certificate = certificate;
                 // })              
-                .ConfigServer(p =>
+                .ConfigSocketServer(p =>
                 {
                     p.MaxConnectCout = 100;
                     p.Port = 1005;

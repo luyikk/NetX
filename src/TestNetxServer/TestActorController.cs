@@ -49,6 +49,7 @@ namespace TestNetxServer
             Log.Info(c);
             UseCount++;
             Log.Info(msg);
+            
         }
     }
 

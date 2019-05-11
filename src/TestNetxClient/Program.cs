@@ -17,8 +17,8 @@ namespace TestNetxClient
                  p.Port = 1006;
              })
              //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
-             .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
-            //.ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
+            // .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
+            .ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
              .Build();
 
             client.LoadInstance(new ClientTestController()); //加载客户端控制器供服务区主动调用,
@@ -67,10 +67,11 @@ namespace TestNetxClient
             int a = await server.RecursiveTest(10000);
             stop.Stop();
             client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
-
-
+            
 
             server.RunMsg("close");
+
+            server.Finsh();
 
             Console.ReadLine();
         }

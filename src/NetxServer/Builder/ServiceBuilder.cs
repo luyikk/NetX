@@ -169,7 +169,7 @@ namespace Netx.Service.Builder
             return this;
         }
 
-        public INetxServBuilder ConfigServer(Action<SocketServerOptions> config = null)
+        public INetxServBuilder ConfigSocketServer(Action<SocketServerOptions> config = null)
         {
             SockServConfig.ConfigServer(config);
             return this;
@@ -230,11 +230,22 @@ namespace Netx.Service.Builder
             return this;
         }
 
+
+        public INetxServBuilder ConfigSession(Action<SessionOption> config=null)
+        {
+            if (config != null)
+                Container.Configure<SessionOption>(config);
+            return this;
+        }
+
+
         public INetxServBuilder AddActorEvent<T>() where T : ActorEventBase
         {
             Container.AddSingleton<ActorEventBase,T>();
             return this;
         }
+
+
 
 
 

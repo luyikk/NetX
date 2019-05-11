@@ -73,5 +73,23 @@ namespace TestNetxServer
             else
                 return Task.FromResult(a);
         }
+
+        [TAG(1006)]
+        public void Finsh()
+        {
+            Log.Info("the token finsh,disconnect it");
+            this.Current.DisconnectIt();
+          
+        }
+
+        public override void Disconnect()
+        {
+            Log.Info("disconnect");
+        }
+
+        public override void Closed()
+        {
+            Log.Info("closed");
+        }
     }
 }

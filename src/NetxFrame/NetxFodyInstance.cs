@@ -11,7 +11,7 @@ namespace Netx
         protected Dictionary<Type, Type> FodyType { get; set; } = new Dictionary<Type, Type>();
 
 
-        public T Get<T>()
+        public virtual T Get<T>()
         {           
 
             var interfaceType = typeof(T);

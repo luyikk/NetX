@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Netx.Actor
+namespace Netx
 {
     public static class TimeHelper
     {

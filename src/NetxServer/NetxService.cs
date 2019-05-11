@@ -51,9 +51,11 @@ namespace Netx.Service
             return true;
         }
 
-        private void DisconnectHandler(string message, ISockAsyncEventAsServer socketAsync, int erorr)
+        protected override void DisconnectHandler(string message, ISockAsyncEventAsServer socketAsync, int erorr)
         {
-            this.Log.TraceFormat("IP Disconnect:{0}", socketAsync?.AcceptSocket?.RemoteEndPoint);
+            base.DisconnectHandler(message, socketAsync, erorr);
+
+            this.Log.TraceFormat("IP Disconnect:{0}", socketAsync?.AcceptSocket?.RemoteEndPoint); 
             socketAsync.UserToken = null;
             socketAsync.AcceptSocket.Dispose();
         }

@@ -25,6 +25,7 @@ namespace Netx.Service
         protected IServiceProvider Container { get; }
 
 
+      
 
         public ServiceBase(IServiceProvider container)
         {

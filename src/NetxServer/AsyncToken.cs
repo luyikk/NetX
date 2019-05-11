@@ -13,6 +13,7 @@ namespace Netx.Service
     public class AsyncToken : AsyncBuffer
     {
 
+        private bool is_dispose = false;
 
         public ConcurrentDictionary<int, MethodRegister> AsyncServicesRegisterDict { get; }
 
@@ -31,8 +32,55 @@ namespace Netx.Service
             asyncControllerInstanceDict = new Lazy<Dictionary<Type, AsyncController>>();
         }
 
+
+        internal void Close()
+        {
+            if (!is_dispose)
+            {
+                is_dispose = true;
+
+                foreach (var item in AsyncControllerInstanceDict.Values)
+                    item.Closed();
+
+                AsyncControllerInstanceDict.Clear();
+               
+           
+
+                if (this.IsConnect)
+                {
+                    this.IsConnect = false;
+                    this.FiberRw.UserToken = null;
+                    this.FiberRw?.Async?.Disconnect();
+                    this.IWrite = null;
+                   
+                }
+
+              
+           
+
+            }
+        }
+
+        public void DisconnectIt()
+        {         
+            FiberRw?.Async?.Disconnect();
+        }
+
+
+        public override T Get<T>()
+        {
+            if (is_dispose)
+                throw new ObjectDisposedException("AsyncToken");
+
+            return base.Get<T>();
+        }
+
+
         public T Actor<T>()
         {
+            if (is_dispose)
+                throw new ObjectDisposedException("AsyncToken");
+
             return ActorRun.Get<T>();
         }       
 
@@ -45,7 +93,9 @@ namespace Netx.Service
 
         internal async Task<bool> RunIt()
         {
-          
+            if (is_dispose)
+                throw new ObjectDisposedException("AsyncToken");
+
             while (isConnect)
             {
                 if (!await DataOnByLine(FiberRw))
@@ -59,15 +109,18 @@ namespace Netx.Service
         internal void Reset(IFiberRw<AsyncToken> fiberRw)
         {
             FiberRw = fiberRw;
-            isConnect = true;
-            DisconnectTime = DateTime.MaxValue;
+            isConnect = true;          
         }
 
 
-        public void Disconnect()
+        internal void Disconnect()
         {
-            DisconnectTime = DateTime.Now;
             isConnect = false;
+
+            this.IWrite = null;
+            this.FiberRw = null;           
+            foreach (var controller in AsyncControllerInstanceDict.Values)
+                controller.Disconnect();
         }
 
        
@@ -389,7 +442,6 @@ namespace Netx.Service
 
         }
 
-
-
+     
     }
 }
