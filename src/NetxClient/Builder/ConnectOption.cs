@@ -14,7 +14,7 @@ namespace Netx.Client
 
         public int BufferSize { get; set; } = 4096;
 
-        public int RequestTimeOut { get; set; } = 10000;
+        public int RequestTimeOut { get; set; } = 20000;
     
     }
 }
