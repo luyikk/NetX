@@ -35,7 +35,7 @@ namespace Netx.Service
 
             var actor_run = container.GetRequiredService<ActorRun>();
             foreach (var @event in container.GetServices<ActorEventBase>())            
-                actor_run.CompletedEvent += @event.ActorCompletedEvent;            
+                actor_run.EventSourcing += @event.ActorEventSourcing;            
         }
 
 

@@ -9,6 +9,9 @@ namespace ActorTest
     [Build]
     interface ICallServer
     {
+
+
+
         [TAG(2000)]
         Task<int> Add(int a, int b);
 
@@ -23,5 +26,17 @@ namespace ActorTest
 
         [TAG(3002)]
         Task<int> AddX();
+
+        [TAG(10001)]
+        Task<User> GetUser(int id);
+
+        [TAG(10002)]
+        Task<bool> AddUserCoin(int Id, int coin);
+
+        [TAG(10003)]
+        Task<bool> SubUserCoin(int Id, int coin);
+
+        [TAG(10004)]
+        Task<bool> SetUserCoin(int Id, int coin);
     }
 }

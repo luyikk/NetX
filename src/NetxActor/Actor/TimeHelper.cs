@@ -8,13 +8,12 @@ namespace Netx.Actor
     {
         public static long GetTime()
         {           
-           return DateTime.UtcNow.Ticks / 10000000;
+           return DateTime.UtcNow.Ticks;
         }
 
         public static DateTime GetTime(long time)
-        {
-            long Eticks = (long)(time * 10000000);
-            return new DateTime(Eticks,DateTimeKind.Utc).ToLocalTime();
+        {         
+            return new DateTime(time, DateTimeKind.Utc).ToLocalTime();
         }
     }
 }

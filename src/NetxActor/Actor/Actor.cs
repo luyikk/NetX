@@ -41,13 +41,14 @@ namespace Netx.Actor
 
         public ActorOptionAttribute Option { get; }
 
-        internal event EventHandler<ActorMessage> CompletedEvent;
+        internal event EventHandler<ActorMessage> EventSourcing;
 
 
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
         {
             this.ActorScheduler = actorScheduler;
+         
             this.ActorGet = actorGet;
             this.ActorController = instance;
 
@@ -182,10 +183,7 @@ namespace Netx.Actor
 
 
         private Task Runing()
-        {
-            if (status == Disposed)
-                throw new ObjectDisposedException("the Actor is Close");
-
+        {          
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
                  async Task RunNext()
@@ -197,12 +195,13 @@ namespace Netx.Actor
 
                             var res = await Call_runing(msg);
 
-                            //当前容器的线程去触发外部事件已达到安全访问的目的,让用户自定义保存控制器中的数据和当前事件,已达到事件回溯
-                            //请确保控制器里面的数据属性 是 {public get;private set;} 已保证在容器外的安全目的
-                            CompletedEvent(ActorController, msg);
-
                             msg.Awaiter.Completed(res);
 
+                            if (EventSourcing != null)
+                            {
+                                msg.CompleteTime=TimeHelper.GetTime();
+                                EventSourcing(ActorController, msg);
+                            }
 
                             if (status == Disposed)
                                 break;
@@ -232,7 +231,7 @@ namespace Netx.Actor
 
                 if (service.ArgsLen == args.Length)
                 {
-                    ActorController.OrderTime = result.PushTime;
+                    ActorController.OrderTime = result.CompleteTime;
 
                     switch (service.ReturnMode)
                     {

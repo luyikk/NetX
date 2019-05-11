@@ -7,19 +7,22 @@ namespace Netx.Actor
 {
     internal class LineByLineScheduler : ActorScheduler
     {
-        public override Task Scheduler(Func<Task> action)
-        {
-            return action();
-        }
+        public override Task Scheduler(Func<Task> action) => action();
+      
     }
 
 
-    internal class ThreadPoolScheduler : ActorScheduler
+    internal class TaskScheduler : ActorScheduler
     {
-        public override Task Scheduler(Func<Task> action)
-        {
-            return Task.Factory.StartNew(action);
-        }
+        public override Task Scheduler(Func<Task> action) => Task.Factory.StartNew(action);
+
+
+    }
+
+    internal class TaskRunScheduler : ActorScheduler
+    {
+        public override Task Scheduler(Func<Task> action)=> Task.Run(action);
+
     }
 
 
@@ -27,7 +30,8 @@ namespace Netx.Actor
     {
         
         public static ActorScheduler LineByLine { get => new LineByLineScheduler(); }
-        public static ActorScheduler ThreadPool { get => new ThreadPoolScheduler(); }
+        public static ActorScheduler TaskFactory { get => new TaskScheduler(); }
+        public static ActorScheduler TaskRun  { get => new TaskRunScheduler(); }
 
         public abstract Task Scheduler(Func<Task> action);
     }

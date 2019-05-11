@@ -13,7 +13,9 @@ namespace Netx.Actor
 
         public object[] Args { get; }
 
-        public long PushTime { get; }
+        public long PushTime { get; set; }
+    
+        public long CompleteTime { get; set; }
 
         public ActorMessage(long id, int cmd, object[] args)
         {
