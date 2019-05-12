@@ -27,7 +27,7 @@ namespace Netx.Service
         public AsyncToken(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, ConcurrentDictionary<int, MethodRegister> asyncServicesRegisterDict, long sessionId)
             : base(container, fiberRw, sessionId)
         {
-            this.RequestOutTime= container.GetRequiredService<IOptions<NetxOption>>().Value.ClearRequestTime;
+            this.RequestOutTime= container.GetRequiredService<IOptions<ServiceOption>>().Value.ClearRequestTime;
             ActorRun = container.GetRequiredService<ActorRun>();
             AsyncServicesRegisterDict = asyncServicesRegisterDict;
             asyncControllerInstanceDict = new Lazy<Dictionary<Type, AsyncController>>();

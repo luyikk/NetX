@@ -22,14 +22,13 @@ namespace Netx.Service
         private ConcurrentQueue<TimeKey> DisconnectRemoveList { get => disconnectRemoveList.Value; }
 
 
-        protected NetxOption SessionOption { get; }
 
 
-      private  struct TimeKey
+        private struct TimeKey
         {
             public long Key { get; }
             public long Time { get; }
-            public TimeKey(long key,long time)
+            public TimeKey(long key, long time)
             {
                 Key = key;
                 Time = time;
@@ -41,10 +40,9 @@ namespace Netx.Service
         {
             ActorTokenDict = new ConcurrentDictionary<long, AsyncToken>();
             LazyServiceTokenFactory = new Lazy<ServiceTokenFactory>(() => new ServiceTokenFactory(container),true);
-            disconnectRemoveList = new Lazy<ConcurrentQueue<TimeKey>>();          
-
-            SessionOption = container.GetRequiredService<IOptions<NetxOption>>().Value;
-            SessionOption.ClearCheckTime = SessionOption.ClearCheckTime <= 100 ? 100 : SessionOption.ClearCheckTime;
+            disconnectRemoveList = new Lazy<ConcurrentQueue<TimeKey>>();
+          
+            ServiceOption.ClearCheckTime = ServiceOption.ClearCheckTime <= 100 ? 100 : ServiceOption.ClearCheckTime;
 
             Task.Factory.StartNew(RemoveRun);
         }
@@ -53,12 +51,12 @@ namespace Netx.Service
         {
             while (true)
             {
-                await Task.Delay(SessionOption.ClearCheckTime);
+                await Task.Delay(ServiceOption.ClearCheckTime);
 
-                if (SessionOption.ClearSessionTime > 0)
+                if (ServiceOption.ClearSessionTime > 0)
                     CheckSessionTimeOut();
 
-                if (SessionOption.ClearRequestTime > 0)
+                if (ServiceOption.ClearRequestTime > 0)
                     CheckRequestTimeOut();
             }
         }
@@ -80,7 +78,7 @@ namespace Netx.Service
         /// </summary>
         private void CheckSessionTimeOut()
         {
-            var outtime = SessionOption.ClearSessionTime * 10000;
+            var outtime = ServiceOption.ClearSessionTime * 10000;
 
             while (DisconnectRemoveList.Count>0)
             {

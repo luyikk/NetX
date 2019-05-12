@@ -13,13 +13,12 @@ namespace Netx.Service
     {
         public ISocketServer SocketServer { get; set; }
 
-        public string Key { get; }
+       
 
         internal NetxService(IServiceProvider container)
             : base(container)
         {
-
-            Key = Container.GetRequiredService<IOptions<OptionKey>>().Value.Key;
+         
             SocketServer = container.GetRequiredService<ISocketServer>();
             SocketServer.BinaryInput = new BinaryInputHandler(BinaryInputHandler);
             SocketServer.Connetions = new ConnectionFilter(ConnectionFilter);
@@ -103,10 +102,22 @@ namespace Netx.Service
                     return false;
                 }
 
+                var serviceName = await fiberRw.ReadString();
+
+                if (!string.IsNullOrEmpty(ServiceOption.ServiceName))
+                    if (!ServiceOption.ServiceName.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Log.TraceFormat("IP:{0} not find the service:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, serviceName);
+                        await SendToKeyError(fiberRw, true, $"not find the service!{serviceName}");
+                        return false;
+                    }                  
+                   
+
+
                 var key = await fiberRw.ReadString();
-                if (!String.IsNullOrEmpty(Key))
+                if (!String.IsNullOrEmpty(OpenKey))
                 {
-                    if (string.Compare(Key, key, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(OpenKey, key, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         Log.TraceFormat("IP:{0} verify key error:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, key);
                         await SendToKeyError(fiberRw, true, "verify key error!");

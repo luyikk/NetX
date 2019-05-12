@@ -4,8 +4,20 @@ using System.Text;
 
 namespace Netx.Service
 {
-    public class NetxOption
+    public class ServiceOption
     {
+
+        /// <summary>
+        /// 钥匙
+        /// </summary>
+        public string OpenKey { get; set; }
+
+        /// <summary>
+        /// 当前服务名
+        /// </summary>
+        public string ServiceName { get; set; }
+
+
         /// <summary>
         /// 多久检查一遍超时
         /// </summary>

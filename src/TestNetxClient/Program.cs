@@ -15,6 +15,7 @@ namespace TestNetxClient
              {
                  p.Host = "127.0.0.1";
                  p.Port = 1006;
+                 
              })
              //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
             // .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
@@ -71,7 +72,7 @@ namespace TestNetxClient
 
             try
             {
-                await server.TestTimeOut();
+                await server.TestTimeOut(); //超时测试
 
             }catch(NetxException er)
             {
@@ -79,9 +80,9 @@ namespace TestNetxClient
             }
 
 
-            server.RunMsg("close");
+            server.RunMsg("close"); 
 
-            server.Finsh();
+            server.Finsh(); //断线测试
 
             Console.ReadLine();
         }

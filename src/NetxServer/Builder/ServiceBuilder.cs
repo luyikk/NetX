@@ -169,7 +169,7 @@ namespace Netx.Service.Builder
             return this;
         }
 
-        public INetxServBuilder ConfigSocketServer(Action<SocketServerOptions> config = null)
+        public INetxServBuilder ConfigNetWork(Action<SocketServerOptions> config = null)
         {
             SockServConfig.ConfigServer(config);
             return this;
@@ -192,15 +192,7 @@ namespace Netx.Service.Builder
             }
 
             return this;
-        }
-
-        public INetxServBuilder ConfigureKey(Action<OptionKey> config = null)
-        {
-            if (config != null)
-                Container.Configure<OptionKey>(config);
-
-            return this;
-        }
+        }             
 
 
         public INetxServBuilder ConfigIIds(Func<IServiceProvider,IIds> func = null)
@@ -231,10 +223,10 @@ namespace Netx.Service.Builder
         }
 
 
-        public INetxServBuilder ConfigBase(Action<NetxOption> config=null)
+        public INetxServBuilder ConfigBase(Action<ServiceOption> config=null)
         {
             if (config != null)
-                Container.Configure<NetxOption>(config);
+                Container.Configure<ServiceOption>(config);
             return this;
         }
 

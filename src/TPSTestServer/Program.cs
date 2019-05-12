@@ -12,21 +12,22 @@ namespace TestServer
         static void Main()
         {
             var service = new Netx.Service.Builder.NetxServBuilder()
-                .RegisterService(Assembly.GetExecutingAssembly())
-                .ConfigureKey(p => p.Key = "123123")
+                .RegisterService(Assembly.GetExecutingAssembly())              
                 //.ConfigSSL(p =>
                 // {
                 //     p.IsUse = true;
                 //     p.Certificate = certificate;
                 // })              
-                .ConfigSocketServer(p =>
+                .ConfigNetWork(p =>
                 {
+                   
                     p.MaxConnectCout = 100;
                     p.Port = 1005;
 
                 })
                 .ConfigBase(p=>
                 {                    
+                    p.OpenKey = "123123";
                     p.ClearSessionTime = 5000;
                 })
                 .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            

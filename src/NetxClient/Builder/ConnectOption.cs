@@ -10,7 +10,9 @@ namespace Netx.Client
 
         public int Port { get; set; } = 1002;
 
-        public string VerifyKey { get; set; }
+        public string ServiceName { get; set; } = "";
+
+        public string VerifyKey { get; set; } = "";
 
         public int BufferSize { get; set; } = 4096;
 

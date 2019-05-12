@@ -24,14 +24,13 @@ namespace Netx.Service.Builder
         INetxServBuilder ConfigISend(Func<ISend> func = null);
         INetxServBuilder ConfigMemoryPool(Func<MemoryPool<byte>> func = null);
         INetxServBuilder ConfigObjFormat(Func<ISerialization> func = null);
-        INetxServBuilder ConfigSocketServer(Action<SocketServerOptions> config = null);
+        INetxServBuilder ConfigNetWork(Action<SocketServerOptions> config = null);
         INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null);
-        INetxServBuilder ConfigureDefaults();
-        INetxServBuilder ConfigureKey(Action<OptionKey> config = null);
+        INetxServBuilder ConfigureDefaults();     
         INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null);
         INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null);
         INetxServBuilder ConfigSSL(Action<SslOption> config = null);
-        INetxServBuilder ConfigBase(Action<NetxOption> config = null);
+        INetxServBuilder ConfigBase(Action<ServiceOption> config = null);
         INetxServBuilder AddActorEvent<T>() where T : ActorEventBase;
         INetxServBuilder RegisterService(Assembly assembly);
         INetxServBuilder RegisterService(Type controller_instance_type);

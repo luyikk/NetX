@@ -63,6 +63,7 @@ namespace Netx.Client
         {
             IWrite.Write(1000);
             IWrite.Write(ConnectOption.VerifyKey??"");
+            IWrite.Write(ConnectOption.ServiceName ?? "");
             IWrite.Write(Session.GetSessionId());
             return IWrite.Flush();
         }

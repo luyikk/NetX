@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Netx.Actor;
 using Netx.Loggine;
 using System;
@@ -23,7 +24,14 @@ namespace Netx.Service
 
 
         protected IServiceProvider Container { get; }
-      
+
+        /// <summary>
+        /// 服务器配置
+        /// </summary>
+        protected ServiceOption ServiceOption { get; }
+
+        public string OpenKey { get => ServiceOption.OpenKey; }
+
 
         public ServiceBase(IServiceProvider container)
         {
@@ -34,7 +42,9 @@ namespace Netx.Service
 
             var actor_run = container.GetRequiredService<ActorRun>();
             foreach (var @event in container.GetServices<ActorEventBase>())            
-                actor_run.EventSourcing += @event.ActorEventSourcing;            
+                actor_run.EventSourcing += @event.ActorEventSourcing;
+
+            ServiceOption = container.GetRequiredService<IOptions<ServiceOption>>().Value;
         }
 
 
