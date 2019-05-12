@@ -15,19 +15,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetxClient", "NetxClient\Ne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetxServer", "NetxServer\NetxServer.csproj", "{463B7860-C594-4676-91B1-F618BC153372}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFody", "TestFody\TestFody.csproj", "{BFDDB297-98DD-4DF1-BC9E-802893997AA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFody", "Test\TestFody\TestFody.csproj", "{BFDDB297-98DD-4DF1-BC9E-802893997AA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TPSTestServer", "TPSTestServer\TPSTestServer.csproj", "{01031C7F-E52E-4F27-B563-6E1882869C07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TPSTestServer", "Test\TPSTestServer\TPSTestServer.csproj", "{01031C7F-E52E-4F27-B563-6E1882869C07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TPSTestClient", "TPSTestClient\TPSTestClient.csproj", "{92E94AC4-6D31-4259-90D8-145D2CAD9E51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TPSTestClient", "Test\TPSTestClient\TPSTestClient.csproj", "{92E94AC4-6D31-4259-90D8-145D2CAD9E51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestNetxClient", "TestNetxClient\TestNetxClient.csproj", "{A56B987C-41B7-47DD-B9F2-19F73DDE4A3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestNetxClient", "Test\TestNetxClient\TestNetxClient.csproj", "{A56B987C-41B7-47DD-B9F2-19F73DDE4A3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetxActor", "NetxActor\NetxActor.csproj", "{E4B9F09C-723B-4D61-AC0A-A25C585D95E6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestNetxServer", "TestNetxServer\TestNetxServer.csproj", "{F9456D68-B140-4B97-9D27-75700A40227B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestNetxServer", "Test\TestNetxServer\TestNetxServer.csproj", "{F9456D68-B140-4B97-9D27-75700A40227B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorTest", "ActorTest\ActorTest.csproj", "{3F705D84-D9A6-4808-9890-82D539D0B4DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActorTest", "Test\ActorTest\ActorTest.csproj", "{3F705D84-D9A6-4808-9890-82D539D0B4DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,7 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetxServer\NetxServer.csproj" />
+    <ProjectReference Include="..\..\NetxServer\NetxServer.csproj" />
+  </ItemGroup>
+
+<ItemGroup>
+    <None Update="server.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

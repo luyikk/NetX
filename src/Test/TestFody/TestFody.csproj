@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetxBuildAddin.Fody\NetxBuildAddin.Fody.csproj" />
+    <ProjectReference Include="..\..\NetxBuildAddin.Fody\NetxBuildAddin.Fody.csproj" />
   </ItemGroup>
 
 </Project>
