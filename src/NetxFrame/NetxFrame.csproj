@@ -4,6 +4,16 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.2</LangVersion>
     <RootNamespace>Netx</RootNamespace>
+    <Authors>luyikk</Authors>
+    <Product>NetX Frame Package</Product>
+    <Description>NetX Frame Package</Description>
+    <Copyright>luyikk</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/luyikk/NetX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>NETX;ZYSOCKET</PackageTags>
+    <PackageReleaseNotes>NetX Frame Package</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
