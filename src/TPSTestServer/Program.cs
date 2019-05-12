@@ -27,7 +27,7 @@ namespace TestServer
                 })
                 .ConfigBase(p=>
                 {                    
-                    p.OpenKey = "123123";
+                    p.VerifyKey = "123123";
                     p.ClearSessionTime = 5000;
                 })
                 .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            

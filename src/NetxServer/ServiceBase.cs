@@ -30,7 +30,7 @@ namespace Netx.Service
         /// </summary>
         protected ServiceOption ServiceOption { get; }
 
-        public string OpenKey { get => ServiceOption.OpenKey; }
+        public string OpenKey { get => ServiceOption.VerifyKey; }
 
 
         public ServiceBase(IServiceProvider container)

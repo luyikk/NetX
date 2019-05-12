@@ -10,7 +10,7 @@ namespace Netx.Service
         /// <summary>
         /// 钥匙
         /// </summary>
-        public string OpenKey { get; set; }
+        public string VerifyKey { get; set; }
 
         /// <summary>
         /// 当前服务名

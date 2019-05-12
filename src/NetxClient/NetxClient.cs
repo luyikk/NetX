@@ -31,8 +31,9 @@ namespace Netx.Client
             SocketClient.Disconnect += SocketClient_Disconnect;
         }
 
-        public void Open(int timeout = 6000)
+        public void Open()
         {
+            var timeout = ConnectOption.ConnectedTimeOut;
             var result = SocketClient.Connect(ConnectOption.Host, ConnectOption.Port, timeout);
             if (!result.IsSuccess)
             {
@@ -40,8 +41,9 @@ namespace Netx.Client
             }
         }
 
-        public async Task<ConnectResult> OpenAsync(int timeout = 6000)
+        public async Task<ConnectResult> OpenAsync()
         {
+            var timeout = ConnectOption.ConnectedTimeOut;
             return await SocketClient.ConnectAsync(ConnectOption.Host, ConnectOption.Port, timeout);
         }
 

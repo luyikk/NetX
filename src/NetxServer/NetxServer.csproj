@@ -14,5 +14,4 @@
     <ProjectReference Include="..\NetxActor\NetxActor.csproj" />
     <ProjectReference Include="..\NetxFrame\NetxFrame.csproj" />
   </ItemGroup>
-
 </Project>

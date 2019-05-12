@@ -7,6 +7,9 @@ using ZYSQL;
 
 namespace ActorTest
 {
+    /// <summary>
+    /// 整个Actor 容器为全局唯一
+    /// </summary>
     public class NextActorController : ActorController
     {
         public ILog Log { get; }
