@@ -197,7 +197,47 @@ namespace Netx
         }
 
 
-   
+        protected virtual object  ReadData(ReadBytes read, Type type)
+        {
+
+            if (type == typeof(sbyte))
+                return (sbyte)read.ReadByte();
+            else if (type == typeof(byte))
+                return read.ReadByte();
+            else if (type == typeof(short))
+                return read.ReadInt16();
+            else if (type == typeof(ushort))
+                return read.ReadUint16();
+            else if (type == typeof(int))
+                return read.ReadInt32();
+            else if (type == typeof(uint))
+                return read.ReadUint32();
+            else if (type == typeof(long))
+                return read.ReadInt64();
+            else if (type == typeof(ulong))
+                return read.ReadUint64();
+            else if (type == typeof(double))
+                return read.ReadDouble();
+            else if (type == typeof(decimal))
+                return Convert.ToDecimal(read.ReadDouble());
+            else if (type == typeof(bool))
+                return read.ReadBoolean();
+            else if (type == typeof(byte[]))
+                return read.ReadArray();
+            else if (type == typeof(string))
+                return read.ReadString();
+            else if (type == typeof(Memory<byte>))            
+               return read.ReadMemory();              
+            else if (type == typeof(ArraySegment<byte>))
+            {
+                var mem =  read.ReadMemory();
+                return mem.GetArray();
+            }
+            else
+                return  read.ReadObject(type);
+
+        }
+
 
         protected virtual async Task<(object arg, IMemoryOwner<byte> ownew)> ReadDataAsync(IBufferAsyncRead fiberR,Type type)
         {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using ZYSocket;
 using ZYSocket.FiberStream;
 
 namespace Netx.Client
@@ -19,24 +20,24 @@ namespace Netx.Client
         public ILogger GetLogger(string categoryName)=> LoggerFactory.CreateLogger(categoryName);
        
 
-        protected async Task Calling(IFiberRw fiberRw)
+        protected async Task Calling(ReadBytes read)
         {
-            var type = await fiberRw.ReadByte();
+            var type = read.ReadByte();
             switch (type)
             {
                 case 0: //RUN CALL NOT RES
                     {
-                        await DataOnByRead(fiberRw, 0);
+                        await DataOnByRead(read, 0);
                     }
                     break;
                 case 1: //RUN CALL HAVE RES
                     {
-                        await DataOnByRead(fiberRw, 1);
+                        await DataOnByRead(read, 1);
                     }
                     break;
                 case 2: // RUN CALL RETURN 
                     {
-                        await DataOnByRead(fiberRw, 2);
+                        await DataOnByRead(read, 2);
                     }
                     break;
                 default:
@@ -45,30 +46,24 @@ namespace Netx.Client
 
         }
 
-        private async Task DataOnByRead(IFiberRw fiberRw, byte runtype)
+        private async Task DataOnByRead(ReadBytes read, byte runtype)
         {
-            var cmd = await fiberRw.ReadInt32();
+            var cmd = read.ReadInt32();
             if (cmd.HasValue)
             {
 
-                var id = (await fiberRw.ReadInt64()).GetValueOrDefault(-1);
+                var id = (read.ReadInt64()).GetValueOrDefault(-1);
                 if (MethodInstanceDict.TryGetValue(cmd.Value, out InstanceRegister service))
                 {
-                    var argslen = (await fiberRw.ReadInt32()).Value;
+                    var argslen = (read.ReadInt32()).Value;
                     if (argslen == service.ArgsLen)
                     {
                         object[] args = new object[argslen];
-                        List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
-
-                        for (int i = 0; i < argslen; i++)
-                        {
-                            var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
-                            args[i] = arg;
-                            if (owner != null)
-                                mem_disposetable.Add(owner);
-                        }
-
-                        RunCall(service, cmd.Value, id, runtype, mem_disposetable, args);                      
+                        for (int i = 0; i < argslen; i++)                        
+                            args[i] = base.ReadData(read, service.ArgsType[i]);                          
+                          
+                        
+                        RunCall(service, cmd.Value, id, runtype, args);                      
                     }
                     else
                     {
@@ -86,7 +81,7 @@ namespace Netx.Client
             }
         }
 
-        private async void RunCall(InstanceRegister service,int cmd,long id,byte runType, List<IMemoryOwner<byte>> memoryOwners, object[] args)
+        private async void RunCall(InstanceRegister service,int cmd,long id,byte runType, object[] args)
         {
             try
             {
@@ -100,7 +95,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             service.Method.Execute(service.Instance, args);
-                            Dispose_table(memoryOwners);
+                          
                             return;
                         }
                         break;
@@ -111,7 +106,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             await service.Method.ExecuteAsync(service.Instance, args);
-                            Dispose_table(memoryOwners);
+                          
                             await SendResult(id);
                             return;
                         }
@@ -123,7 +118,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             var ret_value = (object)await service.Method.ExecuteAsync(service.Instance, args);
-                            Dispose_table(memoryOwners);
+                         
                             switch (ret_value)
                             {
                                 case Result result:

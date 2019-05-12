@@ -17,7 +17,7 @@ namespace TestClient
         static async Task Main(string[] args)
         {
 
-            int clientCout =  Environment.ProcessorCount*4;
+            int clientCout = Environment.ProcessorCount*4;
 
 
             var clientBuilder = new NetxSClientBuilder()
@@ -26,7 +26,7 @@ namespace TestClient
                     p.Host = args.Length==0? "127.0.0.1":args[0];
                     p.Port = args.Length == 0 ? 1005:args.Length>=2?int.Parse(args[1]): 1005;
                     p.VerifyKey = args.Length == 0 ? "123123":args.Length>=3?args[2]:"123123";
-                    p.RequestTimeOut = 5000;
+                    p.RequestTimeOut = 0;
                 })
                 //.ConfigSSL(p =>
                 //{
@@ -80,7 +80,7 @@ namespace TestClient
             
             var server = client.Get<IServer>();
 
-            int count = 10000;
+            int count = 100000;
 
             var x = System.Diagnostics.Stopwatch.StartNew();
             int i = new Random().Next(-10000, 10000);

@@ -4,10 +4,23 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Netx</RootNamespace>
     <LangVersion>7.2</LangVersion>
+    <Authors>luyikk</Authors>
+    <Company>luyikk</Company>
+    <Product>Netx Actor Package</Product>
+    <Description>Netx Actor Package
+</Description>
+    <Copyright>luyikk</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/luyikk/netx</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/luyikk/netx</RepositoryUrl>
+    <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
+    <PackageTags>NetX</PackageTags>
+    <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
