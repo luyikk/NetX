@@ -38,50 +38,48 @@ namespace Netx.Actor
             EventSourcing?.Invoke(sender, e);           
         }
 
-        public MethodRegister GetCmdService(int cmd)
+        public MethodRegister GetCmdService(int cmd,OpenAccess access)
         {
-            if (ActorCollect.ContainsKey(cmd))
-            {
-                return ActorCollect[cmd].CmdDict[cmd];
-            }
+            if (ActorCollect.ContainsKey(cmd))            
+                return ActorCollect[cmd].CmdDict[cmd];            
             else
                 return null;
 
         }
 
-        public void CallAction(long id, int cmd, params object[] args)
+        public void CallAction(long id, int cmd,OpenAccess access, params object[] args)
         {
             if (ActorCollect.ContainsKey(cmd))
-                ActorCollect[cmd].Action(id, cmd, args);
+                ActorCollect[cmd].Action(id, cmd, access, args);
             else
                 Log.Error($"not find actor service cmd:{cmd}");
 
         }
 
-        public async Task CallAsyncAction(long id, int cmd, params object[] args)
+        public async Task CallAsyncAction(long id, int cmd, OpenAccess access, params object[] args)
         {
             if (ActorCollect.ContainsKey(cmd))
-                await ActorCollect[cmd].AsyncAction(id, cmd, args);
+                await ActorCollect[cmd].AsyncAction(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        public async Task<R> CallAsyncFunc(long id, int cmd, params object[] args)
+        public async Task<R> CallAsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
         {
             if (ActorCollect.ContainsKey(cmd))
-                return await ActorCollect[cmd].AsyncFunc(id, cmd, args);
+                return await ActorCollect[cmd].AsyncFunc(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
         protected override Task SendAsyncAction(int cmdTag, long Id, object[] args)
         {
-            return CallAsyncAction(Id, cmdTag, args);
+            return CallAsyncAction(Id, cmdTag, OpenAccess.Internal, args);
         }
 
         protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
         {
-            var result = await this.CallAsyncFunc(Id, cmdTag, args);
+            var result = await this.CallAsyncFunc(Id, cmdTag, OpenAccess.Internal, args);
 
             switch (result)
             {
@@ -113,7 +111,7 @@ namespace Netx.Actor
 
         protected override void SendAction(int cmdTag, object[] args)
         {
-            this.CallAction(-1, cmdTag, args);
+            this.CallAction(-1, cmdTag, OpenAccess.Internal, args);
         }
 
         public void Dispose()

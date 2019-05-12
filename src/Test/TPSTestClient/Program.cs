@@ -80,7 +80,7 @@ namespace TestClient
             
             var server = client.Get<IServer>();
 
-            int count = 100000;
+            int count = 10000;
 
             var x = System.Diagnostics.Stopwatch.StartNew();
             int i = new Random().Next(-10000, 10000);

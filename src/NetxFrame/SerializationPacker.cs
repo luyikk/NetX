@@ -28,6 +28,8 @@ namespace Netx
                     return arg;
                 case sbyte arg:
                     return new byte[] { (byte)arg };
+                case bool arg:
+                    return BitConverter.GetBytes(arg);
                 case byte arg:
                     return new byte[] { arg };              
                 case short arg:
@@ -85,6 +87,13 @@ namespace Netx
             else if (type == typeof(byte[]))
             {
                 return data;
+            }
+            else if (type == typeof(bool))
+            {
+                if (data.Length > 0)
+                    return BitConverter.ToBoolean(data, 0); 
+                else
+                    return false;
             }
             else if (type == typeof(byte))
             {

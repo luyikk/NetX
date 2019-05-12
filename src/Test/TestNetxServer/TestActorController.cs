@@ -40,6 +40,14 @@ namespace TestNetxServer
         }
 
 
+        [Open(OpenAccess.Internal)]
+        [TAG(ActorCmdTag.GetData)]
+        public Task<string> GetData()
+        {
+            return Task.FromResult("123123");
+        }
+
+
         [TAG(ActorCmdTag.ShowMsg)]
         public async void ShowMsg(string msg)
         {

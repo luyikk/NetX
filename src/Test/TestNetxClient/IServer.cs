@@ -47,6 +47,12 @@ namespace TestNetxClient
         [TAG(1007)]
         Task<bool> TestTimeOut();
 
+        [TAG(1008)]
+        Task<string> TestPermission();
+
+        [TAG(4000)]
+        Task<string> TestPermission2();
+
         [TAG(1006)]
         void Finsh();
     }

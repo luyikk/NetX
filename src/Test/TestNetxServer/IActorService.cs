@@ -9,7 +9,8 @@ namespace TestNetxServer
     public enum ActorCmdTag
     {
         Add=2000,
-        ShowMsg=3000
+        ShowMsg=3000,
+        GetData=4000
     }
 
     [Build]
@@ -20,5 +21,8 @@ namespace TestNetxServer
 
         [TAG(ActorCmdTag.ShowMsg)]
         void Show(string a);
+
+        [TAG(ActorCmdTag.GetData)]
+        Task<string> GetData();
     }
 }

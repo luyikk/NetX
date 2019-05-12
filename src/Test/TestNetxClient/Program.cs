@@ -28,6 +28,17 @@ namespace TestNetxClient
 
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
+
+            var cvs = await server.TestPermission();
+
+            try
+            {
+                cvs = await server.TestPermission2();
+            }
+            catch(NetxException er)
+            {
+                client.Log.Error(er.Message);
+            }
      
             for (int i = 0; i < 1000; i++)
             {
@@ -80,9 +91,9 @@ namespace TestNetxClient
             }
 
 
-            server.RunMsg("close"); 
+            //server.RunMsg("close"); 
 
-            server.Finsh(); //断线测试
+            //server.Finsh(); //断线测试
 
             Console.ReadLine();
         }

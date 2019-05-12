@@ -23,7 +23,7 @@ namespace Netx.Actor
 
         public ActorController @ActorController { get; }
 
-        public Dictionary<int,MethodRegister> CmdDict { get; }
+        public Dictionary<int, ActorMethodRegister> CmdDict { get; }
 
         private readonly Lazy<ConcurrentQueue<ActorMessage<R>>> actorRunQueue;
 
@@ -69,36 +69,56 @@ namespace Netx.Actor
             this.Container = container;
            
             actorRunQueue = new Lazy<ConcurrentQueue<ActorMessage<R>>>();
-            this.CmdDict = LoadRegister(instance.GetType());
             Log = new DefaultLog(container.GetRequiredService<ILoggerFactory>().CreateLogger($"Actor-{instance.GetType().Name}"));
+            this.CmdDict = LoadRegister(instance.GetType());
+            
         }
 
 
-        private Dictionary<int, MethodRegister> LoadRegister(Type instanceType)
+        private Dictionary<int, ActorMethodRegister> LoadRegister(Type instanceType)
         {
-            Dictionary<int, MethodRegister> registerdict = new Dictionary<int, MethodRegister>();
+            Dictionary<int, ActorMethodRegister> registerdict = new Dictionary<int, ActorMethodRegister>();
 
             var methods = instanceType.GetMethods();
             foreach (var method in methods)
                 if (method.IsPublic)
-                    foreach (var attr in method.GetCustomAttributes(typeof(TAG), true))
-                        if (attr is TAG attrcmdtype)
-                        {
-                            if (TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) || method.ReturnType == null)
-                            {
-                                var sr = new MethodRegister(instanceType, method);
+                {
+                    var attrs = method.GetCustomAttributes(true);
 
-                                if (!registerdict.ContainsKey(attrcmdtype.CmdTag))
-                                    registerdict.Add(attrcmdtype.CmdTag, sr);
+
+
+                    List<TAG> taglist = new List<TAG>();
+                    OpenAccess openAccess = OpenAccess.Public;
+                    foreach (var attr in attrs)
+                    {
+                        if (attr is TAG attrcmdtype)
+                            taglist.Add(attrcmdtype);
+                        else if (attr is OpenAttribute access)
+                            openAccess = access.Access;
+                    }
+
+                    if (taglist.Count > 0)
+                    {
+
+                        if (TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) || method.ReturnType == null)
+                        {
+                            foreach (var tag in taglist)
+                            {
+                                var sr = new ActorMethodRegister(instanceType, method, openAccess);
+
+                                if (!registerdict.ContainsKey(tag.CmdTag))
+                                    registerdict.Add(tag.CmdTag, sr);
                                 else
                                 {
-                                    Log.Error($"Register actor service {method.Name},cmd:{attrcmdtype.CmdTag} repeat");
-                                    registerdict[attrcmdtype.CmdTag] = sr;
+                                    Log.Error($"Register actor service {method.Name},cmd:{tag.CmdTag} repeat");
+                                    registerdict[tag.CmdTag] = sr;
                                 }
                             }
-                            else
-                                Log.Error($"Register Actor Service Return Type Err:{method.Name},Use void, Task or Task<T>");
                         }
+                        else
+                            Log.Error($"Register Actor Service Return Type Err:{method.Name},Use void, Task or Task<T>");
+                    }
+                }
 
             return registerdict;
         }
@@ -106,7 +126,7 @@ namespace Netx.Actor
 
 
 
-        public void Action(long id, int cmd, params object[] args)
+        public void Action(long id, int cmd, OpenAccess access, params object[] args)
         {
 
             if (status == Disposed)
@@ -116,7 +136,7 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > Option.MaxQueueCount)
                     throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, args);
+            var sa = new ActorMessage<R>(id, cmd, access,args);
             ActorRunQueue.Enqueue(sa);
             try
             {
@@ -128,7 +148,7 @@ namespace Netx.Actor
             }
         }
 
-        public async ValueTask AsyncAction(long id, int cmd, params object[] args)
+        public async ValueTask AsyncAction(long id, int cmd, OpenAccess access, params object[] args)
         {
             if (status == Disposed)
                 throw new ObjectDisposedException("this actor is dispose");
@@ -137,7 +157,7 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > Option.MaxQueueCount)
                     throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, args);
+            var sa = new ActorMessage<R>(id, cmd, access, args);
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);
             await Runing();
@@ -148,7 +168,7 @@ namespace Netx.Actor
                 await task;
         }
 
-        public async ValueTask<R> AsyncFunc(long id, int cmd, params object[] args)
+        public async ValueTask<R> AsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
         {
           
             if (status == Disposed)
@@ -158,7 +178,7 @@ namespace Netx.Actor
                 if(ActorRunQueue.Count>Option.MaxQueueCount)
                     throw new NetxException($"this actor queue count >{Option.MaxQueueCount}",ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, args);
+            var sa = new ActorMessage<R>(id, cmd, access, args);
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);
 
@@ -229,36 +249,44 @@ namespace Netx.Actor
             {
                 var service = CmdDict[cmd];
 
-                if (service.ArgsLen == args.Length)
+                if (result.Access>= service.Access)
                 {
-                    ActorController.OrderTime = result.CompleteTime;
 
-                    switch (service.ReturnMode)
+                    if (service.ArgsLen == args.Length)
                     {
-                        case ReturnTypeMode.Null:
-                            {
-                                service.Method.Execute(ActorController, args.Length==0?null:args);
-                                return null;
-                            }                           
-                        case ReturnTypeMode.Task:
-                            {
-                                await service.Method.ExecuteAsync(ActorController, args);
-                                return null;
-                            }                           
-                        case ReturnTypeMode.TaskValue:
-                            {
-                                return (dynamic)  await service.Method.ExecuteAsync(ActorController, args);
-                            }
-                        default:
-                            {
-                                throw new NetxException("not find the return mode", ErrorType.ReturnModeErr);
-                            }                            
+                        ActorController.OrderTime = result.CompleteTime;
 
+                        switch (service.ReturnMode)
+                        {
+                            case ReturnTypeMode.Null:
+                                {
+                                    service.Method.Execute(ActorController, args.Length == 0 ? null : args);
+                                    return null;
+                                }
+                            case ReturnTypeMode.Task:
+                                {
+                                    await service.Method.ExecuteAsync(ActorController, args);
+                                    return null;
+                                }
+                            case ReturnTypeMode.TaskValue:
+                                {
+                                    return (dynamic)await service.Method.ExecuteAsync(ActorController, args);
+                                }
+                            default:
+                                {
+                                    throw new NetxException("not find the return mode", ErrorType.ReturnModeErr);
+                                }
+
+                        }
+                    }
+                    else
+                    {
+                        return (R)GetErrorResult($"actor cmd:{cmd} args count error", result.Id);
                     }
                 }
                 else
                 {
-                    return (R)GetErrorResult($"actor cmd:{cmd} args count error", result.Id);                   
+                    throw new NetxException($"actor cmd:{cmd} permission denied", ErrorType.PermissionDenied);                   
                 }
             }
             else

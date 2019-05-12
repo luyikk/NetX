@@ -122,6 +122,11 @@ namespace Netx.Service
 
         protected async Task<bool> ResetToken(IFiberRw<AsyncToken> fiberRw, AsyncToken token)
         {
+            if (token.IsConnect)
+            {
+                token.DisconnectIt();               
+                return false;
+            }
             token.Reset(fiberRw);
             fiberRw.UserToken = token;           
             return await token.RunIt();

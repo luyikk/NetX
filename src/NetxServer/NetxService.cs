@@ -111,8 +111,6 @@ namespace Netx.Service
                         await SendToKeyError(fiberRw, true, $"not find the service!{serviceName}");
                         return false;
                     }                  
-                   
-
 
                 var key = await fiberRw.ReadString();
                 if (!String.IsNullOrEmpty(OpenKey))

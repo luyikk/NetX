@@ -83,6 +83,11 @@ namespace TestNetxServer
             return true;
         }
 
+        [TAG(1008)]
+        public async Task<string> TestPermission()
+        {
+            return await  Actor<IActorService>().GetData();
+        }
 
 
         [TAG(1006)]

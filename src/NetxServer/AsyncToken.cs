@@ -204,7 +204,7 @@ namespace Netx.Service
                 else
                 {
                     var cmdTag = cmd.Value;
-                    service = ActorRun.GetCmdService(cmdTag);
+                    service = ActorRun.GetCmdService(cmdTag,OpenAccess.Public);
                     if (service!=null)
                     {
                         var argslen = (await fiberRw.ReadInt32()).Value;
@@ -260,20 +260,20 @@ namespace Netx.Service
                 {
                     case 0:
                         {
-                            ActorRun.CallAction(id, cmd, args);
+                            ActorRun.CallAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                         }
                         break;
                     case 1:
                         {
-                            await (Task)ActorRun.CallAsyncAction(id, cmd, args);
+                            await (Task)ActorRun.CallAsyncAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             await SendResult(id);
                         }
                         break;
                     case 2:
                         {
-                            var ret_value = await ActorRun.CallAsyncFunc(id, cmd, args);
+                            var ret_value = await ActorRun.CallAsyncFunc(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             switch (ret_value)
                             {

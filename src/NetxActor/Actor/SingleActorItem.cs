@@ -9,7 +9,7 @@ namespace Netx.Actor
     {
         public long Id { get; }
 
-        public int Cmd { get; }
+        public int Cmd { get; }       
 
         public object[] Args { get; }
 
@@ -28,12 +28,14 @@ namespace Netx.Actor
 
     public class ActorMessage<T>: ActorMessage
     {
+        internal OpenAccess Access { get; }
 
         internal ActorResultAwaiter<T> Awaiter { get; }
 
-        public ActorMessage(long id, int cmd, object[] args)
+        public ActorMessage(long id, int cmd, OpenAccess access, object[] args)
             :base(id,cmd,args)
         {
+            this.Access = access;
             Awaiter = new ActorResultAwaiter<T>();
         }
     }
