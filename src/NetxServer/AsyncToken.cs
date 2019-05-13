@@ -204,7 +204,7 @@ namespace Netx.Service
                 else
                 {
                     var cmdTag = cmd.Value;
-                    service = ActorRun.GetCmdService(cmdTag,OpenAccess.Public);
+                    service = ActorRun.GetCmdService(cmdTag);
                     if (service!=null)
                     {
                         var argslen = (await fiberRw.ReadInt32()).Value;
@@ -266,7 +266,7 @@ namespace Netx.Service
                         break;
                     case 1:
                         {
-                            await (Task)ActorRun.CallAsyncAction(id, cmd, OpenAccess.Public, args);
+                            await (ValueTask)ActorRun.CallAsyncAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             await SendResult(id);
                         }
@@ -324,7 +324,7 @@ namespace Netx.Service
 
            
                 if (controller != null)
-                    await RunControllerService(service, controller, id, runtype, memoryOwners, args);
+                    await RunControllerService(service, controller,cmd, id, runtype, memoryOwners, args);
 
             }
             catch(System.Net.Sockets.SocketException)
@@ -338,15 +338,16 @@ namespace Netx.Service
             }
         }
 
-        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller, long id, int runType, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
+        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller,int cmd, long id, int runType, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
+          
             switch (service.ReturnMode)
             {
 
                 case ReturnTypeMode.Null:
                     if (runType == 0)
                     {
-                        service.Method.Execute(controller, args);
+                        controller.Runs__Make(cmd, args);
                         Dispose_table(memoryOwners);
                         return;
                     }
@@ -354,7 +355,7 @@ namespace Netx.Service
                 case ReturnTypeMode.Task:
                     if (runType == 1)
                     {
-                        await service.Method.ExecuteAsync(controller, args);
+                        await (dynamic) controller.Runs__Make(cmd, args);
                         Dispose_table(memoryOwners);
                         await SendResult(id);
                         return;
@@ -363,7 +364,7 @@ namespace Netx.Service
                 case ReturnTypeMode.TaskValue:
                     if (runType == 2)
                     {
-                        var ret_value = (object) await service.Method.ExecuteAsync(controller, args);
+                        var ret_value = await (dynamic)controller.Runs__Make(cmd, args);
                         Dispose_table(memoryOwners);
                         switch (ret_value)
                         {

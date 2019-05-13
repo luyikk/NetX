@@ -29,17 +29,19 @@ namespace TestNetxClient
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
 
+            var pcs = await server.Testnull(Guid.NewGuid(),"XCM",123);
+
             var cvs = await server.TestPermission();
 
             try
             {
                 cvs = await server.TestPermission2();
             }
-            catch(NetxException er)
+            catch (NetxException er)
             {
                 client.Log.Error(er.Message);
             }
-     
+
             for (int i = 0; i < 1000; i++)
             {
                 var c = await server.Add(i, 0); //调用RPC
@@ -76,24 +78,25 @@ namespace TestNetxClient
             }
 
             var stop = System.Diagnostics.Stopwatch.StartNew(); //测试双向递归函数
-            int a = await server.RecursiveTest(10000);
+            int a = await server.RecursiveTest(100);
             stop.Stop();
             client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
-            
+
 
             try
             {
                 await server.TestTimeOut(); //超时测试
 
-            }catch(NetxException er)
+            }
+            catch (NetxException er)
             {
                 client.Log.Error(er.Message);
             }
 
 
-            //server.RunMsg("close"); 
+            server.RunMsg("close");
 
-            //server.Finsh(); //断线测试
+            server.Finsh(); //断线测试
 
             Console.ReadLine();
         }

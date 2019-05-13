@@ -22,7 +22,7 @@ namespace TestNetxServer
                 {
                     p.MaxConnectCout = 100;
                     p.Port = 1006;
-
+                   
                 })        
                 .Build();
 

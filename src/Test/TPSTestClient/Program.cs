@@ -26,7 +26,7 @@ namespace TestClient
                     p.Host = args.Length==0? "127.0.0.1":args[0];
                     p.Port = args.Length == 0 ? 1005:args.Length>=2?int.Parse(args[1]): 1005;
                     p.VerifyKey = args.Length == 0 ? "123123":args.Length>=3?args[2]:"123123";
-                    p.RequestTimeOut = 0;
+                    p.RequestTimeOut = 0;                  
                 })
                 //.ConfigSSL(p =>
                 //{
@@ -88,10 +88,7 @@ namespace TestClient
             while (i < xcount)
             {
                 int c = i+1;
-                i = await server.AddOne(i);
-
-                Debug.Equals(c, i);
-
+                i = await server.AddOne(i);              
                 if (c != i)
                     throw new Exception("error value");
             }

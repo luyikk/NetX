@@ -44,16 +44,147 @@ public partial class ModuleWeaver : BaseModuleWeaver
             LogInfo($"Added Packer Type '{newType.FullName}' with Interface '{iface.FullName}'.");
         }
 
+        var actors = GetActorControllers();
 
+        foreach (var item in actors)
+        {
+            AddMethod(item);
+        }
+
+        foreach (var item in GetAsyncControllers())
+        {
+            AddMethod(item);
+        }
+
+        foreach (var item in GetBuildClass())
+        {
+            AddMethod(item);
+        }
     }
 
- 
 
-    TypeDefinition[] GetBuildInterfaces()
+    TypeDefinition[] GetBuildClass()
+    {
+        var all = ModuleDefinition.GetAllTypes();
+        return ModuleDefinition.GetAllTypes().Where(p => p.IsClass && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
+    }
+
+
+
+    TypeDefinition[] GetAsyncControllers()
+    {
+        var all = ModuleDefinition.GetAllTypes();
+        return all.Where(p => p.IsClass && p.BaseType?.Name == "AsyncController").ToArray();
+    }
+
+
+    TypeDefinition[] GetActorControllers()
+    {
+        var all = ModuleDefinition.GetAllTypes();
+        return all.Where(p => p.IsClass && p.BaseType?.Name== "ActorController").ToArray();
+    }
+
+
+   TypeDefinition[] GetBuildInterfaces()
     {
         var all = ModuleDefinition.GetAllTypes();
         return ModuleDefinition.GetAllTypes().Where(p => p.IsInterface && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
     }
+
+
+    void AddMethod(TypeDefinition typeDefinition)
+    {
+
+        var NewMethod = new MethodDefinition("Runs__Make", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual, ModuleDefinition.ImportReference(typeof(object)));
+
+        var il = NewMethod.Body.GetILProcessor();
+
+        NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(Int32))));
+        NewMethod.Parameters.Add(new ParameterDefinition("args", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(object[]))));
+
+        List<MakeBne> benList = new List<MakeBne>();
+
+        foreach (var method in typeDefinition.GetMethods().Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
+        {
+            var tag = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG");
+            if (tag is null)
+                return;
+            var cmdx = tag.ConstructorArguments.First().Value;
+            var cmd = 0;
+            switch (cmdx)
+            {
+                case Mono.Cecil.CustomAttributeArgument args:
+                    cmd = (int)args.Value;
+                    break;
+                default:
+                    cmd = (int)cmdx;
+                    break;
+            }
+
+            MakeBne bne = new MakeBne(il)
+            {
+                Cmd = cmd,
+                Method = method,
+                ModuleWeaver = this               
+            };
+            benList.Add(bne);
+        }
+
+        for (int i = 0; i < benList.Count; i++)
+        {
+            if (i + 1 < benList.Count)
+            {
+                benList[i].Next = benList[i + 1].Start;
+            }
+            else
+            {
+                benList[i].IsEnd = true;
+            }
+        }
+
+
+        List<List<Instruction>> codes = new List<List<Instruction>>();
+
+        foreach (var p in benList)
+        {
+            foreach (var item in p.MakeCode())
+            {
+                il.Append(item);
+            } 
+        }
+
+        typeDefinition.Methods.Add(NewMethod);
+    }
+
+
+
+
+
+    public List<Instruction> MakeBneCall(ILProcessor processor,MethodDefinition method,int cmd,Instruction next)
+    {
+        var codes = new List<Instruction>
+        {
+           processor.Create(OpCodes.Ldarg_1),
+           processor.Create(OpCodes.Ldc_I4,cmd),
+           processor.Create(OpCodes.Bne_Un_S,next),
+           processor.Create(OpCodes.Ldarg_0)
+        };
+
+        int i = 0;
+        foreach (var parmeter in method.Parameters)
+        {
+            codes.Add(processor.Create(OpCodes.Ldarg_2));
+            codes.Add(processor.Create(OpCodes.Ldc_I4,i));
+            codes.Add(processor.Create(OpCodes.Ldelem_Ref));
+            Convert(processor, codes, ModuleDefinition.ImportReference(typeof(object)), parmeter.ParameterType, false);
+        }
+
+        codes.Add(processor.Create(OpCodes.Callvirt, method));
+        codes.Add(processor.Create(OpCodes.Ret));
+
+        return codes;
+    }
+
 
 
 
@@ -144,7 +275,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         var method = new MethodDefinition(irpc.Name, MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final, irpc.ReturnType);
 
         var il = method.Body.GetILProcessor();
-
+        
         var parameters = irpc.Parameters;
         var paramTypes = ParamTypes(parameters.ToArray(), false);
 
@@ -240,7 +371,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldfld, obj);
             il.Emit(OpCodes.Ldc_I4, cmd);
-
+            
             GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
             for (int i = 0; i < parameters.Count; i++)

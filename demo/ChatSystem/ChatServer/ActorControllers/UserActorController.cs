@@ -1,4 +1,4 @@
-﻿using ChatServer.Mode;
+﻿using ChatServer.Model;
 using Microsoft.Extensions.Logging;
 using Netx;
 using Netx.Actor;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using ZYSQL;
+using ChatTag;
 
 namespace ChatServer.ActorControllers
 {
@@ -75,6 +76,7 @@ namespace ChatServer.ActorControllers
             }
         }
 
+        [Open(OpenAccess.Internal)]
         [TAG(ActorTag.CheckUserNameAndPassword)]
         public async Task<(bool,Users,string)> LogOnUser(string username,string password)
         {
@@ -86,18 +88,38 @@ namespace ChatServer.ActorControllers
                     );
 
                 if (r is null)
-                    return (false, r,"username or password error");               
+                    return (false, null,"username or password error");               
                 else
-                    return (true, null,"login successfully");
+                    return (true, r,"login successfully");
             }
         }
 
+        [Open(OpenAccess.Internal)]
         [TAG(ActorTag.GetUsers)]
         public async Task<List<Users>> GetUsers(string exclude_username)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-                return await obj.SqlExcuteSelectObjectAsync<Users>("SELECT * FROM Users WHERE UserName!=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", exclude_username));
+                return await obj.SqlExcuteSelectObjectAsync<Users>("SELECT UserName,NickName,OnLineStatus FROM Users WHERE UserName!=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", exclude_username));
+            }
+        }
+
+        [Open(OpenAccess.Internal)]
+        [TAG(ActorTag.SetStatus)]
+        public async Task<bool> SetStatus(string username,int status)
+        {
+            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
+            {
+                var i = await obj.SqlExecuteNonQueryAsync("UPDATE Users SET OnLineStatus=@OnLineStatus WHERE UserName=@UserName"
+                    , new System.Data.SQLite.SQLiteParameter("@UserName", username)
+                    , new System.Data.SQLite.SQLiteParameter("@OnLineStatus", status)
+                    );
+
+                if (i == 1)
+                    return true;
+                else
+                    return false;
+
             }
         }
 

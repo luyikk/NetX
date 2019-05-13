@@ -14,6 +14,7 @@ namespace Netx.Service
         public T Get<T>() => Current.Get<T>();
         public T Actor<T>() => Current.Actor<T>();
 
+        public virtual object Runs__Make(int tag, object[] args) => null;
 
         /// <summary>
         /// 断线处理

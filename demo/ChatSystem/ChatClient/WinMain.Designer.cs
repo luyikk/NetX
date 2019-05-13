@@ -113,7 +113,7 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.listView1);
             this.Name = "WinMain";
-            this.Text = "Char Room";
+            this.Text = "ChaT Room";
             this.Load += new System.EventHandler(this.WinMain_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

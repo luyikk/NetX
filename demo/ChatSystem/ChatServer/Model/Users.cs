@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ChatServer.Mode
+namespace ChatServer.Model
 {
     public class Users
     {

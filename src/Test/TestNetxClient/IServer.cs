@@ -53,6 +53,9 @@ namespace TestNetxClient
         [TAG(4000)]
         Task<string> TestPermission2();
 
+        [TAG(1009)]
+        Task<List<string>> Testnull(Guid guid,string a,int b);
+
         [TAG(1006)]
         void Finsh();
     }

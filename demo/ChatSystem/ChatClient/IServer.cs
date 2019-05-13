@@ -4,27 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ChatTag;
 namespace ChatClient
 {
-    public enum ServerTag
-    {
-        Register=1,
-        LogOn = 1001,
-        CheckLogIn = 1002
-    }
-
+   
 
     [Build]
     public interface IServer
     {
-        [TAG(ServerTag.Register)]
+        [TAG(ActorTag.Register)]
         Task<(bool, string)> Register(Users user);
 
-        [TAG(ServerTag.LogOn)]
+        [TAG(ServiceTag.LogOn)]
         Task<(bool, string)> LogOn(string username, string password);
 
-        [TAG(ServerTag.CheckLogIn)]
+        [TAG(ServiceTag.CheckLogIn)]
         Task<bool> CheckLogIn();
+
+        [TAG(ServiceTag.GetUserList)]
+        Task<List<Users>> GetUsers();
     }
 }

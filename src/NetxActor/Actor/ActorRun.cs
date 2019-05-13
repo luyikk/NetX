@@ -38,7 +38,7 @@ namespace Netx.Actor
             EventSourcing?.Invoke(sender, e);           
         }
 
-        public MethodRegister GetCmdService(int cmd,OpenAccess access)
+        public MethodRegister GetCmdService(int cmd)
         {
             if (ActorCollect.ContainsKey(cmd))            
                 return ActorCollect[cmd].CmdDict[cmd];            
@@ -56,25 +56,25 @@ namespace Netx.Actor
 
         }
 
-        public async Task CallAsyncAction(long id, int cmd, OpenAccess access, params object[] args)
+        public ValueTask CallAsyncAction(long id, int cmd, OpenAccess access, params object[] args)
         {
-            if (ActorCollect.ContainsKey(cmd))
-                await ActorCollect[cmd].AsyncAction(id, cmd, access, args);
+            if (ActorCollect.TryGetValue(cmd, out Actor<R> m))
+                return m.AsyncAction(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        public async Task<R> CallAsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
+        public  ValueTask<R> CallAsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
         {
-            if (ActorCollect.ContainsKey(cmd))
-                return await ActorCollect[cmd].AsyncFunc(id, cmd, access, args);
+            if (ActorCollect.TryGetValue(cmd,out Actor<R> m))
+                return  m.AsyncFunc(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        protected override Task SendAsyncAction(int cmdTag, long Id, object[] args)
+        protected override async Task SendAsyncAction(int cmdTag, long Id, object[] args)
         {
-            return CallAsyncAction(Id, cmdTag, OpenAccess.Internal, args);
+              await CallAsyncAction(Id, cmdTag, OpenAccess.Internal, args);
         }
 
         protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
@@ -86,11 +86,10 @@ namespace Netx.Actor
                 case Result rs: return rs;
                 default:
                     {
-                        var rs = new Result(result)
+                        return new Result(result)
                         {
                             Id = Id
                         };
-                        return rs;
                     }
             }
         }

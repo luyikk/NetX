@@ -19,10 +19,9 @@ namespace TestServer
                 //     p.Certificate = certificate;
                 // })              
                 .ConfigNetWork(p =>
-                {
-                   
+                {                   
                     p.MaxConnectCout = 100;
-                    p.Port = 1005;
+                    p.Port = 1005;                
 
                 })
                 .ConfigBase(p=>

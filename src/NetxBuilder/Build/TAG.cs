@@ -7,7 +7,7 @@ namespace Netx
     /// <summary>
     /// 用于设置函数的命令
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public sealed class TAG : Attribute
     {
         public int CmdTag { get; set; }

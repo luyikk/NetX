@@ -187,9 +187,7 @@ namespace Netx.Actor
             if (sa.Awaiter.IsCompleted)
                 return sa.Awaiter.GetResult();
             else
-                return await task;
-
-          
+                return await task;          
 
         }
 
@@ -260,17 +258,17 @@ namespace Netx.Actor
                         {
                             case ReturnTypeMode.Null:
                                 {
-                                    service.Method.Execute(ActorController, args.Length == 0 ? null : args);
+                                    ActorController.Runs__Make(cmd, args);
                                     return null;
                                 }
                             case ReturnTypeMode.Task:
                                 {
-                                    await service.Method.ExecuteAsync(ActorController, args);
+                                    await (dynamic)ActorController.Runs__Make(cmd, args);
                                     return null;
                                 }
                             case ReturnTypeMode.TaskValue:
                                 {
-                                    return (dynamic)await service.Method.ExecuteAsync(ActorController, args);
+                                    return await (dynamic)ActorController.Runs__Make(cmd, args);
                                 }
                             default:
                                 {

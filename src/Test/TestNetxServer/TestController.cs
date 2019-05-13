@@ -89,6 +89,13 @@ namespace TestNetxServer
             return await  Actor<IActorService>().GetData();
         }
 
+        [TAG(1009)]
+        public async Task<List<string>> Testnull(Guid guid,string a,int b)
+        {
+            Log.Info(guid);
+            await Task.Delay(100);
+            return new List<string>();
+        }
 
         [TAG(1006)]
         public void Finsh()
@@ -97,6 +104,8 @@ namespace TestNetxServer
             this.Current.DisconnectIt();
           
         }
+
+   
 
         public override void Disconnect()
         {

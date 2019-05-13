@@ -1,6 +1,6 @@
 ﻿namespace Netx.Actor
 {
-    public class ActorController
+    public abstract class ActorController
     {
         public long OrderTime { get; internal set; }
         public long CurrentTime { get => TimeHelper.GetTime(); }
@@ -9,5 +9,8 @@
         public IActorStatus Status { get; internal set; }
 
         protected T Get<T>() => ActorGet.Get<T>();
+
+        public virtual object Runs__Make(int tag, object[] args) => null;
+       
     }
 }

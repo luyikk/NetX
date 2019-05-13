@@ -36,58 +36,57 @@ namespace ActorTest
             var server= Actor.Get<ICallServer>();
             //await server.Add(0, 0);
 
-          
-
-            await server.SetUserCoin(1, 100);
-            var user = await server.GetUser(1);
-            Console.WriteLine($"{user.Name} current coin:{user.Coin}");           
 
 
-            var task1 = Task.Run(() =>
-              {
-                  for (int i = 0; i < 100; i++)
-                  {
-                      server.AddUserCoin(1, 100);
-                  }
+            //await server.SetUserCoin(1, 100);
+            //var user = await server.GetUser(1);
+            //Console.WriteLine($"{user.Name} current coin:{user.Coin}");
 
-              });
 
-            var task2 = Task.Run(() =>
+            //var task1 = Task.Run(() =>
+            //  {
+            //      for (int i = 0; i < 100; i++)
+            //      {
+            //          server.AddUserCoin(1, 100);
+            //      }
+
+            //  });
+
+            //var task2 = Task.Run(() =>
+            //{
+            //    for (int i = 0; i < 100; i++)
+            //    {
+            //        server.SubUserCoin(1, 100);
+            //    }
+
+            //});
+
+
+            //await Task.WhenAll(task1, task2);
+
+            //user = await server.GetUser(1);
+            //Console.WriteLine($"{user.Name} current coin:{user.Coin}");
+
+            for (int i = 0; i < 1000; i++)
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    server.SubUserCoin(1, 100);
-                }
-
-            });
-
-
-            await Task.WhenAll(task1,task2);
-
-            user = await server.GetUser(1);
-            Console.WriteLine($"{user.Name} current coin:{user.Coin}");
-
-
+                await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, 0);
+            }
 
 
             #region TestCount
             var stop = System.Diagnostics.Stopwatch.StartNew();
 
             var x = 0;
-            //Parallel.For(0, 1000000, async i =>
-            //  {
-            //      x = await server.Add(i, x);
-
-            //  });
-
+         
+          
             for (int i = 0; i < 1000000; i++)
             {
-                x = await server.Add(i, x);
+                x = await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
             }
-
-            var t = await server.GetV();
+           
             stop.Stop();
 
+            var t = await server.GetV();
             Console.WriteLine(x);
             Console.WriteLine(t);
             Console.WriteLine("time :" + stop.ElapsedMilliseconds);

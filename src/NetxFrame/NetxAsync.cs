@@ -72,7 +72,9 @@ namespace Netx
                     var count = (read.ReadInt32()).Value;
                     List<byte[]> args = new List<byte[]>(count);
                     for (int i = 0; i < count; i++)
+                    {
                         args.Add(read.ReadArray());
+                    }
 
                     AsyncBackResult(new Result(args)
                     {

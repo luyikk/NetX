@@ -12,7 +12,7 @@ using GenericParameterAttributes = System.Reflection.GenericParameterAttributes;
 public partial class ModuleWeaver
 {
 
-    private static OpCode[] s_convOpCodes = new OpCode[] {
+    private static readonly OpCode[] s_convOpCodes = new OpCode[] {
                 OpCodes.Nop,//Empty = 0,
                 OpCodes.Nop,//Object = 1,
                 OpCodes.Nop,//DBNull = 2,
@@ -34,7 +34,7 @@ public partial class ModuleWeaver
                 OpCodes.Nop,//String = 18,
             };
 
-    private static OpCode[] s_ldindOpCodes = new OpCode[] {
+    private static readonly OpCode[] s_ldindOpCodes = new OpCode[] {
                 OpCodes.Nop,//Empty = 0,
                 OpCodes.Nop,//Object = 1,
                 OpCodes.Nop,//DBNull = 2,
@@ -56,7 +56,7 @@ public partial class ModuleWeaver
                 OpCodes.Ldind_Ref,//String = 18,
             };
 
-    private static OpCode[] s_stindOpCodes = new OpCode[] {
+    private static readonly OpCode[] s_stindOpCodes = new OpCode[] {
                 OpCodes.Nop,//Empty = 0,
                 OpCodes.Nop,//Object = 1,
                 OpCodes.Nop,//DBNull = 2,
@@ -141,9 +141,9 @@ public partial class ModuleWeaver
 
     private class ParametersArray
     {
-        private ILProcessor _il;
-        private TypeReference[] _paramTypes;
-        private ModuleWeaver _moduleweaver;
+        private readonly ILProcessor _il;
+        private readonly TypeReference[] _paramTypes;
+        private readonly ModuleWeaver _moduleweaver;
         internal ParametersArray(ModuleWeaver moduleweaver, ILProcessor il, TypeReference[] paramTypes)
         {
             _moduleweaver = moduleweaver;
@@ -174,9 +174,9 @@ public partial class ModuleWeaver
 
     private class GenericArray<T>
     {
-        private ILProcessor _il;
-        private VariableDefinition _lb;
-        private ModuleWeaver _moduleweaver;
+        private readonly ILProcessor _il;
+        private readonly VariableDefinition _lb;
+        private readonly ModuleWeaver _moduleweaver;
         internal GenericArray(ModuleWeaver moduleweaver, ILProcessor il, int len)
         {
             _moduleweaver = moduleweaver;
@@ -212,6 +212,92 @@ public partial class ModuleWeaver
             _moduleweaver.Convert(_il, stackType, _moduleweaver.ModuleDefinition.ImportReference(typeof(T)), false);
             _il.Emit(OpCodes.Stelem_Ref);
         }
+    }
+
+    public List<Instruction> Convert(ILProcessor il, List<Instruction> opCodes, TypeReference source, TypeReference target, bool isAddress)
+    {
+        Debug.Assert(!target.IsByReference);
+        if (target == source)
+            return opCodes;
+
+
+        if (source.IsByReference)
+        {
+            Debug.Assert(!isAddress);
+            TypeReference argType = source.GetElementType();
+
+            OpCode opCode = s_ldindOpCodes[GetTypeCode(argType)];
+            if (!opCode.Equals(OpCodes.Nop))
+            {
+                opCodes.Add(il.Create(opCode));
+            }
+            else
+            {
+                opCodes.Add(il.Create(OpCodes.Ldobj, argType));
+            }
+
+            Convert(il, opCodes,argType, target, isAddress);
+            return opCodes;
+        }
+        if (target.IsValueType)
+        {
+            if (source.IsValueType)
+            {
+                OpCode opCode = s_convOpCodes[GetTypeCode(target)];
+                Debug.Assert(!opCode.Equals(OpCodes.Nop));
+                opCodes.Add(il.Create(opCode));
+            }
+            else
+            {
+                Debug.Assert(IsAssignableFrom(source, target));
+                opCodes.Add(il.Create(OpCodes.Unbox_Any, ModuleDefinition.ImportReference(target)));
+                if (!isAddress)
+                {
+                    OpCode opCode = s_ldindOpCodes[GetTypeCode(target)];
+                    if (!opCode.Equals(OpCodes.Nop))
+                    {
+                        opCodes.Add(il.Create(opCode));
+                    }
+                    else
+                    {
+                        opCodes.Add(il.Create(OpCodes.Ldobj, target));
+                    }
+                }
+            }
+        }
+        else if (IsAssignableFrom(target, source))
+        {
+            if (source.IsValueType)
+            {
+                if (isAddress)
+                {
+                    OpCode opCode = s_ldindOpCodes[GetTypeCode(source)];
+                    if (!opCode.Equals(OpCodes.Nop))
+                    {
+                        il.Emit(opCode);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldobj, source);
+                    }
+                }
+                opCodes.Add(il.Create(OpCodes.Box, ModuleDefinition.ImportReference(source)));
+            }
+        }
+        else
+        {
+            Debug.Assert(IsAssignableFrom(source, target) || target.Resolve().IsInterface || source.Resolve().IsInterface);
+            if (target.IsGenericParameter)
+            {
+                opCodes.Add(il.Create(OpCodes.Unbox_Any, ModuleDefinition.ImportReference(target)));
+            }
+            else
+            {
+                opCodes.Add(il.Create(OpCodes.Castclass, ModuleDefinition.ImportReference(target)));
+            }
+        }
+
+        return opCodes;
     }
 
     private void Convert(ILProcessor il, TypeReference source, TypeReference target, bool isAddress)
