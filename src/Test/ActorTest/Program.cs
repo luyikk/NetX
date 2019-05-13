@@ -60,7 +60,7 @@ namespace ActorTest
             //    }
 
             //});
-
+            //x = await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
 
             //await Task.WhenAll(task1, task2);
 
@@ -81,7 +81,7 @@ namespace ActorTest
           
             for (int i = 0; i < 1000000; i++)
             {
-                x = await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
+                x = await server.Add(i, x);
             }
            
             stop.Stop();
