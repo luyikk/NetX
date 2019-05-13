@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetxServer" Version="1.0.4" />
+    <PackageReference Include="NetxServer" Version="1.0.8" />
     <PackageReference Include="ZYSQL" Version="1.0.6" />
   </ItemGroup>
 

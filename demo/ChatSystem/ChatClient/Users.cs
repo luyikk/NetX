@@ -12,5 +12,9 @@ namespace ChatClient
         public string PassWord { get; set; }
         public byte OnLineStatus { get; set; }
 
+        public override string ToString()
+        {
+            return NickName; 
+        }
     }
 }

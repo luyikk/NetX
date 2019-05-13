@@ -29,7 +29,7 @@ namespace ChatClient
                         , "testPassword");
                     p.IsUse = true;
                 })
-               // .ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
+               // .ConfigSessionStore(() => new Netx.Client.Session.SessionFile()) //如何需要下次打开 不用登陆
                 .ConfigConnection(p =>
                 {
                     p.Host = "127.0.0.1";

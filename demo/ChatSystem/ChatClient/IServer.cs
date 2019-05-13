@@ -23,5 +23,12 @@ namespace ChatClient
 
         [TAG(ServiceTag.GetUserList)]
         Task<List<Users>> GetUsers();
+
+        [TAG(ServiceTag.Say)]
+        Task<(bool, string)> Say(long userId, string msg);
+
+        [TAG(ServiceTag.GetLeaving)]
+        Task<List<LeavingMsg>> GetLeavingMessage();
+
     }
 }

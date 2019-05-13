@@ -42,11 +42,18 @@ namespace Netx.Service
                 is_dispose = true;
 
                 foreach (var item in AsyncControllerInstanceDict.Values)
-                    item.Closed();
+                {
+                    try { item.Closed(); }
+                    catch (Exception er)
+                    {
+                        Log.Error(er);
+                    }
+
+                }
 
                 AsyncControllerInstanceDict.Clear();
-               
-           
+
+
 
                 if (this.IsConnect)
                 {
@@ -54,11 +61,11 @@ namespace Netx.Service
                     this.FiberRw.UserToken = null;
                     this.FiberRw?.Async?.Disconnect();
                     this.IWrite = null;
-                   
+
                 }
 
-              
-           
+
+
 
             }
         }
@@ -79,10 +86,7 @@ namespace Netx.Service
 
 
         public T Actor<T>()
-        {
-            if (is_dispose)
-                throw new ObjectDisposedException("AsyncToken");
-
+        {          
             return ActorRun.Get<T>();
         }       
 
@@ -120,9 +124,13 @@ namespace Netx.Service
             isConnect = false;
 
             this.IWrite = null;
-            this.FiberRw = null;           
+            this.FiberRw = null;
             foreach (var controller in AsyncControllerInstanceDict.Values)
-                controller.Disconnect();
+            {
+                try { controller.Disconnect(); }
+                catch(Exception er)
+                { Log.Error(er); }
+            }
         }
 
        
@@ -236,8 +244,8 @@ namespace Netx.Service
                     }
                     else
                     {
-                        Log.WarnFormat("{1} call actor service:{0} not find cmd ", cmd.Value, fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
-                        await SendError(id, $"call actor service:{cmd.Value} not find the cmd,please check it", ErrorType.NotCmd);
+                        Log.WarnFormat("{1} call service:{0} not find cmd ", cmd.Value, fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
+                        await SendError(id, $"call service:{cmd.Value} not find the cmd,please check it", ErrorType.NotCmd);
                         return false;
                     }
                 }
@@ -245,7 +253,7 @@ namespace Netx.Service
             else
             {
 
-                Log.WarnFormat("{0} call async service not read cmd,cmd is null", fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
+                Log.WarnFormat("{0} call service not read cmd,cmd is null", fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
                 await SendError(-1, "not read cmd", ErrorType.NotReadCmd);
                 return false;
             }

@@ -34,7 +34,16 @@ namespace Netx.Actor
                 foreach (var item in ActorCollect.Values)
                 {
                     if (item.IsNeedSleep)
-                        item.Action(-1, Actor<R>.SleepCmd, OpenAccess.Private, null);
+                    {
+                        try
+                        {
+                            await item.AsyncAction(-1, Actor<R>.SleepCmd, OpenAccess.Private, null);
+                        }
+                        catch (Exception er)
+                        {
+                            Log.Error(er);
+                        }
+                    }
                 }
             }
         }

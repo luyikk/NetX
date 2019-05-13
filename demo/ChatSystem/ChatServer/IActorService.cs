@@ -21,6 +21,12 @@ namespace ChatServer
         Task<List<Users>> GetUsers(string exclude_username);
 
         [TAG(ActorTag.SetStatus)]
-        Task<bool> SetStatus(string username, int status);
+        Task<bool> SetStatus(string username, byte status);
+
+        [TAG(ActorTag.SaveMsg)]
+        Task<(bool, string)> SaveMessage(long fromid, long targetid, byte msgtype, string msg, bool issend);
+
+        [TAG(ActorTag.LeavingMessage)]
+        Task<List<LeavingMsg>> GetLeavingMessage(long userId);
     }
 }

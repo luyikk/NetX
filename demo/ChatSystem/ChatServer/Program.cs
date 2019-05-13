@@ -1,11 +1,14 @@
 ﻿using System;
 using Netx.Service.Builder;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using ChatServer.AsyncControllers;
+
 namespace ChatServer
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
            
             var server = new NetxServBuilder()
@@ -13,6 +16,7 @@ namespace ChatServer
                  {
                      p.ServiceName = "MessageService";
                      p.VerifyKey = "123123";
+                     p.ClearSessionTime = 6000;
                  })
                   .ConfigSSL(p =>
                   {
@@ -21,11 +25,13 @@ namespace ChatServer
                           "testPassword");
                       p.IsUse = true;
                   })
+                 
                  .ConfigNetWork(p =>
                  {
                      p.Port = 3000;
                  })
                  .RegisterService(Assembly.GetExecutingAssembly())
+                 .RegisterDescriptors(p=>p.AddSingleton<UserManager, UserManager>())
                  .Build();
 
             server.Start();
