@@ -34,39 +34,39 @@ namespace ActorTest
       
 
             var server= Actor.Get<ICallServer>();
-            //await server.Add(0, 0);
+            await server.Add(0, 0);
 
 
 
-            //await server.SetUserCoin(1, 100);
-            //var user = await server.GetUser(1);
-            //Console.WriteLine($"{user.Name} current coin:{user.Coin}");
+            await server.SetUserCoin(1, 100);
+            var user = await server.GetUser(1);
+            Console.WriteLine($"{user.Name} current coin:{user.Coin}");
 
 
-            //var task1 = Task.Run(() =>
-            //  {
-            //      for (int i = 0; i < 100; i++)
-            //      {
-            //          server.AddUserCoin(1, 100);
-            //      }
+            var task1 = Task.Run(() =>
+              {
+                  for (int i = 0; i < 100; i++)
+                  {
+                      server.AddUserCoin(1, 100);
+                  }
 
-            //  });
+              });
 
-            //var task2 = Task.Run(() =>
-            //{
-            //    for (int i = 0; i < 100; i++)
-            //    {
-            //        server.SubUserCoin(1, 100);
-            //    }
+            var task2 = Task.Run(() =>
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    server.SubUserCoin(1, 100);
+                }
 
-            //});
-            //x = await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
+            });
+         
+            await Task.WhenAll(task1, task2);
 
-            //await Task.WhenAll(task1, task2);
+            user = await server.GetUser(1);
+            Console.WriteLine($"{user.Name} current coin:{user.Coin}");
 
-            //user = await server.GetUser(1);
-            //Console.WriteLine($"{user.Name} current coin:{user.Coin}");
-
+            //预热1000次
             for (int i = 0; i < 1000; i++)
             {
                 await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, 0);
