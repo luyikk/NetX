@@ -22,18 +22,29 @@ namespace ChatServer.AsyncControllers
           
         }
 
-        public async override void Disconnect()
-        {
-            await Actor<IActorService>().SetStatus(CurrentUser.UserName, 2);
-        }
 
-        public async override void Closed()
-        {
-            await Actor<IActorService>().SetStatus(CurrentUser.UserName, 0);
-        }
+
 
         public bool IsLogOn { get; private set; }
-        public Users CurrentUser { get; private set; }
+        public UserInfo CurrentUser { get; private set; }
+
+
+        /// <summary>
+        /// 设置当前用户状态
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        private async Task<bool> SetUserStatus(int status)
+        {
+            if (await Actor<IActorService>().SetStatus(CurrentUser.UserContent.UserName, status))
+            {
+                CurrentUser.Status = status;
+                return true;
+            }
+            else
+                return false;
+        }
+
 
 
         [TAG(ServiceTag.LogOn)]
@@ -43,7 +54,7 @@ namespace ChatServer.AsyncControllers
 
             if (success)
             {
-                CurrentUser = user;
+                CurrentUser =new UserInfo(user);
                 IsLogOn = true;
                 return (success, msg);
             }
@@ -53,13 +64,17 @@ namespace ChatServer.AsyncControllers
                 return (success, msg);
             }
         }
+               
 
         [TAG(ServiceTag.CheckLogIn)]
         public async Task<bool> CheckLogIn()
         {
             if (IsLogOn)
             {
-                await Actor<IActorService>().SetStatus(CurrentUser.UserName, 1);
+                CurrentUser.Token = Current;
+                await SetUserStatus(1);
+
+
             }
             return IsLogOn;
         }
@@ -69,11 +84,30 @@ namespace ChatServer.AsyncControllers
         {
             if (IsLogOn)
             {
-                return await Actor<IActorService>().GetUsers(CurrentUser.UserName);
+                return await Actor<IActorService>().GetUsers(CurrentUser.UserContent.UserName);
               
             }
             else
                 throw new Exception("not login");
         }
+
+
+        /// <summary>
+        /// 断线
+        /// </summary>
+        public async override void Disconnect()
+        {
+            await SetUserStatus(2);
+        }
+
+        /// <summary>
+        /// 退出
+        /// </summary>
+        public async override void Closed()
+        {
+            await SetUserStatus(3);
+            CurrentUser.Token = null;
+        }
+
     }
 }

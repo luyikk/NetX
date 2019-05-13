@@ -64,26 +64,25 @@ namespace ActorTest
             await Task.WhenAll(task1, task2);
 
             user = await server.GetUser(1);
-            Console.WriteLine($"{user.Name} current coin:{user.Coin}");
+            Console.WriteLine($"{user.Name} current coin:{user.Coin}");       
 
-            //预热1000次
-            for (int i = 0; i < 1000; i++)
-            {
-                await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, 0);
-            }
+            Console.ReadLine();
+            await server.SetUserCoin(1, 100);
 
+           
 
             #region TestCount
             var stop = System.Diagnostics.Stopwatch.StartNew();
 
             var x = 0;
-         
-          
+
+
             for (int i = 0; i < 1000000; i++)
             {
-                x = await server.Add(i, x);
+                x= await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
+             
             }
-           
+
             stop.Stop();
 
             var t = await server.GetV();
@@ -94,6 +93,8 @@ namespace ActorTest
             #endregion
 
             Console.ReadLine();
+
+          
         }
 
        

@@ -1,4 +1,6 @@
-﻿namespace Netx.Actor
+﻿using System.Threading.Tasks;
+
+namespace Netx.Actor
 {
     public abstract class ActorController
     {
@@ -12,5 +14,20 @@
 
         public virtual object Runs__Make(int tag, object[] args) => null;
        
+        /// <summary>
+        /// 唤醒
+        /// </summary>
+        public virtual Task Awakening()
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 沉睡
+        /// </summary>
+        public virtual Task Sleeping()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

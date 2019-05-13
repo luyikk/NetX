@@ -16,6 +16,8 @@ namespace Netx.Actor
         public const int Open = 1;
         public const int Disposed = 2;
 
+        public const int SleepCmd = -99998983;
+
 
         public ActorScheduler ActorScheduler { get; }
 
@@ -43,6 +45,29 @@ namespace Netx.Actor
 
         internal event EventHandler<ActorMessage> EventSourcing;
 
+        public bool IsSleep { get; private set; } = true;
+
+        private long lastRuntime = 0;
+
+        /// <summary>
+        /// 最后运行时间
+        /// </summary>
+        public long LastRunTime { get => lastRuntime; }
+
+        /// <summary>
+        /// 是否需要休眠
+        /// </summary>
+        public bool IsNeedSleep
+        {
+            get
+            {
+                if (IsSleep)
+                    return false;
+
+                return ((TimeHelper.GetTime() - lastRuntime) / 10000) > Option.Ideltime;
+
+            }
+        }
 
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
@@ -54,10 +79,12 @@ namespace Netx.Actor
 
             var options= instance.GetType().GetCustomAttributes(typeof(ActorOptionAttribute), false);
 
-            if (options != null) {
+            if (options != null&&options.Length>0)
+            {
                 foreach (var attr in options)
                     if (attr is ActorOptionAttribute option)
                         Option = option;
+
             }
             else
                 Option = new ActorOptionAttribute();
@@ -208,6 +235,8 @@ namespace Netx.Actor
                  {
                     try
                     {
+                       
+
                         while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
                         {
 
@@ -215,11 +244,15 @@ namespace Netx.Actor
 
                             msg.Awaiter.Completed(res);
 
+                            lastRuntime = TimeHelper.GetTime();
+
                             if (EventSourcing != null)
                             {
-                                msg.CompleteTime=TimeHelper.GetTime();
+                                msg.CompleteTime= lastRuntime;
                                 EventSourcing(ActorController, msg);
                             }
+
+                             
 
                             if (status == Disposed)
                                 break;
@@ -243,6 +276,27 @@ namespace Netx.Actor
             var cmd = result.Cmd;
             var args = result.Args;
 
+
+            #region Awaken and sleep
+
+            if (cmd == SleepCmd)
+            {
+                await ActorController.Sleeping();
+                IsSleep = true;
+                return default;
+            }
+            else if (IsSleep)
+            {
+                await ActorController.Awakening();
+                IsSleep = false;
+            }
+
+
+
+
+            #endregion
+
+
             if (CmdDict.ContainsKey(cmd))
             {
                 var service = CmdDict[cmd];
@@ -259,12 +313,12 @@ namespace Netx.Actor
                             case ReturnTypeMode.Null:
                                 {
                                     ActorController.Runs__Make(cmd, args);
-                                    return null;
+                                    return default;
                                 }
                             case ReturnTypeMode.Task:
                                 {
                                     await (dynamic)ActorController.Runs__Make(cmd, args);
-                                    return null;
+                                    return default;
                                 }
                             case ReturnTypeMode.TaskValue:
                                 {

@@ -13,12 +13,20 @@ namespace Netx.Actor
         public long MaxQueueCount { get; }
 
         /// <summary>
-        /// 设置
+        /// 多少毫秒秒没有订单沉睡
+        /// </summary>
+        public int Ideltime { get;  }
+
+
+        /// <summary>
+        /// Actor设置
         /// </summary>
         /// <param name="maxQueueCount">限制最大队列的数量</param>
-        public ActorOptionAttribute(long maxQueueCount=0)
+        /// <param name="sleepTime">多少毫秒秒没有订单沉睡</param>
+        public ActorOptionAttribute(long maxQueueCount = 0, int ideltime = 5000)
         {
             MaxQueueCount = maxQueueCount;
+            Ideltime = ideltime;
         }
 
     }

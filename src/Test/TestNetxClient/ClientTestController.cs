@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace TestNetxClient
 {
+    
     public class ClientTestController:MethodControllerBase  //or IMethodController
     {
         //public INetxSClient current { get; set; }

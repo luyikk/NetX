@@ -20,6 +20,23 @@ namespace Netx.Actor
         {
             actorCollect = new Lazy<ConcurrentDictionary<int, Actor<R>>>(true);
             Load();
+
+            if(ActorCollect.Count>0)
+                Task.Factory.StartNew(SleepingHandler);
+        }
+
+        private async void SleepingHandler()
+        {
+            while(true)
+            {
+                await Task.Delay(1000);
+
+                foreach (var item in ActorCollect.Values)
+                {
+                    if (item.IsNeedSleep)
+                        item.Action(-1, Actor<R>.SleepCmd, OpenAccess.Private, null);
+                }
+            }
         }
 
         private void Load()
