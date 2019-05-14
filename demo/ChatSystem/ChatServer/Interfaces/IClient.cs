@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using ChatServer.Model;
-using ChatTag;
 using Netx;
 
-namespace ChatServer
+namespace Interfaces
 {
     [Build]
     public interface IClient
     {
-        [TAG(ClientTag.UpdateStatus)]
+        [TAG(1001)]
         void SetUserStats(long userid, byte status);
 
-        [TAG(ClientTag.Message)]
+        [TAG(1002)]
         void SayMessage(long fromuserId, string fromusername, byte MsgType, string msg,long time);
 
-        [TAG(ClientTag.NeedLogOn)]
+        [TAG(1003)]
         void NeedLogOn();
 
-        [TAG(ClientTag.UserAdd)]
+        [TAG(1004)]
         void UserAdd(Users newuser);
     }
 }

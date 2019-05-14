@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NetxBuildAddin.Fody.2.0.4\build\NetxBuildAddin.Fody.props" Condition="Exists('..\packages\NetxBuildAddin.Fody.2.0.4\build\NetxBuildAddin.Fody.props')" />
+  <Import Project="..\packages\NetxBuildAddin.Fody.2.0.7\build\NetxBuildAddin.Fody.props" Condition="Exists('..\packages\NetxBuildAddin.Fody.2.0.7\build\NetxBuildAddin.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -76,13 +76,13 @@
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="NetxBuilder, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NetxBuildAddin.Fody.2.0.4\lib\netstandard2.0\NetxBuilder.dll</HintPath>
+      <HintPath>..\packages\NetxBuildAddin.Fody.2.0.7\lib\netstandard2.0\NetxBuilder.dll</HintPath>
     </Reference>
-    <Reference Include="NetxClient, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NetxClient.1.0.8\lib\netstandard2.0\NetxClient.dll</HintPath>
+    <Reference Include="NetxClient, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetxClient.1.1.0\lib\netstandard2.0\NetxClient.dll</HintPath>
     </Reference>
-    <Reference Include="NetxFrame, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NetxFrame.1.0.8\lib\netstandard2.0\NetxFrame.dll</HintPath>
+    <Reference Include="NetxFrame, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetxFrame.1.1.0\lib\netstandard2.0\NetxFrame.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\ZYSOCKET-protobuf-net.4.3.2\lib\net451\protobuf-net.dll</HintPath>
@@ -127,21 +127,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dependency.cs" />
-    <Compile Include="IServer.cs" />
+    <Compile Include="Interfaces\IActorService.cs" />
+    <Compile Include="Interfaces\IClient.cs" />
+    <Compile Include="Interfaces\IServer.cs" />
     <Compile Include="LogOn.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LogOn.Designer.cs">
       <DependentUpon>LogOn.cs</DependentUpon>
     </Compile>
-    <Compile Include="Message.cs" />
+    <Compile Include="Model\Message.cs" />
     <Compile Include="Register.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Register.Designer.cs">
       <DependentUpon>Register.cs</DependentUpon>
     </Compile>
-    <Compile Include="Users.cs" />
+    <Compile Include="Model\Users.cs" />
     <Compile Include="WinMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -185,12 +187,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ChatTag\ChatTag.csproj">
-      <Project>{94b16cf6-0cf6-4886-aadc-42b9de0082a2}</Project>
-      <Name>ChatTag</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.5.0.5\build\Fody.targets" Condition="Exists('..\packages\Fody.5.0.5\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -198,6 +194,6 @@
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.5.0.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.5.0.5\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\NetxBuildAddin.Fody.2.0.4\build\NetxBuildAddin.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NetxBuildAddin.Fody.2.0.4\build\NetxBuildAddin.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\NetxBuildAddin.Fody.2.0.7\build\NetxBuildAddin.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NetxBuildAddin.Fody.2.0.7\build\NetxBuildAddin.Fody.props'))" />
   </Target>
 </Project>

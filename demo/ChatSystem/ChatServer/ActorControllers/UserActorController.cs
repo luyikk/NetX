@@ -1,21 +1,21 @@
 ﻿using ChatServer.Model;
+using Interfaces;
 using Microsoft.Extensions.Logging;
 using Netx;
 using Netx.Actor;
 using Netx.Loggine;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using ZYSQL;
-using ChatTag;
+
 
 namespace ChatServer.ActorControllers
 {
     /// <summary>
     /// 用户数据库ACTOR
     /// </summary>
-    public class UserActorController:ActorController
+    public class UserActorController : ActorController, IActorService
     {
         public ILog Log { get; }
 
@@ -35,12 +35,12 @@ namespace ChatServer.ActorControllers
             Log = new DefaultLog(logger);
         }
 
-        [TAG(ActorTag.CheckUserName)]
+
         public async Task<bool> CheckUserName(string username)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-                var r= await obj.SqlExecuteScalarAsync("SELECT 1 FROM Users WHERE UserName=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", username));
+                var r = await obj.SqlExecuteScalarAsync("SELECT 1 FROM Users WHERE UserName=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", username));
 
                 if (r is null)
                     return true;
@@ -50,7 +50,7 @@ namespace ChatServer.ActorControllers
         }
 
 
-        [TAG(ActorTag.Register)]
+
         public async Task<(bool, string)> Register(Users user)
         {
             try
@@ -78,13 +78,12 @@ namespace ChatServer.ActorControllers
 
 
         [Open(OpenAccess.Internal)]
-        [TAG(ActorTag.SaveMsg)]
         public async Task<(bool, string)> SaveMessage(long fromid, long targetid, byte msgtype, string msg, bool issend)
         {
             var message = new Message()
             {
                 FromUserId = fromid,
-                Time=TimeHelper.GetTime(),
+                Time = TimeHelper.GetTime(),
                 TargetUserId = targetid,
                 MessageContext = msg,
                 MsgType = msgtype,
@@ -93,38 +92,36 @@ namespace ChatServer.ActorControllers
 
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-               var r= await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync<Message>("INSERT INTO Message(Time,MsgType,FromUserId,TargetUserId,MessageContext,IsSend)VALUES(@Time,@MsgType,@FromUserId,@TargetUserId,@MessageContext,@IsSend)", message);
+                var r = await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync<Message>("INSERT INTO Message(Time,MsgType,FromUserId,TargetUserId,MessageContext,IsSend)VALUES(@Time,@MsgType,@FromUserId,@TargetUserId,@MessageContext,@IsSend)", message);
 
-                if (r == 1)                
-                    return (true, "success");                
+                if (r == 1)
+                    return (true, "success");
                 else
                     return (false, "insert fail");
             }
 
         }
-    
 
 
-        [Open(OpenAccess.Internal)] //OpenAccess.Internal 表示无法被客户端直接访问
-        [TAG(ActorTag.CheckUserNameAndPassword)]
-        public async Task<(bool,Users,string)> LogOnUser(string username,string password)
+
+        [Open(OpenAccess.Internal)] //OpenAccess.Internal 表示无法被客户端直接访问     
+        public async Task<(bool, Users, string)> GetUserNameAndPassword(string username, string password)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
                 var r = await obj.SqlExcuteSelectFirstAsync<Users>("SELECT UserId,UserName,NickName,OnLineStatus FROM Users WHERE UserName=@UserName AND PassWord=@PassWord"
                     , new System.Data.SQLite.SQLiteParameter("@UserName", username)
-                    ,new System.Data.SQLite.SQLiteParameter("@PassWord",password)
+                    , new System.Data.SQLite.SQLiteParameter("@PassWord", password)
                     );
 
                 if (r is null)
-                    return (false, null,"username or password error");               
+                    return (false, null, "username or password error");
                 else
-                    return (true, r,"login successfully");
+                    return (true, r, "login successfully");
             }
         }
 
         [Open(OpenAccess.Internal)]
-        [TAG(ActorTag.GetUsers)]
         public async Task<List<Users>> GetUsers(string exclude_username)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
@@ -134,8 +131,7 @@ namespace ChatServer.ActorControllers
         }
 
         [Open(OpenAccess.Internal)]
-        [TAG(ActorTag.SetStatus)]
-        public async Task<bool> SetStatus(string username,byte status)
+        public async Task<bool> SetStatus(string username, byte status)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
@@ -153,12 +149,11 @@ namespace ChatServer.ActorControllers
         }
 
         [Open(OpenAccess.Internal)]
-        [TAG(ActorTag.LeavingMessage)]
         public async Task<List<LeavingMsg>> GetLeavingMessage(long userId)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-                var lmsgs= await obj.SqlExcuteSelectObjectAsync<LeavingMsg>("SELECT a.Time,a.MsgType,a.FromUserId,b.NickName,a.MessageContext FROM Message AS a LEFT JOIN Users AS b ON a.FromUserId=b.UserId WHERE a.IsSend=0 AND a.TargetUserId=@TargetUserId"
+                var lmsgs = await obj.SqlExcuteSelectObjectAsync<LeavingMsg>("SELECT a.Time,a.MsgType,a.FromUserId,b.NickName,a.MessageContext FROM Message AS a LEFT JOIN Users AS b ON a.FromUserId=b.UserId WHERE a.IsSend=0 AND a.TargetUserId=@TargetUserId"
                     , new System.Data.SQLite.SQLiteParameter("@TargetUserId", userId));
 
 

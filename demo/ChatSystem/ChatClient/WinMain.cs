@@ -1,25 +1,17 @@
-﻿using Netx;
+﻿using Interfaces;
+using Netx;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ChatTag;
 
 namespace ChatClient
 {
-    public partial class WinMain : Form,IMethodController
+    public partial class WinMain : Form, IMethodController, IClient
     {
-        public INetxSClient Current { get => Dependency.Client; set { } }
+        public INetxSClient Current { get=>Dependency.Client; set { } }
 
-        public T Get<T>()
-        {
-            return Current.Get<T>();
-        }
+        public T Get<T>() => Current.Get<T>();
+
 
         public WinMain()
         {
@@ -27,7 +19,7 @@ namespace ChatClient
         }
 
         private async void WinMain_Load(object sender, EventArgs e)
-        {           
+        {
             await LoginServer();
             await LoadingUserList();
             await GetLGetLeaving();
@@ -39,8 +31,8 @@ namespace ChatClient
         {
             foreach (var item in await Get<IServer>().GetLeavingMessage())
             {
-                SayMessage(item.FromUserId, item.NickName, item.MsgType, item.MessageContext,item.Time);
-            } 
+                SayMessage(item.FromUserId, item.NickName, item.MsgType, item.MessageContext, item.Time);
+            }
         }
 
         private async Task LoadingUserList()
@@ -92,7 +84,7 @@ namespace ChatClient
                         LogOn logOn = new LogOn();
                         logOn.ShowDialog();
 
-                        if(!await Get<IServer>().CheckLogIn())
+                        if (!await Get<IServer>().CheckLogIn())
                         {
                             this.Close();
                         }
@@ -110,7 +102,8 @@ namespace ChatClient
 
             }
         }
-        [TAG(ClientTag.UserAdd)]
+
+
         public void UserAdd(Users newuser)
         {
             this.BeginInvoke(new EventHandler((a, b) =>
@@ -135,7 +128,7 @@ namespace ChatClient
             }));
         }
 
-        [TAG(ClientTag.UpdateStatus)]
+
         public void SetUserStats(long userid, byte status)
         {
             this.BeginInvoke(new EventHandler((a, b) =>
@@ -155,8 +148,8 @@ namespace ChatClient
             }));
         }
 
-        [TAG(ClientTag.Message)]
-        public void SayMessage(long fromuserId,string fromusername, byte msgType, string msg,long time=0)
+
+        public void SayMessage(long fromuserId, string fromusername, byte msgType, string msg, long time = 0)
         {
             this.BeginInvoke(new EventHandler((a, b) =>
             {
@@ -175,7 +168,7 @@ namespace ChatClient
                         break;
                     case 2:
                         {
-                            if(time==0)
+                            if (time == 0)
                                 this.richTextBox1.AppendText($" [L]{fromusername} {DateTime.Now.ToString("T")} \r\n   {msg}\r\n");
                             else
                                 this.richTextBox1.AppendText($" [L]{fromusername} {TimeHelper.GetTime(time).ToString("T")} \r\n   {msg}\r\n");
@@ -185,7 +178,7 @@ namespace ChatClient
             }));
         }
 
-        [TAG(ClientTag.NeedLogOn)]
+
         public void NeedLogOn()
         {
             this.BeginInvoke(new EventHandler(async (a, b) =>
@@ -213,17 +206,17 @@ namespace ChatClient
                     userid = user.UserId;
                     this.richTextBox1.AppendText($"  ->{user.NickName} {DateTime.Now.ToString("T")}\r\n   {msg}\r\n");
                 }
-              
+
 
                 await Get<IServer>().Say(userid, msg);
-              
+
 
             }
             catch (NetxException er)
             {
                 MessageBox.Show(er.Message);
             }
-            
+
         }
     }
 }

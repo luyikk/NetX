@@ -1,19 +1,17 @@
 ﻿using ChatServer.Model;
+using Interfaces;
 using Microsoft.Extensions.Logging;
 using Netx;
 using Netx.Loggine;
 using Netx.Service;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using ChatTag;
 
 namespace ChatServer.AsyncControllers
 {
-    public class UserAsyncController : AsyncController
+    public class UserAsyncController : AsyncController, IServer
     {
-        public ILog Log { get;  }
+        public ILog Log { get; }
 
         public UserManager UserLines { get; }
 
@@ -43,7 +41,7 @@ namespace ChatServer.AsyncControllers
 
                 foreach (var user in UserLines.UserList.Values)
                 {
-                    if(user.Token!=null&&user.Token.IsConnect)
+                    if (user.Token != null && user.Token.IsConnect)
                         user.Token.Get<IClient>().SetUserStats(CurrentUser.UserContent.UserId, status);
                 }
 
@@ -55,14 +53,14 @@ namespace ChatServer.AsyncControllers
 
 
 
-        [TAG(ServiceTag.LogOn)]
-        public async Task<(bool,string)> LogOn(string username,string password)
+
+        public async Task<(bool, string)> LogOn(string username, string password)
         {
             var (success, user, msg) = await Actor<IActorService>().GetUserNameAndPassword(username, password);
 
             if (success)
             {
-                CurrentUser =new UserInfo(user);
+                CurrentUser = new UserInfo(user);
                 IsLogOn = true;
 
                 foreach (var otheruser in UserLines.UserList.Values)
@@ -79,29 +77,29 @@ namespace ChatServer.AsyncControllers
                 return (success, msg);
             }
         }
-               
 
-        [TAG(ServiceTag.CheckLogIn)]
+
+
         public async Task<bool> CheckLogIn()
         {
             if (IsLogOn)
             {
                 CurrentUser.Token = Current;
 
-                UserLines.UserList.AddOrUpdate(CurrentUser.UserContent.UserId, CurrentUser,(_,__)=>CurrentUser);
+                UserLines.UserList.AddOrUpdate(CurrentUser.UserContent.UserId, CurrentUser, (_, __) => CurrentUser);
 
                 await SetUserStatus(1);
             }
             return IsLogOn;
         }
 
-        [TAG(ServiceTag.GetUserList)]
+
         public async Task<List<Users>> GetUsers()
         {
             if (IsLogOn)
             {
                 return await Actor<IActorService>().GetUsers(CurrentUser.UserContent.UserName);
-              
+
             }
             else
             {
@@ -115,8 +113,7 @@ namespace ChatServer.AsyncControllers
         /// </summary>
         /// <param name="userid">-1=对所有人说</param>
         /// <param name="msg">消息</param>
-        /// <returns></returns>
-        [TAG(ServiceTag.Say)]
+        /// <returns></returns>       
         public async Task<(bool, string)> Say(long userid, string msg)
         {
             if (!IsLogOn)
@@ -132,7 +129,7 @@ namespace ChatServer.AsyncControllers
                 if (s)
                 {
                     foreach (var user in UserLines.UserList.Values)
-                        user.Token.Get<IClient>().SayMessage(CurrentUser.UserContent.UserId, CurrentUser.UserContent.NickName, 0, msg,TimeHelper.GetTime());
+                        user.Token.Get<IClient>().SayMessage(CurrentUser.UserContent.UserId, CurrentUser.UserContent.NickName, 0, msg, TimeHelper.GetTime());
 
                     return (true, "success");
                 }
@@ -165,7 +162,7 @@ namespace ChatServer.AsyncControllers
 
         }
 
-        [TAG(ServiceTag.GetLeaving)]
+
         public async Task<List<LeavingMsg>> GetLeavingMessage()
         {
             if (!IsLogOn)
@@ -203,7 +200,7 @@ namespace ChatServer.AsyncControllers
 
             if (CurrentUser != null)
             {
-                await SetUserStatus(0);              
+                await SetUserStatus(0);
             }
 
         }

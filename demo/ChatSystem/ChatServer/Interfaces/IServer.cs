@@ -1,33 +1,33 @@
-﻿using Netx;
+﻿using ChatServer.Model;
+using Netx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ChatTag;
-namespace ChatClient
+
+
+namespace Interfaces
 {
    
 
     [Build]
     public interface IServer
     {
-        [TAG(ActorTag.Register)]
-        Task<(bool, string)> Register(Users user);
-
-        [TAG(ServiceTag.LogOn)]
+      
+        [TAG(5002)]
         Task<(bool, string)> LogOn(string username, string password);
 
-        [TAG(ServiceTag.CheckLogIn)]
+        [TAG(5003)]
         Task<bool> CheckLogIn();
 
-        [TAG(ServiceTag.GetUserList)]
+        [TAG(5004)]
         Task<List<Users>> GetUsers();
 
-        [TAG(ServiceTag.Say)]
+        [TAG(5005)]
         Task<(bool, string)> Say(long userId, string msg);
 
-        [TAG(ServiceTag.GetLeaving)]
+        [TAG(5006)]
         Task<List<LeavingMsg>> GetLeavingMessage();
 
     }

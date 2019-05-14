@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,7 +22,7 @@ namespace ChatClient
         {
             try
             {
-                var service = Dependency.Client.Get<IServer>();
+                var service = Dependency.Client.Get<IActorService>();
                 var (success, msg) = await service.Register(new Users()
                 {
                     UserName = this.textBox1.Text,

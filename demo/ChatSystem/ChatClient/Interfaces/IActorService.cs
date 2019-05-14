@@ -1,32 +1,31 @@
-﻿using ChatServer.Model;
+﻿using ChatClient;
 using Netx;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using ChatTag;
 
-namespace ChatServer
+namespace Interfaces
 {
     [Build]
     public interface IActorService
     {
-        [TAG(ActorTag.Register)]
+        [TAG(10000)]
         Task<(bool, string)> Register(Users user);
 
-        [TAG(ActorTag.CheckUserNameAndPassword)]
+        [TAG(10001)]
         Task<(bool, Users, string)> GetUserNameAndPassword(string username, string password);
 
-        [TAG(ActorTag.GetUsers)]
+        [TAG(10002)]
         Task<List<Users>> GetUsers(string exclude_username);
 
-        [TAG(ActorTag.SetStatus)]
+        [TAG(10003)]
         Task<bool> SetStatus(string username, byte status);
 
-        [TAG(ActorTag.SaveMsg)]
+        [TAG(10004)]
         Task<(bool, string)> SaveMessage(long fromid, long targetid, byte msgtype, string msg, bool issend);
 
-        [TAG(ActorTag.LeavingMessage)]
+        [TAG(10005)]
         Task<List<LeavingMsg>> GetLeavingMessage(long userId);
     }
 }

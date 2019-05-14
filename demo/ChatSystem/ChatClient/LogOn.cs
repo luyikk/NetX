@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Interfaces;
+using System;
 using System.Windows.Forms;
 
 namespace ChatClient
@@ -27,11 +21,11 @@ namespace ChatClient
 
         private async void Button1_Click(object sender, EventArgs e)
         {
-            var service= Dependency.Client.Get<IServer>();
+            var service = Dependency.Client.Get<IServer>();
 
             try
             {
-               var (success,msg)= await  service.LogOn(this.textBox1.Text, this.textBox2.Text);
+                var (success, msg) = await service.LogOn(this.textBox1.Text, this.textBox2.Text);
 
                 if (success)
                 {
@@ -43,7 +37,7 @@ namespace ChatClient
                 }
 
             }
-            catch(Netx.NetxException er)
+            catch (Netx.NetxException er)
             {
                 MessageBox.Show(er.Message);
             }
