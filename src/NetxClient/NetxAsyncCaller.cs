@@ -25,13 +25,25 @@ namespace Netx.Client
         {
             var instancetype = instance.GetType();
 
-            var methods = instancetype.GetMethods();
-            foreach (var method in methods)
-                if (method.IsPublic)
-                    foreach (var attr in method.GetCustomAttributes(typeof(TAG), true))
-                        if (attr is TAG attrcmdtype)
-                            IsRegisterCmd(instance, attrcmdtype.CmdTag, instancetype, method);
 
+            foreach (var ainterface in instancetype.GetInterfaces())
+            {
+                var methods = ainterface.GetMethods();
+
+                foreach (var method in methods)
+                    foreach (var attr in method.GetCustomAttributes< TAG >(true))
+                        IsRegisterCmd(instance, attr.CmdTag, instancetype, method);
+            }
+                        
+
+            {
+                var methods = instancetype.GetMethods();
+                foreach (var method in methods)
+                    if (method.IsPublic)
+                        foreach (var attr in method.GetCustomAttributes<TAG>(true))                            
+                                IsRegisterCmd(instance, attr.CmdTag, instancetype, method);
+
+            }
            
         }
 

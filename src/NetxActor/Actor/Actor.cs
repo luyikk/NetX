@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,20 +79,16 @@ namespace Netx.Actor
             this.ActorGet = actorGet;
             this.ActorController = instance;
 
-            var options= instance.GetType().GetCustomAttributes(typeof(ActorOptionAttribute), false);
+            var options= instance.GetType().GetCustomAttributes<ActorOptionAttribute>(false);
 
-            if (options != null&&options.Length>0)
-            {
-                foreach (var attr in options)
-                    if (attr is ActorOptionAttribute option)
-                        Option = option;
+            foreach (var attr in options)
+                if (attr is ActorOptionAttribute option)
+                    Option = option;
 
-            }
-            else
+            if (Option == null)
                 Option = new ActorOptionAttribute();
-            
-           
-            
+
+
             ActorController.ActorGet = ActorGet;
             ActorController.Status = this;
             this.Container = container;
@@ -105,6 +103,71 @@ namespace Netx.Actor
         private Dictionary<int, ActorMethodRegister> LoadRegister(Type instanceType)
         {
             Dictionary<int, ActorMethodRegister> registerdict = new Dictionary<int, ActorMethodRegister>();
+
+
+            foreach (var ainterface in instanceType.GetInterfaces())
+            {
+                if (ainterface.GetCustomAttribute<Build>(true) != null)
+                {                  
+                    foreach (var method in ainterface.GetMethods())
+                    {
+                        var attrs = method.GetCustomAttributes(true);
+
+
+
+                        List<TAG> taglist = new List<TAG>();
+                        OpenAccess openAccess = OpenAccess.Public;
+                        foreach (var attr in attrs)
+                        {
+                            if (attr is TAG attrcmdtype)
+                                taglist.Add(attrcmdtype);
+                            else if (attr is OpenAttribute access)
+                                openAccess = access.Access;
+                        }
+
+                        if (taglist.Count > 0)
+                        {
+
+                            if (TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) || method.ReturnType == null)
+                            {
+                                var type = from xx in method.GetParameters()
+                                           select xx.ParameterType;
+
+                                var methodx = instanceType.GetMethod(method.Name, type.ToArray());
+
+                                if (methodx != null)
+                                {
+
+                                    var openattr=  methodx.GetCustomAttribute<OpenAttribute>();
+
+                                    if (openattr != null)
+                                        openAccess = openattr.Access;
+
+                                    foreach (var tag in taglist)
+                                    {
+                                        var sr = new ActorMethodRegister(instanceType, methodx, openAccess);
+
+                                        if (!registerdict.ContainsKey(tag.CmdTag))
+                                            registerdict.Add(tag.CmdTag, sr);
+                                        else
+                                        {
+                                            Log.Error($"Register actor service {method.Name},cmd:{tag.CmdTag} repeat");
+                                            registerdict[tag.CmdTag] = sr;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                Log.Error($"Register Actor Service Return Type Err:{method.Name},Use void, Task or Task<T>");
+                        }
+
+
+                    }
+                }
+            }
+
+
+
 
             var methods = instanceType.GetMethods();
             foreach (var method in methods)

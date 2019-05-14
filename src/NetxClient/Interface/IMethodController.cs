@@ -17,7 +17,5 @@ namespace Netx
         public INetxSClient Current { get; set; }
 
         public T Get<T>() => Current.Get<T>();
-
-
     }
 }

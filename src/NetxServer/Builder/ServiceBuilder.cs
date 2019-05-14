@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Netx.Interface;
 using Netx.Actor;
+using System.Linq;
 
 namespace Netx.Service.Builder
 {
@@ -77,6 +78,33 @@ namespace Netx.Service.Builder
             bool have = false;
             if (instanceType.BaseType == typeof(AsyncController))
             {
+              
+                foreach (var item in instanceType.GetInterfaces())
+                {
+                    if(item.GetCustomAttribute<Build>(true) !=null)
+                    {
+                        foreach (var imethod in item.GetMethods())
+                        {
+                            foreach (var attr in imethod.GetCustomAttributes<TAG>(true))
+                            {
+                                if (attr is TAG attrcmdtype)
+                                {
+                                    have = true;
+
+                                    var type = from xx in imethod.GetParameters()
+                                               select xx.ParameterType;
+
+                                    var method = instanceType.GetMethod(imethod.Name, type.ToArray());
+
+                                    if (method != null)
+                                        IsRegisterCmd(attrcmdtype.CmdTag, instanceType, method);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
                 var methods = instanceType.GetMethods();
                 foreach (var method in methods)
                     if (method.IsPublic)
@@ -89,7 +117,7 @@ namespace Netx.Service.Builder
 
                 return have;
             }
-            else if(instanceType.BaseType==typeof(ActorController))
+            else if (instanceType.BaseType == typeof(ActorController))
             {
                 Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), instanceType));
                 return false;

@@ -47,7 +47,14 @@ public class MakeBne
             }
 
             codes.Add(Processor.Create(OpCodes.Call, Method));
-            codes.Add(Processor.Create(OpCodes.Ret));
+
+            if (Method.ReturnType.Name != "Void")
+                codes.Add(Processor.Create(OpCodes.Ret));
+            else
+            {
+                codes.Add(End);
+                codes.Add(Processor.Create(OpCodes.Ret));
+            }
 
             return codes;
         }

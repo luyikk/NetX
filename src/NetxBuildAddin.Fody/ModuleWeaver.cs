@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Netx;
 
+
 public partial class ModuleWeaver : BaseModuleWeaver
 {
  
@@ -27,8 +28,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
             newType.Fields.Add(obj);
 
             AddConstructor(newType);
-            
-            var allRpc = iface.GetMethods().Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null);
+
+            var allRpc = iface.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null);
 
             if (allRpc.FirstOrDefault(p => p.ContainsGenericParameter) != null)
             {
@@ -38,6 +39,23 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
             foreach (var rpc in allRpc)
                 AddRpc(newType, rpc);
+
+
+            foreach (var ibase in iface.Interfaces)
+            {
+                var baseallRpc = ibase.InterfaceType.Resolve().Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null);
+
+                if (baseallRpc.FirstOrDefault(p => p.ContainsGenericParameter) != null)
+                {
+                    LogInfo($"not make build the '{iface.FullName}',is have generic method.");
+                    continue;
+                }
+
+                foreach (var rpc in baseallRpc)
+                    AddRpc(newType, rpc);
+            }
+
+
 
             ModuleDefinition.Types.Add(newType);
 
@@ -94,7 +112,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     void AddMethod(TypeDefinition typeDefinition)
     {
-
+       
         var NewMethod = new MethodDefinition("Runs__Make", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual, ModuleDefinition.ImportReference(typeof(object)));
 
         var il = NewMethod.Body.GetILProcessor();
@@ -102,7 +120,99 @@ public partial class ModuleWeaver : BaseModuleWeaver
         NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(Int32))));
         NewMethod.Parameters.Add(new ParameterDefinition("args", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(object[]))));
 
-        List<MakeBne> benList = new List<MakeBne>();
+             
+        Dictionary<int, MethodDefinition> methods = new Dictionary<int, MethodDefinition>();
+
+        foreach (var ifacer in typeDefinition.Interfaces)
+        {
+
+            var iface = ifacer.InterfaceType.Resolve();
+
+            if (iface != null)
+            {
+                var build = iface.CustomAttributes.FirstOrDefault(p => p.AttributeType.Name == "Build");
+                if (build != null)
+                {
+
+                    LogInfo("USE INTERFACE DEF  Runs__Make");
+
+                    foreach (var method in iface.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
+                    {
+                        var tag = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG");
+                        if (tag is null)
+                            return;
+                        var cmdx = tag.ConstructorArguments.First().Value;
+                        var cmd = 0;
+                        switch (cmdx)
+                        {
+                            case Mono.Cecil.CustomAttributeArgument args:
+                                cmd = (int)args.Value;
+                                break;
+                            default:
+                                cmd = (int)cmdx;
+                                break;
+                        }
+
+                        methods[cmd] = method;
+
+                    }
+                }
+            }
+            else
+            {
+                string dllname = System.Environment.CurrentDirectory+"/"+ifacer.InterfaceType.Scope.Name + ".dll";
+                try
+                {
+                    var module = Mono.Cecil.ModuleDefinition.ReadModule(dllname);
+
+
+                     
+
+                   var ifacec = module?.GetType(ifacer.InterfaceType.FullName);
+
+
+                      ifacec = module.ImportReference(ifacec).Resolve();
+
+                    var build = ifacec.CustomAttributes.FirstOrDefault(p => p.AttributeType.Name == "Build");
+                    if (build != null)
+                    {
+
+                        LogInfo("USE INTERFACE DEF  Runs__Make");
+
+                        foreach (var method in ifacec.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
+                        {
+                            var tag = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG");
+                            if (tag is null)
+                                return;
+                            var cmdx = tag.ConstructorArguments.First().Value;
+                            var cmd = 0;
+                            switch (cmdx)
+                            {
+                                case Mono.Cecil.CustomAttributeArgument args:
+                                    cmd = (int)args.Value;
+                                    break;
+                                default:
+                                    cmd = (int)cmdx;
+                                    break;
+                            }
+
+                            var mc = typeDefinition.Methods.Where(p => p.Name == method.Name && p.Parameters.Count == method.Parameters.Count).ToArray();
+                            if (mc.Length > 0)
+                                methods[cmd] = mc[0];
+                            else
+                                LogError("not find "+ method.Name);
+
+                        }
+                    }
+
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    LogError("not find " + dllname);
+                }
+            }
+        }
+
 
         foreach (var method in typeDefinition.GetMethods().Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
         {
@@ -121,39 +231,53 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     break;
             }
 
-            MakeBne bne = new MakeBne(il)
-            {
-                Cmd = cmd,
-                Method = method,
-                ModuleWeaver = this               
-            };
-            benList.Add(bne);
+            methods[cmd] = method;
+
         }
 
-        for (int i = 0; i < benList.Count; i++)
+
+
+
+        if(methods.Count > 0)
         {
-            if (i + 1 < benList.Count)
+            List<MakeBne> benList = new List<MakeBne>();
+
+            foreach (var methodkv in methods)
             {
-                benList[i].Next = benList[i + 1].Start;
+                MakeBne bne = new MakeBne(il)
+                {
+                    Cmd = methodkv.Key,
+                    Method = methodkv.Value,
+                    ModuleWeaver = this
+                };
+                benList.Add(bne);
             }
-            else
+
+
+            for (int i = 0; i < benList.Count; i++)
             {
-                benList[i].IsEnd = true;
+                if (i + 1 < benList.Count)
+                {
+                    benList[i].Next = benList[i + 1].Start;
+                }
+                else
+                {
+                    benList[i].IsEnd = true;
+                }
             }
-        }
+        
 
-
-        List<List<Instruction>> codes = new List<List<Instruction>>();
-
-        foreach (var p in benList)
-        {
-            foreach (var item in p.MakeCode())
+            foreach (var p in benList)
             {
-                il.Append(item);
-            } 
-        }
+                foreach (var item in p.MakeCode())
+                {
+                    il.Append(item);
+                }
+            }
 
-        typeDefinition.Methods.Add(NewMethod);
+            if(benList.Count>0)
+                typeDefinition.Methods.Add(NewMethod);
+        }
     }
 
 
