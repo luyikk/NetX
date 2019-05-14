@@ -22,7 +22,7 @@ namespace ChatClient
         {
             try
             {
-                var service = Dependency.Client.Get<IActorService>();
+                var service = Dependency.Client.Get<IServer>();
                 var (success, msg) = await service.Register(new Users()
                 {
                     UserName = this.textBox1.Text,

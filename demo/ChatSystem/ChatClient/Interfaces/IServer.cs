@@ -27,5 +27,8 @@ namespace Interfaces
         [TAG(5006)]
         Task<List<LeavingMsg>> GetLeavingMessage();
 
+        [TAG(10000)]
+        Task<(bool, string)> Register(Users user);
+
     }
 }

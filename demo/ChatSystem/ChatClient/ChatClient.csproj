@@ -127,7 +127,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dependency.cs" />
-    <Compile Include="Interfaces\IActorService.cs" />
     <Compile Include="Interfaces\IClient.cs" />
     <Compile Include="Interfaces\IServer.cs" />
     <Compile Include="LogOn.cs">
