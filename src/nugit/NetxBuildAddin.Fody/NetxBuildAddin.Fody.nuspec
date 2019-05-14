@@ -16,7 +16,7 @@
     <tags>Netx</tags>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="Fody" version="5.0.5" />
+        <dependency id="Fody" version="4.2.1" />
       </group>
     </dependencies>
   </metadata>
