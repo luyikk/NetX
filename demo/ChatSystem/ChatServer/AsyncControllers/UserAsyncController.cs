@@ -15,18 +15,15 @@ namespace ChatServer.AsyncControllers
 
         public UserManager UserLines { get; }
 
+        public bool IsLogOn { get; private set; }
+
+        public UserInfo CurrentUser { get; private set; }
+
         public UserAsyncController(ILogger<UserAsyncController> logger, UserManager userManager)
         {
             Log = new DefaultLog(logger);
             this.UserLines = userManager;
         }
-
-
-
-
-        public bool IsLogOn { get; private set; }
-        public UserInfo CurrentUser { get; private set; }
-
 
         /// <summary>
         /// 设置当前用户状态
@@ -35,6 +32,12 @@ namespace ChatServer.AsyncControllers
         /// <returns></returns>
         private async Task<bool> SetUserStatus(byte status)
         {
+            if (!IsLogOn)
+            {
+                Get<IClient>().NeedLogOn();
+                return false;
+            }
+
             if (await Actor<IActorService>().SetStatus(CurrentUser.UserContent.UserName, status))
             {
                 CurrentUser.Status = status;
@@ -50,9 +53,7 @@ namespace ChatServer.AsyncControllers
             else
                 return false;
         }
-
-
-
+               
 
         public async Task<(bool, string)> LogOn(string username, string password)
         {
@@ -77,8 +78,7 @@ namespace ChatServer.AsyncControllers
                 return (success, msg);
             }
         }
-
-
+        
 
         public async Task<bool> CheckLogIn()
         {

@@ -94,7 +94,7 @@ namespace Netx.Service
                                     if(ActorTokenDict.TryRemove(timeKey.Key, out AsyncToken _))
                                     {
                                         token.Close();
-                                        Log.Trace($"session:{ token.SessionId} is remove");
+                                        Log.Trace($"session:{ token.SessionId} remove");
                                     }
                             }
                         }
