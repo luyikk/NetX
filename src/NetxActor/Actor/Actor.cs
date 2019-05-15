@@ -309,11 +309,12 @@ namespace Netx.Actor
 
                             lastRuntime = TimeHelper.GetTime();
 
-                            if (EventSourcing != null)
-                            {
-                                msg.CompleteTime= lastRuntime;
-                                EventSourcing(ActorController, msg);
-                            }
+                            if (EventSourcing != null)                            
+                                if (msg.Cmd != SleepCmd)
+                                {
+                                    msg.CompleteTime = lastRuntime;
+                                    EventSourcing(ActorController, msg);
+                                }                            
 
                              
 

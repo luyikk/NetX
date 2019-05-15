@@ -9,7 +9,7 @@ namespace Netx
     {
         IServiceProvider Container { get; }
         T Get<T>();
-        ILogger GetLogger(string categoryName);
+        ILogger GetLogger<T>();
         void Action(int cmdTag, params object[] args);
         Task AsyncAction(int cmdTag, params object[] args);
         Task<IResult> AsyncFunc(int cmdTag, params object[] args);

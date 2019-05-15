@@ -17,8 +17,8 @@ namespace Netx.Actor
         public ActorRunBase(IServiceProvider container)
         {
             Container = container;
-            this.LoggerFactory = container.GetRequiredService<ILoggerFactory>();
-            Log = new DefaultLog(LoggerFactory.CreateLogger("Actor Run->"));
+            var loggerFactory = container.GetRequiredService<ILoggerFactory>();
+            Log = new DefaultLog(loggerFactory.CreateLogger("Actor Run->"));
             IdsManager = container.GetRequiredService<IIds>();
             SerializationPacker.Serialization = SerializationPacker.Serialization??container.GetRequiredService<ISerialization>();
             var actorscheduler = container.GetService<ActorScheduler>();

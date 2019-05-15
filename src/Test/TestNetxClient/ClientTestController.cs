@@ -26,7 +26,7 @@ namespace TestNetxClient
         [TAG(2001)]
         public Task<int> Add(int a,int b)
         {
-            ILog log =new DefaultLog(Current.GetLogger("Add"));
+            ILog log =new DefaultLog(Current.GetLogger<ClientTestController>());
             
             log.Info($"server request {a}+{b}");
             return Task.FromResult(a+b);

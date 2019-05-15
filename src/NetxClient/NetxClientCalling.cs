@@ -6,19 +6,24 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ZYSocket;
 using ZYSocket.FiberStream;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Netx.Client
 {
-    public abstract  class NetxClientCalling: NetxAsyncRegisterInstance,INetxSClient
+    public abstract class NetxClientCalling : NetxAsyncRegisterInstance, INetxSClient
     {
         public NetxClientCalling(IServiceProvider container)
           : base(container)
         {
 
         }
+        public ILogger GetLogger<T>()
+        {
+            return Container.GetRequiredService<ILogger<T>>();
 
-        public ILogger GetLogger(string categoryName)=> LoggerFactory.CreateLogger(categoryName);
-       
+        }
+
+
 
         protected async Task Calling(ReadBytes read)
         {
@@ -59,16 +64,16 @@ namespace Netx.Client
                     if (argslen == service.ArgsLen)
                     {
                         object[] args = new object[argslen];
-                        for (int i = 0; i < argslen; i++)                        
-                            args[i] = base.ReadData(read, service.ArgsType[i]);                          
-                          
-                        
-                        RunCall(service, cmd.Value, id, runtype, args);                      
+                        for (int i = 0; i < argslen; i++)
+                            args[i] = base.ReadData(read, service.ArgsType[i]);
+
+
+                        RunCall(service, cmd.Value, id, runtype, args);
                     }
                     else
                     {
                         Log.WarnFormat("call method tag :{0} Args Error: len {1}->{2}  to\r\n  {3}", cmd.Value, argslen, service.ArgsType.Length, service);
-                        await SendError(id, $"call method tag :{ cmd.Value} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);                   
+                        await SendError(id, $"call method tag :{ cmd.Value} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
                     }
                 }
 
@@ -77,11 +82,11 @@ namespace Netx.Client
             else
             {
                 Log.WarnFormat("call read cmd error");
-                await SendError(-1, "not read cmd", ErrorType.NotReadCmd);               
+                await SendError(-1, "not read cmd", ErrorType.NotReadCmd);
             }
         }
 
-        private async void RunCall(InstanceRegister service,int cmd,long id,byte runType, object[] args)
+        private async void RunCall(InstanceRegister service, int cmd, long id, byte runType, object[] args)
         {
             try
             {
@@ -95,7 +100,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             service.Method.Execute(service.Instance, args);
-                          
+
                             return;
                         }
                         break;
@@ -106,7 +111,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             await service.Method.ExecuteAsync(service.Instance, args);
-                          
+
                             await SendResult(id);
                             return;
                         }
@@ -118,7 +123,7 @@ namespace Netx.Client
                                 controller.Current = this;
 
                             var ret_value = (object)await service.Method.ExecuteAsync(service.Instance, args);
-                         
+
                             switch (ret_value)
                             {
                                 case Result result:
@@ -146,7 +151,7 @@ namespace Netx.Client
 
             }
             catch (NetxException er)
-            {               
+            {
                 Log.Error(er);
                 await SendError(id, $"Client Method Tag:{cmd} Call Err:{er.Message}", ErrorType.CallErr);
             }
@@ -163,6 +168,6 @@ namespace Netx.Client
             return SendError(id, $"call method:{service}  not find runtype:{runtype}", ErrorType.NotRunType);
         }
 
- 
     }
+
 }

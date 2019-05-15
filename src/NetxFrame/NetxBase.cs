@@ -14,11 +14,7 @@ namespace Netx
     {
 
         protected IIds IdsManager { get; set; }
-
-        /// <summary>
-        /// 日记工厂类
-        /// </summary>
-        protected ILoggerFactory LoggerFactory { get;  set; }
+     
         /// <summary>
         /// 日记输出
         /// </summary>

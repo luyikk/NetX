@@ -27,9 +27,8 @@ namespace Netx.Service
             SessionId = sessionId;
             FiberRw = fiberRw;
             IsConnect = true;
-            IWrite = fiberRw;
-            LoggerFactory = container.GetRequiredService<ILoggerFactory>();
-            Log = new DefaultLog(LoggerFactory.CreateLogger<AsyncToken>());
+            IWrite = fiberRw;           
+            Log = new DefaultLog(container.GetRequiredService<ILogger<AsyncToken>>());
             IdsManager = container.GetRequiredService<IIds>();
         }
 

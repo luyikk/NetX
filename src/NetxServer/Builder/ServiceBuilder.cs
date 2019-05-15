@@ -209,7 +209,7 @@ namespace Netx.Service.Builder
             if (config is null)
             {
                 Container.AddLogging(p =>
-                {
+                {                   
                     p.AddConsole();
                     p.SetMinimumLevel(LogLevel.Trace);
                 });

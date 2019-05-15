@@ -27,7 +27,7 @@ namespace ChatServer
                   })
                  
                  .ConfigNetWork(p =>
-                 {
+                 {                 
                      p.Port = 3000;
                  })
                  .RegisterService(Assembly.GetExecutingAssembly())
