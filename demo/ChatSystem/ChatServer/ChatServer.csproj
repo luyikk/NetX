@@ -6,16 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetxServer" Version="1.1.1" />
-    <PackageReference Include="ZYSQL" Version="1.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NetxServer" Version="1.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="server.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="UserDatabase.db3">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

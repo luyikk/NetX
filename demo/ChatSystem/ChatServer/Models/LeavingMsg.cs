@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ChatServer.Model
+namespace ChatServer.Models
 {
     public class LeavingMsg
     {

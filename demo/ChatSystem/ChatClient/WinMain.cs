@@ -104,13 +104,13 @@ namespace ChatClient
         }
 
 
-        public void UserAdd(Users newuser)
+        public void UserAdd(User newuser)
         {
             this.BeginInvoke(new EventHandler((a, b) =>
             {
                 foreach (ListViewItem item in this.listView1.Items)
                 {
-                    if (item.Tag is Users user)
+                    if (item.Tag is User user)
                     {
                         if (user.UserId == newuser.UserId)
                             return;
@@ -136,7 +136,7 @@ namespace ChatClient
 
                 foreach (ListViewItem item in this.listView1.Items)
                 {
-                    if (item.Tag is Users user)
+                    if (item.Tag is User user)
                     {
                         if (user.UserId == userid)
                         {
@@ -201,7 +201,7 @@ namespace ChatClient
 
                 long userid = -1;
 
-                if (select is Users user)
+                if (select is User user)
                 {
                     userid = user.UserId;
                     this.richTextBox1.AppendText($"  ->{user.NickName} {DateTime.Now.ToString("T")}\r\n   {msg}\r\n");

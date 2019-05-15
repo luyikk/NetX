@@ -1,4 +1,4 @@
-﻿using ChatServer.Model;
+﻿using ChatServer.Models;
 using Interfaces;
 using Microsoft.Extensions.Logging;
 using Netx;
@@ -7,73 +7,53 @@ using Netx.Loggine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZYSQL;
-
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatServer.ActorControllers
 {
     /// <summary>
     /// 用户数据库ACTOR
     /// </summary>
+    [ActorOption(1000,1000)]
     public class UserActorController : ActorController, IActorService
     {
         public ILog Log { get; }
 
-        public UserActorController(ILogger<UserActorController> logger)
-        {
-            ZYSQL.SqlInstance.Instance.InstallConfig(new DataConnectConfig[]
-            {
-                new DataConnectConfig()
-                {
-                    Name="DefautConnectionString",
-                    ConnectionString="Data Source=|DataDirectory|./UserDatabase.db3;Pooling=true;FailIfMissing=false",
-                    SqlType="SQLite",
-                    MaxCount=100
-                }
-             });
+        public UserDatabaseContext UserDatabase { get; }
 
+        public UserActorController(ILogger<UserActorController> logger,UserDatabaseContext userDatabaseContext)
+        {         
             Log = new DefaultLog(logger);
+            UserDatabase = userDatabaseContext;
+            UserDatabase.Database.EnsureCreated();
         }
 
 
-        public async Task<bool> CheckUserName(string username)
+        public Task<bool> CheckUserName(string username)
         {
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-            {
-                var r = await obj.SqlExecuteScalarAsync("SELECT 1 FROM Users WHERE UserName=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", username));
-
-                if (r is null)
-                    return true;
-                else
-                    return false;
-            }
+           
+            if (UserDatabase.Users.SingleOrDefault(p => p.UserName == username) ==null)
+                return Task.FromResult(true);
+            else
+                return Task.FromResult(false);
         }
 
 
 
         public async Task<(bool, string)> Register(Users user)
-        {
-            try
-            {
-                var ishave = await CheckUserName(user.UserName);
+        {            
+            var ishave = await CheckUserName(user.UserName);
 
-                if (!ishave)
-                    return (false, "username is invalid");
+            if (!ishave)
+                return (false, "username is invalid");
 
-                using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-                {
-                    var p = await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync<Users>("INSERT INTO Users(UserName,NickName,PassWord,OnLineStatus)VALUES(@UserName,@NickName,@PassWord,@OnLineStatus)", user);
+            await UserDatabase.Users.AddAsync(user);
 
-                    if (p > 0)
-                        return (true, null);
-                    else
-                        return (false, "fail");
-                }
-            }
-            catch (Exception er)
-            {
-                return (false, er.ToString());
-            }
+            if(await UserDatabase.SaveChangesAsync()>0)
+                return (true, "success");
+            else
+                return (false, "fail");
         }
 
 
@@ -90,77 +70,102 @@ namespace ChatServer.ActorControllers
                 IsSend = issend
             };
 
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-            {
-                var r = await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync<Message>("INSERT INTO Message(Time,MsgType,FromUserId,TargetUserId,MessageContext,IsSend)VALUES(@Time,@MsgType,@FromUserId,@TargetUserId,@MessageContext,@IsSend)", message);
-
-                if (r == 1)
-                    return (true, "success");
-                else
-                    return (false, "insert fail");
-            }
-
+            await UserDatabase.Message.AddAsync(message);         
+            return (true, "success");        
+        
         }
 
 
 
         [Open(OpenAccess.Internal)] //OpenAccess.Internal 表示无法被客户端直接访问     
-        public async Task<(bool, Users, string)> GetUserNameAndPassword(string username, string password)
+        public async Task<(bool, User, string)> GetUserNameAndPassword(string username, string password)
         {
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-            {
-                var r = await obj.SqlExcuteSelectFirstAsync<Users>("SELECT UserId,UserName,NickName,OnLineStatus FROM Users WHERE UserName=@UserName AND PassWord=@PassWord"
-                    , new System.Data.SQLite.SQLiteParameter("@UserName", username)
-                    , new System.Data.SQLite.SQLiteParameter("@PassWord", password)
-                    );
 
-                if (r is null)
-                    return (false, null, "username or password error");
-                else
-                    return (true, r, "login successfully");
+            var user = await UserDatabase.Users.Where(p => p.UserName == username && p.PassWord == password).FirstOrDefaultAsync();
+
+            if (user is null)
+                return (false, null, "username or password error");
+            else
+            {
+                var datauser = new User()
+                {
+                    NickName = user.NickName,
+                    OnLineStatus = user.OnLineStatus,                  
+                    UserId = user.UserId,
+                    UserName = user.UserName
+                };
+
+                return (true, datauser, "login successfully");
             }
+
         }
 
         [Open(OpenAccess.Internal)]
-        public async Task<List<Users>> GetUsers(string exclude_username)
-        {
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-            {
-                return await obj.SqlExcuteSelectObjectAsync<Users>("SELECT UserId,UserName,NickName,OnLineStatus FROM Users WHERE UserName!=@UserName", new System.Data.SQLite.SQLiteParameter("@UserName", exclude_username));
-            }
+        public Task<List<User>> GetUsers(string exclude_username)
+        {           
+            var userlist = from user in UserDatabase.Users
+                           where user.UserName != exclude_username
+                           select new User (){ UserId=  user.UserId, UserName=user.UserName, NickName= user.NickName, OnLineStatus= user.OnLineStatus };
+
+            return Task.FromResult(userlist.ToList());
         }
 
         [Open(OpenAccess.Internal)]
         public async Task<bool> SetStatus(string username, byte status)
         {
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
-            {
-                var i = await obj.SqlExecuteNonQueryAsync("UPDATE Users SET OnLineStatus=@OnLineStatus WHERE UserName=@UserName"
-                    , new System.Data.SQLite.SQLiteParameter("@UserName", username)
-                    , new System.Data.SQLite.SQLiteParameter("@OnLineStatus", status)
-                    );
 
-                if (i == 1)
+            var user = await UserDatabase.Users.SingleOrDefaultAsync(p => p.UserName == username);
+            if (user is null)
+                return false;
+            else
+            {
+                user.OnLineStatus = status;
+
+                if (await UserDatabase.SaveChangesAsync() > 0)
                     return true;
                 else
                     return false;
-
+               
             }
         }
 
         [Open(OpenAccess.Internal)]
         public async Task<List<LeavingMsg>> GetLeavingMessage(long userId)
         {
-            using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
+
+            var leavingMsgList = UserDatabase.Message.Where(p => p.TargetUserId == userId && p.IsSend == false);                                
+
+            List<LeavingMsg> list = new List<LeavingMsg>();
+
+            foreach (var msg in leavingMsgList)
             {
-                var lmsgs = await obj.SqlExcuteSelectObjectAsync<LeavingMsg>("SELECT a.Time,a.MsgType,a.FromUserId,b.NickName,a.MessageContext FROM Message AS a LEFT JOIN Users AS b ON a.FromUserId=b.UserId WHERE a.IsSend=0 AND a.TargetUserId=@TargetUserId"
-                    , new System.Data.SQLite.SQLiteParameter("@TargetUserId", userId));
+                await UserDatabase.Entry(msg)
+                .Reference(b => b.FromUser)
+                .LoadAsync();
 
+                msg.IsSend = true;
+                list.Add(new LeavingMsg()
+                {
+                    FromUserId = msg.FromUserId,
+                    MessageContext = msg.MessageContext,
+                    MsgType = msg.MsgType,
+                    NickName = msg.FromUser.NickName,
+                    Time = msg.Time
+                });
+            }           
+         
 
+            return list;
+        }
 
-                obj.SqlExecuteNonQuery("UPDATE Message SET IsSend=1 WHERE TargetUserId=@TargetUserId", new System.Data.SQLite.SQLiteParameter("@TargetUserId", userId));
+        public async override Task Sleeping()
+        {
+            if (UserDatabase.ChangeTracker.HasChanges())
+            {
+                var i = await UserDatabase.SaveChangesAsync();
 
-                return lmsgs;
+                if (i > 0)
+                    Log.Info($"save {i} row data");
             }
         }
 

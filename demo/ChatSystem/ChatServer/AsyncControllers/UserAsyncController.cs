@@ -1,4 +1,5 @@
 ﻿using ChatServer.Model;
+using ChatServer.Models;
 using Interfaces;
 using Microsoft.Extensions.Logging;
 using Netx;
@@ -61,6 +62,7 @@ namespace ChatServer.AsyncControllers
 
             if (success)
             {
+                user.PassWord = null;
                 CurrentUser = new UserInfo(user);
                 IsLogOn = true;
 
@@ -94,7 +96,7 @@ namespace ChatServer.AsyncControllers
         }
 
 
-        public async Task<List<Users>> GetUsers()
+        public async Task<List<User>> GetUsers()
         {
             if (IsLogOn)
             {

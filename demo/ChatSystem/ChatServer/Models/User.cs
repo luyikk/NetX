@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ChatServer.Model
+namespace ChatServer.Models
 {
-    public class Users
+    public class User
     {
         public long UserId { get; set; }
         public string UserName { get; set; }

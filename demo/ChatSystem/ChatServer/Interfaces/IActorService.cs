@@ -1,4 +1,5 @@
 ﻿using ChatServer.Model;
+using ChatServer.Models;
 using Netx;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,10 @@ namespace Interfaces
         Task<(bool, string)> Register(Users user);
 
         [TAG(10001)]
-        Task<(bool, Users, string)> GetUserNameAndPassword(string username, string password);
+        Task<(bool, User, string)> GetUserNameAndPassword(string username, string password);
 
         [TAG(10002)]
-        Task<List<Users>> GetUsers(string exclude_username);
+        Task<List<User>> GetUsers(string exclude_username);
 
         [TAG(10003)]
         Task<bool> SetStatus(string username, byte status);

@@ -19,6 +19,6 @@ namespace Interfaces
         void NeedLogOn();
 
         [TAG(1004)]
-        void UserAdd(Users newuser);
+        void UserAdd(User newuser);
     }
 }

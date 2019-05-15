@@ -19,7 +19,7 @@ namespace Interfaces
         Task<bool> CheckLogIn();
 
         [TAG(5004)]
-        Task<List<Users>> GetUsers();
+        Task<List<User>> GetUsers();
 
         [TAG(5005)]
         Task<(bool, string)> Say(long userId, string msg);
@@ -28,7 +28,7 @@ namespace Interfaces
         Task<List<LeavingMsg>> GetLeavingMessage();
 
         [TAG(10000)]
-        Task<(bool, string)> Register(Users user);
+        Task<(bool, string)> Register(User user);
 
     }
 }

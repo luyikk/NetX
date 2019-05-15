@@ -1,4 +1,5 @@
 ﻿using ChatServer.Model;
+using ChatServer.Models;
 using Netx;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Interfaces
         Task<bool> CheckLogIn();
 
         [TAG(5004)]
-        Task<List<Users>> GetUsers();
+        Task<List<User>> GetUsers();
 
         [TAG(5005)]
         Task<(bool, string)> Say(long userId, string msg);

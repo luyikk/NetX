@@ -23,7 +23,7 @@ namespace ChatClient
             try
             {
                 var service = Dependency.Client.Get<IServer>();
-                var (success, msg) = await service.Register(new Users()
+                var (success, msg) = await service.Register(new User()
                 {
                     UserName = this.textBox1.Text,
                     PassWord = this.textBox2.Text,

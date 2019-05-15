@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatServer.Model;
+using ChatServer.Models;
 using Netx;
 
 namespace Interfaces
@@ -19,6 +19,6 @@ namespace Interfaces
         void NeedLogOn();
 
         [TAG(1004)]
-        void UserAdd(Users newuser);
+        void UserAdd(User newuser);
     }
 }
