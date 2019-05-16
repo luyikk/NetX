@@ -46,7 +46,7 @@ namespace Netx.Service
 
         private bool ConnectionFilter(ISockAsyncEventAsServer socketAsync)
         {
-            this.Log.TraceFormat("IP Connect:{0}", socketAsync?.AcceptSocket?.RemoteEndPoint);
+            this.Log.Trace($"IP Connect:{socketAsync?.AcceptSocket?.RemoteEndPoint}");
             return true;
         }
 
