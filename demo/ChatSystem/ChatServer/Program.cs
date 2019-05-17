@@ -34,7 +34,8 @@ namespace ChatServer
                       p.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error);
                   })
                  .ConfigNetWork(p =>
-                 {                 
+                 {                
+                     
                      p.Port = 3000;
                  })
                  .RegisterService(Assembly.GetExecutingAssembly())

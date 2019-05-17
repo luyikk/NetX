@@ -20,6 +20,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
         var allinterface = GetBuildInterfaces();
 
+        Dictionary<string, MethodDefinition> MethodDict = new Dictionary<string, MethodDefinition>();
+
         foreach (var iface in allinterface)
         {
             var newType = new TypeDefinition(iface.Namespace, iface.Name + "_Builder_Netx_Implementation", TypeAttributes.Public| TypeAttributes.BeforeFieldInit, TypeSystem.ObjectReference);
@@ -27,7 +29,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             obj = new FieldDefinition("obj", FieldAttributes.Private, ModuleDefinition.ImportReference(typeof(INetxBuildInterface)));           
             newType.Fields.Add(obj);
 
-            AddConstructor(newType);
+            var method= AddConstructor(newType);
 
             var allRpc = iface.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null);
 
@@ -55,11 +57,62 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     AddRpc(newType, rpc);
             }
 
+            var implementationMethod= AddGetImplementation(newType, iface, method);
 
-
+            MethodDict.Add(iface.FullName, implementationMethod);
             ModuleDefinition.Types.Add(newType);
 
             LogInfo($"Added Packer Type '{newType.FullName}' with Interface '{iface.FullName}'.");
+
+
+        }
+
+
+
+        var app = GetApp();
+        if (app != null)
+        {
+            var alldef = GetAllClass();
+
+            foreach (var def in alldef)
+            {
+                foreach (var method in def.GetMethods())
+                {
+                    try
+                    {
+                        foreach (var item in method.Body.Instructions)
+                        {
+                            if (item.OpCode == OpCodes.Callvirt || item.OpCode == OpCodes.Call)
+                            {
+                                if (item.Operand is GenericInstanceMethod reference)
+                                {
+                                    if (reference.IsGenericInstance == true
+                                        && reference.HasGenericParameters == false
+                                        && reference.HasGenericArguments == true && reference.Parameters.Count == 0 && reference.GenericArguments.Count == 1)
+                                    {
+                                        var call = reference.GenericArguments[0].FullName;
+
+                                        if (MethodDict.ContainsKey(call))
+                                        {
+                                            var li = method.Body.GetILProcessor();
+                                            var newcall = li.Create(OpCodes.Call, MethodDict[call]);
+                                            li.Replace(item, newcall);
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
+            }
+
         }
 
         var actors = GetActorControllers();
@@ -81,9 +134,26 @@ public partial class ModuleWeaver : BaseModuleWeaver
     }
 
 
-    TypeDefinition[] GetBuildClass()
+
+
+
+
+  TypeDefinition GetApp()
+    {
+        return ModuleDefinition.GetAllTypes().FirstOrDefault(p => p.IsClass && p.BaseType?.FullName == "Xamarin.Forms.Application");
+    }
+
+    TypeDefinition[] GetAllClass()
     {
         var all = ModuleDefinition.GetAllTypes();
+        return all.Where(p => p.IsClass).ToArray();
+    }
+
+
+
+    TypeDefinition[] GetBuildClass()
+    {
+      
         return ModuleDefinition.GetAllTypes().Where(p => p.IsClass && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
     }
 
@@ -105,6 +175,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
    TypeDefinition[] GetBuildInterfaces()
     {
+       
         var all = ModuleDefinition.GetAllTypes();
         return ModuleDefinition.GetAllTypes().Where(p => p.IsInterface && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
     }
@@ -280,9 +351,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         }
     }
 
-
-
-
+  
 
     public List<Instruction> MakeBneCall(ILProcessor processor,MethodDefinition method,int cmd,Instruction next)
     {
@@ -319,7 +388,19 @@ public partial class ModuleWeaver : BaseModuleWeaver
     }
 
 
-    void AddConstructor(TypeDefinition newType)
+    MethodDefinition AddGetImplementation(TypeDefinition newType, TypeDefinition infice, MethodDefinition ctor)
+    {
+        var method = new MethodDefinition("GetImplementation", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, infice);
+        method.Parameters.Add(new ParameterDefinition("netx_interface", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(INetxBuildInterface))));
+        var processor = method.Body.GetILProcessor();
+        processor.Emit(OpCodes.Ldarg_0);
+        processor.Emit(OpCodes.Newobj, ctor);
+        processor.Emit(OpCodes.Ret);
+        newType.Methods.Add(method);
+        return method;
+    }
+
+    MethodDefinition AddConstructor(TypeDefinition newType)
     {
         var method = new MethodDefinition(".ctor", MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName|MethodAttributes.HideBySig, TypeSystem.VoidReference);
         var objectConstructor = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition.GetConstructors().First());
@@ -335,6 +416,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         processor.Emit(OpCodes.Stfld, obj);
         processor.Emit(OpCodes.Ret);
         newType.Methods.Add(method);
+        return method;
     }
 
 
@@ -604,5 +686,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
 
     public override bool ShouldCleanReference => true;
+
+   
 }
 

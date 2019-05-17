@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Microsoft.Extensions.Internal;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Netx
 {
+  
     public abstract class NetxFodyInstance:NetxAsync
     {    
 
-        protected Dictionary<Type, Type> FodyType { get; set; } = new Dictionary<Type, Type>();
-
+        protected Dictionary<Type, ObjectMethodExecutor> FodyType { get; set; } = new Dictionary<Type, ObjectMethodExecutor>();
 
         public virtual T Get<T>()
         {           
@@ -21,14 +23,21 @@ namespace Netx
                 var implementationType = assembly.GetType(interfaceType.FullName + "_Builder_Netx_Implementation");
                 if (implementationType == null)
                     throw new NetxException($"not find with {interfaceType.FullName} the Implementation", ErrorType.FodyInstallErr);
-                FodyType.Add(interfaceType, implementationType);
-                return (T)Activator.CreateInstance(implementationType, this);
+               
+
+                var getImplementation= implementationType.GetMethod("GetImplementation", BindingFlags.Static| BindingFlags.Public);
+
+                var method= ObjectMethodExecutor.Create(getImplementation, null);
+                FodyType.Add(interfaceType, method);
+
+                return (T)method.Execute(null, new object[] { this });              
 
             }
             else
             {
-                return (T)Activator.CreateInstance(FodyType[interfaceType], this);
+                return (T)FodyType[interfaceType].Execute(null, new object[] { this });               
             }
-        }      
+        }
+
     }
 }

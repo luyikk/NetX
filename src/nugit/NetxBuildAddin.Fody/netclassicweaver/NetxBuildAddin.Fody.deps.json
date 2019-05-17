@@ -1,15 +1,15 @@
 {
   "runtimeTarget": {
     "name": ".NETStandard,Version=v2.0/",
-    "signature": "8e99a859f9073da72670899b4e3a36f6c705524b"
+    "signature": "dce57252adeb240fcea75d0f5130a3644d716294"
   },
   "compilationOptions": {},
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "NetxBuildAddin.Fody/1.0.3": {
+      "NetxBuildAddin.Fody/1.0.4": {
         "dependencies": {
-          "FodyHelpers": "5.0.5",
+          "FodyHelpers": "4.2.1",
           "NETStandard.Library": "2.0.3",
           "NetxBuilder": "1.0.1"
         },
@@ -17,11 +17,15 @@
           "NetxBuildAddin.Fody.dll": {}
         }
       },
-      "FodyHelpers/5.0.5": {
+      "FodyHelpers/4.2.1": {
         "runtime": {
           "lib/netstandard2.0/FodyHelpers.dll": {
-            "assemblyVersion": "5.0.5.0",
-            "fileVersion": "5.0.5.0"
+            "assemblyVersion": "4.2.1.0",
+            "fileVersion": "4.2.1.0"
+          },
+          "lib/netstandard2.0/Mono.Cecil.Mdb.dll": {
+            "assemblyVersion": "0.11.0.0",
+            "fileVersion": "0.11.0.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Pdb.dll": {
             "assemblyVersion": "0.11.0.0",
@@ -51,17 +55,17 @@
     }
   },
   "libraries": {
-    "NetxBuildAddin.Fody/1.0.3": {
+    "NetxBuildAddin.Fody/1.0.4": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "FodyHelpers/5.0.5": {
+    "FodyHelpers/4.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-kuUKHmzoPkLNbUxngsTx0XxZAPY59s3pmzw5EtDENMVgz+sbV21I5ZXl01qLY0eSBgMJfOoipy17clul51Ufxw==",
-      "path": "fodyhelpers/5.0.5",
-      "hashPath": "fodyhelpers.5.0.5.nupkg.sha512"
+      "sha512": "sha512-gorsknoR2W6dwi121JkkVPXrfal5e4GtYLhCGXqgHeQ3QACtuei3p1O3x9vvRv4AjYHSJ1Vo8LxBNZIdJGYb2w==",
+      "path": "fodyhelpers/4.2.1",
+      "hashPath": "fodyhelpers.4.2.1.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",

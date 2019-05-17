@@ -162,24 +162,48 @@ namespace Microsoft.Extensions.Internal
                 parameters.Add(valueCast);
             }
 
-            // Call method
-            var instanceCast = Expression.Convert(targetParameter, targetTypeInfo.AsType());
-            var methodCall = Expression.Call(instanceCast, methodInfo, parameters);
-
-            // methodCall is "((Ttarget) target) method((T0) parameters[0], (T1) parameters[1], ...)"
-            // Create function
-            if (methodCall.Type == typeof(void))
+            if (targetTypeInfo != null)
             {
-                var lambda = Expression.Lambda<VoidMethodExecutor>(methodCall, targetParameter, parametersParameter);
-                var voidExecutor = lambda.Compile();
-                return WrapVoidMethod(voidExecutor);
+                // Call method
+                var instanceCast = Expression.Convert(targetParameter, targetTypeInfo.AsType());
+                var methodCall = Expression.Call(instanceCast, methodInfo, parameters);
+
+                // methodCall is "((Ttarget) target) method((T0) parameters[0], (T1) parameters[1], ...)"
+                // Create function
+                if (methodCall.Type == typeof(void))
+                {
+                    var lambda = Expression.Lambda<VoidMethodExecutor>(methodCall, targetParameter, parametersParameter);
+                    var voidExecutor = lambda.Compile();
+                    return WrapVoidMethod(voidExecutor);
+                }
+                else
+                {
+                    // must coerce methodCall to match ActionExecutor signature
+                    var castMethodCall = Expression.Convert(methodCall, typeof(object));
+                    var lambda = Expression.Lambda<MethodExecutor>(castMethodCall, targetParameter, parametersParameter);
+                    return lambda.Compile();
+                }
             }
             else
             {
-                // must coerce methodCall to match ActionExecutor signature
-                var castMethodCall = Expression.Convert(methodCall, typeof(object));
-                var lambda = Expression.Lambda<MethodExecutor>(castMethodCall, targetParameter, parametersParameter);
-                return lambda.Compile();
+          
+                var methodCall = Expression.Call(null, methodInfo, parameters);
+
+                // methodCall is "((Ttarget) target) method((T0) parameters[0], (T1) parameters[1], ...)"
+                // Create function
+                if (methodCall.Type == typeof(void))
+                {
+                    var lambda = Expression.Lambda<VoidMethodExecutor>(methodCall, targetParameter, parametersParameter);
+                    var voidExecutor = lambda.Compile();
+                    return WrapVoidMethod(voidExecutor);
+                }
+                else
+                {
+                    // must coerce methodCall to match ActionExecutor signature
+                    var castMethodCall = Expression.Convert(methodCall, typeof(object));
+                    var lambda = Expression.Lambda<MethodExecutor>(castMethodCall, targetParameter, parametersParameter);
+                    return lambda.Compile();
+                }
             }
         }
 
