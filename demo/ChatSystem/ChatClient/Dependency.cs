@@ -32,7 +32,7 @@ namespace ChatClient
                // .ConfigSessionStore(() => new Netx.Client.Session.SessionFile()) //如何需要下次打开 不用登陆
                 .ConfigConnection(p =>
                 {
-                    p.Host = "32km.com";
+                    p.Host = "127.0.0.1";
                     p.Port = 3000;
                     p.ServiceName = "MessageService";
                     p.VerifyKey = "123123";

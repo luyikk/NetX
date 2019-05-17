@@ -87,59 +87,76 @@ namespace Netx.Client
         {
             var fiberRw = await GetFiberRw(socketAsync);
 
-            if (fiberRw == null)
-            {
-                client.SetConnected(false, "ssl error");
-                return;
-            }
-
-            IWrite = fiberRw;
-
-            if (!isConnect)
+            try
             {
 
-                await SendVerify(); //发送KEY和sessionid验证
-                await fiberRw.ReadInt32();//丢弃长度,因为这个Socket框架不需要,留给C++ go java等语言和其他SOCKET框架用
-                var cmd = await fiberRw.ReadInt32();
-
-                if (cmd.HasValue)
+                if (fiberRw == null)
                 {
-                    switch (cmd)
-                    {
-                        case 1000: //key check
-                            {
-                                var iserror = await fiberRw.ReadBoolean();
+                    client.SetConnected(false, "ssl error");
+                    return;
+                }
 
-                                if (iserror.HasValue)
+                IWrite = fiberRw;
+
+                if (!isConnect)
+                {
+
+                    await SendVerify(); //发送KEY和sessionid验证
+                    await fiberRw.ReadInt32();//丢弃长度,因为这个Socket框架不需要,留给C++ go java等语言和其他SOCKET框架用
+                    var cmd = await fiberRw.ReadInt32();
+
+                    if (cmd.HasValue)
+                    {
+                        switch (cmd)
+                        {
+                            case 1000: //key check
                                 {
-                                    if (!iserror.Value)
+                                    var iserror = await fiberRw.ReadBoolean();
+
+                                    if (iserror.HasValue)
                                     {
-                                        Log.Trace(await fiberRw.ReadString());
-                                        isConnect = true;
-                                        client.SetConnected();
-                                        await ReadIng(fiberRw);
+                                        if (!iserror.Value)
+                                        {
+                                            Log.Trace(await fiberRw.ReadString());
+                                            isConnect = true;
+                                            client.SetConnected();
+                                            await ReadIng(fiberRw);
+                                        }
+                                        else
+                                        {
+                                            var msg = await fiberRw.ReadString();
+                                            Log.Info(msg);
+                                            client.SetConnected(false, msg);
+                                        }
                                     }
                                     else
-                                    {
-                                        var msg = await fiberRw.ReadString();
-                                        Log.Info(msg);
-                                        client.SetConnected(false, msg);
-                                    }
+                                        client.SetConnected(false, "data error");
                                 }
-                                else
-                                    client.SetConnected(false, "data error");
-                            }
-                            break;
+                                break;
+
+                        }
 
                     }
+                    else
+                        client.SetConnected(false, "key error");
 
                 }
-                else
-                    client.SetConnected(false, "key error");
+
+                client.ShutdownBoth(true);
 
             }
-
-            client.ShutdownBoth(true);
+            catch (Exception er)
+            {
+                if (!client.IsConnect)
+                {
+                    client.SetConnected(false, er.Message);
+                }
+                else
+                {
+                    Log.Error(er);
+                    client.ShutdownBoth(true);
+                }
+            }
         }
 
         public void Dispose()

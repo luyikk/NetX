@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Netx;
 using Netx.Loggine;
 using Netx.Service;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,12 +34,7 @@ namespace ChatServer.AsyncControllers
         /// <returns></returns>
         private async Task<bool> SetUserStatus(byte status)
         {
-            if (!IsLogOn)
-            {
-                Get<IClient>().NeedLogOn();
-                return false;
-            }
-
+          
             if (await Actor<IActorService>().SetStatus(CurrentUser.UserContent.UserName, status))
             {
                 CurrentUser.Status = status;
@@ -126,7 +122,7 @@ namespace ChatServer.AsyncControllers
             }
             if (userid == -1)
             {
-                var (s, m) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, CurrentUser.UserContent.UserId, 0, msg, true); //公聊
+                var (s, _) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, CurrentUser.UserContent.UserId, 0, msg, true); //公聊
 
                 if (s)
                 {
@@ -142,7 +138,7 @@ namespace ChatServer.AsyncControllers
             {
                 if (UserLines.UserList.ContainsKey(userid))
                 {
-                    var (s, m) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, userid, 1, msg, true); //私聊
+                    var (s, _) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, userid, 1, msg, true); //私聊
                     if (s)
                     {
                         UserLines.UserList[userid].Token.Get<IClient>().SayMessage(CurrentUser.UserContent.UserId, CurrentUser.UserContent.NickName, 1, msg, TimeHelper.GetTime());
@@ -153,7 +149,7 @@ namespace ChatServer.AsyncControllers
                 }
                 else
                 {
-                    var (s, m) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, userid, 2, msg, false); //留言
+                    var (s, _) = await Actor<IActorService>().SaveMessage(CurrentUser.UserContent.UserId, userid, 2, msg, false); //留言
 
                     if (s)
                         return (true, "success");
@@ -182,29 +178,41 @@ namespace ChatServer.AsyncControllers
         /// <summary>
         /// 断线
         /// </summary>
-        public async override void Disconnect()
+        public async override void Disconnect() //特别要注意 如果 是async void 那么异常将无法捕捉,需要手工添加try
         {
 
-            if (CurrentUser != null)
+            try
             {
-                UserLines.UserList.TryRemove(CurrentUser.UserContent.UserId, out _);
+                if (CurrentUser != null)
+                {
+                    UserLines.UserList.TryRemove(CurrentUser.UserContent.UserId, out _);
 
-                await SetUserStatus(2);
+                    await SetUserStatus(2);
+                }
             }
-
+            catch (Exception er)
+            {
+                Log.Error(er);
+            }
         }
 
         /// <summary>
         /// 退出
         /// </summary>
-        public async override void Closed()
+        public async override void Closed() //特别要注意 如果 是async void 那么异常将无法捕捉,需要手工添加try
         {
-
-            if (CurrentUser != null)
+            try
             {
-                await SetUserStatus(0);
-            }
 
+                if (CurrentUser != null)
+                {
+                    await SetUserStatus(0);
+                }
+            }
+            catch (Exception er)
+            {
+                Log.Error(er);
+            }
         }
 
     }

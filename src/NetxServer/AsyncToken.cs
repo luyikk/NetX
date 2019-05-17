@@ -125,12 +125,8 @@ namespace Netx.Service
 
             this.IWrite = null;
             this.FiberRw = null;
-            foreach (var controller in AsyncControllerInstanceDict.Values)
-            {
-                try { controller.Disconnect(); }
-                catch(Exception er)
-                { Log.Error(er); }
-            }
+            foreach (var controller in AsyncControllerInstanceDict.Values)            
+               controller.Disconnect(); 
         }
 
        

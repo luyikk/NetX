@@ -134,12 +134,19 @@ namespace Netx.Service
 
         protected virtual void DisconnectHandler(string message, ISockAsyncEventAsServer socketAsync, int erorr)
         {
-            if (socketAsync.UserToken is AsyncToken token)
+            try
             {
-                var time = TimeHelper.GetTime();
-                DisconnectRemoveList.Enqueue(new TimeKey(token.SessionId, time));
-                token.Disconnect();
-            }         
+                if (socketAsync.UserToken is AsyncToken token)
+                {
+                    var time = TimeHelper.GetTime();
+                    DisconnectRemoveList.Enqueue(new TimeKey(token.SessionId, time));
+                    token.Disconnect();
+                }
+
+            }catch( Exception er)
+            {
+                Log.Error(er);
+            }
         }
 
     }
