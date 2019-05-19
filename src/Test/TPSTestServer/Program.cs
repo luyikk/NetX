@@ -28,7 +28,7 @@ namespace TestServer
                 {                    
                     p.VerifyKey = "123123";
                     p.ClearSessionTime = 5000;
-                })
+                })             
                 .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            
                 .Build();
 

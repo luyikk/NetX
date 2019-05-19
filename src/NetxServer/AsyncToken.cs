@@ -256,28 +256,30 @@ namespace Netx.Service
 
         }
 
+
         protected virtual async void RunActor(int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
             try
             {
+
                 switch (runtype)
                 {
                     case 0:
                         {
-                            ActorRun.CallAction(id, cmd, OpenAccess.Public, args);
+                            ActorRun.SyncAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                         }
                         break;
                     case 1:
                         {
-                            await (ValueTask)ActorRun.CallAsyncAction(id, cmd, OpenAccess.Public, args);
+                            await (ValueTask)ActorRun.AsyncAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             await SendResult(id);
                         }
                         break;
                     case 2:
                         {
-                            var ret_value = await ActorRun.CallAsyncFunc(id, cmd, OpenAccess.Public, args);
+                            var ret_value = await ActorRun.CallFunc(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             switch (ret_value)
                             {
@@ -288,7 +290,7 @@ namespace Netx.Service
                                     }
                                     break;
                                 default:
-                                    {
+                                    {                                     
                                         await SendResult(id, ret_value);
                                     }
                                     break;

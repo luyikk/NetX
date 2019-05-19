@@ -12,7 +12,7 @@ namespace Netx.Actor
         public ActorRunFodyInstance(IServiceProvider container)
             : base(container)
         {
-            Log = new DefaultLog(container.GetRequiredService<ILogger<ActorRunFodyInstance>>());
+
         }
 
         protected Dictionary<Type, Type> FodyType { get; set; } = new Dictionary<Type, Type>();

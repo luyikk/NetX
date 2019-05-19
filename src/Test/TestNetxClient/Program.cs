@@ -78,7 +78,7 @@ namespace TestNetxClient
             }
 
             var stop = System.Diagnostics.Stopwatch.StartNew(); //测试双向递归函数
-            int a = await server.RecursiveTest(100);
+            int a = await server.RecursiveTest(1000);
             stop.Stop();
             client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");
 

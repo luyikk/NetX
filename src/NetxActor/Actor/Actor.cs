@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
 using Netx.Loggine;
 
 namespace Netx.Actor
@@ -43,14 +44,16 @@ namespace Netx.Actor
 
         public int QueueCount => ActorRunQueue.Count;
 
+        private long maxQueuelen;
         public ActorOptionAttribute Option { get; }
 
-        internal event EventHandler<ActorMessage> EventSourcing;
+        internal event EventHandler<IActorMessage> EventSourcing;
 
         public bool IsSleep { get; private set; } = true;
 
         private long lastRuntime = 0;
 
+       
         /// <summary>
         /// 最后运行时间
         /// </summary>
@@ -66,7 +69,7 @@ namespace Netx.Actor
                 if (IsSleep)
                     return false;
 
-                return ((TimeHelper.GetTime() - lastRuntime) / 10000) > Option.Ideltime;
+                return (Environment.TickCount - lastRuntime) > Option.Ideltime;
 
             }
         }
@@ -88,6 +91,7 @@ namespace Netx.Actor
             if (Option == null)
                 Option = new ActorOptionAttribute();
 
+            maxQueuelen = Option.MaxQueueCount;
 
             ActorController.ActorGet = ActorGet;
             ActorController.Status = this;
@@ -222,12 +226,13 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this actor is dispose");
 
-            if (Option?.MaxQueueCount > 0)
-                if (ActorRunQueue.Count > Option.MaxQueueCount)
-                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
+            if (maxQueuelen > 0)
+                if (ActorRunQueue.Count > maxQueuelen)
+                    throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, access,args);
             ActorRunQueue.Enqueue(sa);
+          
             try
             {
                 Runing().Wait();
@@ -243,13 +248,14 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this actor is dispose");
 
-            if (Option?.MaxQueueCount > 0)
-                if (ActorRunQueue.Count > Option.MaxQueueCount)
-                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}", ErrorType.ActorQueueMaxErr);
+            if (maxQueuelen > 0)
+                if (ActorRunQueue.Count > maxQueuelen)
+                    throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, access, args);
             var task = GetResult(sa);
             ActorRunQueue.Enqueue(sa);
+        
             await Runing();
 
             if (sa.Awaiter.IsCompleted)
@@ -264,14 +270,13 @@ namespace Netx.Actor
             if (status == Disposed)
                 throw new ObjectDisposedException("this actor is dispose");
 
-            if(Option?.MaxQueueCount>0)
-                if(ActorRunQueue.Count>Option.MaxQueueCount)
-                    throw new NetxException($"this actor queue count >{Option.MaxQueueCount}",ErrorType.ActorQueueMaxErr);
+            if(maxQueuelen > 0)
+                if(ActorRunQueue.Count> maxQueuelen)
+                    throw new NetxException($"this actor queue count >{maxQueuelen}",ErrorType.ActorQueueMaxErr);
 
             var sa = new ActorMessage<R>(id, cmd, access, args);
             var task = GetResult(sa);
-            ActorRunQueue.Enqueue(sa);
-
+            ActorRunQueue.Enqueue(sa);           
             await Runing();
 
             if (sa.Awaiter.IsCompleted)
@@ -302,17 +307,18 @@ namespace Netx.Actor
 
                         while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
                         {
-
+                           
                             var res = await Call_runing(msg);
 
                             msg.Awaiter.Completed(res);
 
-                            lastRuntime = TimeHelper.GetTime();
+                           
+                            lastRuntime = Environment.TickCount; 
 
                             if (EventSourcing != null)                            
                                 if (msg.Cmd != SleepCmd)
                                 {
-                                    msg.CompleteTime = lastRuntime;
+                                    msg.CompleteTime = TimeHelper.GetTime() ;
                                     EventSourcing(ActorController, msg);
                                 }                            
 
@@ -355,9 +361,6 @@ namespace Netx.Actor
                 IsSleep = false;
             }
 
-
-
-
             #endregion
 
 
@@ -392,7 +395,6 @@ namespace Netx.Actor
                                 {
                                     throw new NetxException("not find the return mode", ErrorType.ReturnModeErr);
                                 }
-
                         }
                     }
                     else

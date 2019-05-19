@@ -7,6 +7,6 @@ namespace Netx.Service
 {
     public abstract class ActorEventBase
     {
-        public abstract void ActorEventSourcing(object actorController, ActorMessage actorMessage);       
+        public abstract void ActorEventSourcing(object actorController, IActorMessage actorMessage);       
     }
 }

@@ -4,6 +4,7 @@ using Netx;
 using Netx.Actor;
 using Netx.Interface;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZYSocket.Interface;
 using ZYSQL;
@@ -27,13 +28,13 @@ namespace ActorTest
                 p.SetMinimumLevel(LogLevel.Trace);
             });
 
-            var build= Container.BuildServiceProvider();
+            var build = Container.BuildServiceProvider();
 
-            var Actor=  build.GetRequiredService<ActorRun>();
+            var Actor = build.GetRequiredService<ActorRun>();
 
-      
 
-            var server= Actor.Get<ICallServer>();
+
+            var server = Actor.Get<ICallServer>();
             await server.Add(0, 0);
 
 
@@ -60,27 +61,28 @@ namespace ActorTest
                 }
 
             });
-         
+
             await Task.WhenAll(task1, task2);
 
             user = await server.GetUser(1);
-            Console.WriteLine($"{user.Name} current coin:{user.Coin}");       
+            Console.WriteLine($"{user.Name} current coin:{user.Coin}");
 
             Console.ReadLine();
             await server.SetUserCoin(1, 100);
 
-           
+
 
             #region TestCount
             var stop = System.Diagnostics.Stopwatch.StartNew();
 
             var x = 0;
+          
+            long count = 0;            
 
-
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 2000000; i++)
             {
-                x= await Actor.CallAsyncFunc(i, 2000, OpenAccess.Internal, i, x);
-             
+                x = await server.Add(i, x);
+                count++;
             }
 
             stop.Stop();
@@ -88,13 +90,32 @@ namespace ActorTest
             var t = await server.GetV();
             Console.WriteLine(x);
             Console.WriteLine(t);
-            Console.WriteLine("time :" + stop.ElapsedMilliseconds);
+            Console.WriteLine($"Count:{count} time {stop.ElapsedMilliseconds}");
+
+
+            stop.Restart();
+
+            x = 0;
+            count = 0;
+
+            for (int i = 0; i < 2000000; i++)
+            {
+                x = await Actor.CallFunc(i, 2000, OpenAccess.Internal, i, x);
+                count++;
+            }
+
+            stop.Stop();
+
+            t = await server.GetV();
+            Console.WriteLine(x);
+            Console.WriteLine(t);
+            Console.WriteLine($"Count:{count} time {stop.ElapsedMilliseconds}");
 
             #endregion
 
             Console.ReadLine();
 
-          
+
         }
 
        

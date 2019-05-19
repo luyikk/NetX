@@ -24,7 +24,7 @@ namespace TestNetxServer
             Log = new DefaultLog(container.GetRequiredService<ILogger<ActorEvent1>>());
         }
 
-        public override void ActorEventSourcing(object actorController, ActorMessage actorMessage)
+        public override void ActorEventSourcing(object actorController, IActorMessage actorMessage)
         {
             Log.Trace($"PushTime:{TimeHelper.GetTime(actorMessage.CompleteTime)}  Cmd:{actorMessage.Cmd} Completed");
         }
@@ -42,7 +42,7 @@ namespace TestNetxServer
             Log = new DefaultLog(container.GetRequiredService<ILogger<ActorEvent2>>());
         }
 
-        public override void ActorEventSourcing(object actorController, ActorMessage actorMessage)
+        public override void ActorEventSourcing(object actorController, IActorMessage actorMessage)
         {
             switch(actorController)
             {

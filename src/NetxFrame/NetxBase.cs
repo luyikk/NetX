@@ -23,14 +23,14 @@ namespace Netx
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
         /// </summary>
-        private readonly Lazy<Dictionary<long, AsyncResultAwaiter<Result>>> asyncResultDict = new Lazy<Dictionary<long, AsyncResultAwaiter<Result>>>(() =>
-          new Dictionary<long,AsyncResultAwaiter<Result>>(50) //这里不使用 Concurrent 因为我希望他是单线程访问的
+        private readonly Lazy<ConcurrentDictionary<long, AsyncResultAwaiter<Result>>> asyncResultDict = new Lazy<ConcurrentDictionary<long, AsyncResultAwaiter<Result>>>(() =>
+          new ConcurrentDictionary<long,AsyncResultAwaiter<Result>>(50,50) 
         , true);
 
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
         /// </summary>
-        protected Dictionary<long,AsyncResultAwaiter<Result>> AsyncResultDict { get => asyncResultDict.Value; }
+        protected ConcurrentDictionary<long,AsyncResultAwaiter<Result>> AsyncResultDict { get => asyncResultDict.Value; }
 
         /// <summary>
         /// 用来超时处理
@@ -123,10 +123,8 @@ namespace Netx
         protected virtual AsyncResultAwaiter<Result> AddAsyncResult(long ids)
         {
             AsyncResultAwaiter<Result> asyncResult = new AsyncResultAwaiter<Result>();
-            if (!AsyncResultDict.ContainsKey(ids))
-                AsyncResultDict.Add(ids, asyncResult);
-            else
-            {
+            if (!AsyncResultDict.TryAdd(ids, asyncResult))
+            { 
                 Log.Info($"add async back have id:{ids}");
                 AsyncResultDict[ids] = asyncResult;
             }

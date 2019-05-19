@@ -53,13 +53,11 @@ namespace TestClient
 
             double allm = 0.0;
             double count = 0.0;
-
-          
-
+         
+            
             foreach (var item in tasks)
             {
                 var r = await item;
-
                 allm += r.m;
                 count += r.count;
             }

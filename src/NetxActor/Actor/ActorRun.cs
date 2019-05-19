@@ -13,12 +13,12 @@ namespace Netx.Actor
 
         public ConcurrentDictionary<int, Actor<R>> ActorCollect { get => actorCollect.Value; }
 
-        public event EventHandler<ActorMessage> EventSourcing;
+        public event EventHandler<IActorMessage> EventSourcing;
 
         public ActorRun(IServiceProvider container)
             : base(container)
         {
-            actorCollect = new Lazy<ConcurrentDictionary<int, Actor<R>>>(true);
+            actorCollect = new Lazy<ConcurrentDictionary<int, Actor<R>>>();
             Load();
 
             if(ActorCollect.Count>0)
@@ -59,7 +59,7 @@ namespace Netx.Actor
             }
         }
 
-        private void Actor_CompletedEvent(object sender, ActorMessage e)
+        private void Actor_CompletedEvent(object sender, IActorMessage e)
         {
             EventSourcing?.Invoke(sender, e);           
         }
@@ -73,7 +73,7 @@ namespace Netx.Actor
 
         }
 
-        public void CallAction(long id, int cmd,OpenAccess access, params object[] args)
+        public void SyncAction(long id, int cmd,OpenAccess access, params object[] args)
         {
             if (ActorCollect.ContainsKey(cmd))
                 ActorCollect[cmd].Action(id, cmd, access, args);
@@ -82,7 +82,7 @@ namespace Netx.Actor
 
         }
 
-        public ValueTask CallAsyncAction(long id, int cmd, OpenAccess access, params object[] args)
+        public ValueTask AsyncAction(long id, int cmd, OpenAccess access, params object[] args)
         {
             if (ActorCollect.TryGetValue(cmd, out Actor<R> m))
                 return m.AsyncAction(id, cmd, access, args);
@@ -90,22 +90,21 @@ namespace Netx.Actor
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        public  ValueTask<R> CallAsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
+        public  ValueTask<R> CallFunc(long id, int cmd, OpenAccess access, params object[] args)
         {
             if (ActorCollect.TryGetValue(cmd,out Actor<R> m))
                 return  m.AsyncFunc(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
+        
 
-        protected override async Task SendAsyncAction(int cmdTag, long Id, object[] args)
-        {
-              await CallAsyncAction(Id, cmdTag, OpenAccess.Internal, args);
-        }
 
-        protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
+        public async override  Task<IResult> AsyncFunc(int cmdTag, params object[] args)
         {
-            var result = await this.CallAsyncFunc(Id, cmdTag, OpenAccess.Internal, args);
+            var Id = IdsManager.MakeId;
+
+            var result = await this.CallFunc(Id, cmdTag, OpenAccess.Internal, args);
 
             switch (result)
             {
@@ -120,24 +119,23 @@ namespace Netx.Actor
             }
         }
 
-
-        public IResult GetErrorResult(string msg, long id)
+        public async override Task<T> AsyncFunc<T>(int cmdTag, params object[] args)
         {
-            Result err = new Result()
-            {
-                ErrorMsg = msg,
-                Id = id,
-                ErrorId = (int)ErrorType.ActorErr
-            };
-
-            return err;
+           
+            var result =(dynamic) await this.CallFunc(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args);
+            return (T)result;
         }
 
-
-        protected override void SendAction(int cmdTag, object[] args)
-        {
-            this.CallAction(-1, cmdTag, OpenAccess.Internal, args);
+        public async override Task AsyncAction(int cmdTag, params object[] args)
+        {           
+            await AsyncAction(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args);
         }
+
+        public override void Action(int cmdTag, params object[] args)
+        {
+            this.SyncAction(-1, cmdTag, OpenAccess.Internal, args);
+        }
+
 
         public void Dispose()
         {
@@ -148,6 +146,8 @@ namespace Netx.Actor
 
             ActorCollect.Clear();
         }
+
+     
     }
 
     public class ActorRun : ActorRun<dynamic>
