@@ -42,7 +42,7 @@ namespace Netx.Service
 
             var actor_run = container.GetRequiredService<ActorRun>();
             foreach (var @event in container.GetServices<ActorEventBase>())            
-                actor_run.CompletedEvent += @event.ActorEventSourcing;
+                actor_run.CompletedEvent += @event.ActorEventCompleted;
 
             ServiceOption = container.GetRequiredService<IOptions<ServiceOption>>().Value;
         }
