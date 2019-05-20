@@ -13,7 +13,7 @@ namespace Netx.Actor
 
         public ConcurrentDictionary<int, Actor<R>> ActorCollect { get => actorCollect.Value; }
 
-        public event EventHandler<IActorMessage> EventSourcing;
+        public event EventHandler<IActorMessage> CompletedEvent;
 
         public ActorRun(IServiceProvider container)
             : base(container)
@@ -53,7 +53,7 @@ namespace Netx.Actor
             foreach (var controller in Container.GetServices<ActorController>())
             {
                 var actor = new Actor<R>(Container,this,ActorScheduler,controller);
-                actor.EventSourcing += Actor_CompletedEvent;
+                actor.CompletedEvent += Actor_CompletedEvent;
                 foreach (int cmd in actor.CmdDict.Keys)
                     ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);
             }
@@ -61,7 +61,7 @@ namespace Netx.Actor
 
         private void Actor_CompletedEvent(object sender, IActorMessage e)
         {
-            EventSourcing?.Invoke(sender, e);           
+            CompletedEvent?.Invoke(sender, e);           
         }
 
         public MethodRegister GetCmdService(int cmd)

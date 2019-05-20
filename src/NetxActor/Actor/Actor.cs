@@ -47,7 +47,7 @@ namespace Netx.Actor
         private long maxQueuelen;
         public ActorOptionAttribute Option { get; }
 
-        internal event EventHandler<IActorMessage> EventSourcing;
+        internal event EventHandler<IActorMessage> CompletedEvent;
 
         public bool IsSleep { get; private set; } = true;
 
@@ -315,11 +315,11 @@ namespace Netx.Actor
                            
                             lastRuntime = Environment.TickCount; 
 
-                            if (EventSourcing != null)                            
+                            if (CompletedEvent != null)                            
                                 if (msg.Cmd != SleepCmd)
                                 {
                                     msg.CompleteTime = TimeHelper.GetTime() ;
-                                    EventSourcing(ActorController, msg);
+                                    CompletedEvent(ActorController, msg);
                                 }                            
 
                              
