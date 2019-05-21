@@ -125,16 +125,16 @@ namespace Netx.Service
                     await SendToKeyError(fiberRw, msg: "verify success");
 
                     var session = await fiberRw.ReadInt64();
-                    if (!session.HasValue || session.Value == 0)
+                    if (session == 0)
                         return await RunCreateToken(fiberRw);
                     else
                     {
 
-                        if (ActorTokenDict.TryGetValue(session.Value, out AsyncToken actorToken))
+                        if (ActorTokenDict.TryGetValue(session, out AsyncToken actorToken))
                             return await ResetToken(fiberRw, actorToken);
                         else
                         {
-                            Log.TraceFormat("IP:{0} not find sessionid:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, session.Value);
+                            Log.TraceFormat("IP:{0} not find sessionid:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, session);
                             return await RunCreateToken(fiberRw);
                         }
 
@@ -145,16 +145,16 @@ namespace Netx.Service
 
                     await SendToKeyError(fiberRw, msg: "verify success");
                     var session = await fiberRw.ReadInt64();
-                    if (!session.HasValue || session.Value == 0)
+                    if (session == 0)
                         return await RunCreateToken(fiberRw);
                     else
                     {
 
-                        if (ActorTokenDict.TryGetValue(session.Value, out AsyncToken actorToken))
+                        if (ActorTokenDict.TryGetValue(session, out AsyncToken actorToken))
                             return await ResetToken(fiberRw, actorToken);
                         else
                         {
-                            Log.TraceFormat("IP:{0} not find sessionid:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, session.Value);
+                            Log.TraceFormat("IP:{0} not find sessionid:{1}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint, session);
                             return await RunCreateToken(fiberRw);
                         }
 

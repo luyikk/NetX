@@ -175,17 +175,46 @@ namespace Netx.Service
         protected async Task<bool> DataOnByRead(IFiberRw<AsyncToken> fiberRw, int runtype)
         {
             var cmd = await fiberRw.ReadInt32();
-            if (cmd.HasValue)
+            var id = await fiberRw.ReadInt64();
+            if (AsyncServicesRegisterDict.TryGetValue(cmd, out MethodRegister service))
             {
-                var id = (await fiberRw.ReadInt64()).GetValueOrDefault(-1);
-                if (AsyncServicesRegisterDict.TryGetValue(cmd.Value, out MethodRegister service))
+                var argslen = await fiberRw.ReadInt32();
+                if (argslen == service.ArgsLen)
                 {
-                    var argslen = (await fiberRw.ReadInt32()).Value;
+                    object[] args = new object[argslen];
+                    List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
+
+                    for (int i = 0; i < argslen; i++)
+                    {
+                        var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
+                        args[i] = arg;
+                        if (owner != null)
+                            mem_disposetable.Add(owner);
+                    }
+
+                    RunCall(service, cmd, id, runtype, mem_disposetable, args);
+                    return true;
+
+                }
+                else
+                {
+                    Log.WarnFormat("{3} call async service:{0} Args Error: len {1}->{2} \r\n to {4}", cmd, argslen, service.ArgsType.Length, fiberRw.Async?.AcceptSocket?.RemoteEndPoint, service);
+                    await SendError(id, $"call async service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
+                    return false;
+                }
+            }
+            else
+            {
+                var cmdTag = cmd;
+                service = ActorRun.GetCmdService(cmdTag);
+                if (service != null)
+                {
+                    var argslen = await fiberRw.ReadInt32();
                     if (argslen == service.ArgsLen)
                     {
                         object[] args = new object[argslen];
-                        List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
 
+                        List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
                         for (int i = 0; i < argslen; i++)
                         {
                             var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
@@ -194,65 +223,27 @@ namespace Netx.Service
                                 mem_disposetable.Add(owner);
                         }
 
-                        RunCall(service, cmd.Value, id, runtype, mem_disposetable,args);
+
+                        RunActor(cmdTag, id, runtype, mem_disposetable, args);
                         return true;
 
                     }
                     else
                     {
-                        Log.WarnFormat("{3} call async service:{0} Args Error: len {1}->{2} \r\n to {4}", cmd.Value, argslen, service.ArgsType.Length, fiberRw.Async?.AcceptSocket?.RemoteEndPoint, service);
-                        await SendError(id, $"call async service:{cmd.Value} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
+                        Log.WarnFormat("{3} call actor service:{0} Args Error: len {1}->{2} \r\n to {4}", cmd, argslen, service.ArgsType.Length, fiberRw.Async?.AcceptSocket?.RemoteEndPoint, service);
+                        await SendError(id, $"call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
                         return false;
                     }
+
                 }
                 else
                 {
-                    var cmdTag = cmd.Value;
-                    service = ActorRun.GetCmdService(cmdTag);
-                    if (service!=null)
-                    {
-                        var argslen = (await fiberRw.ReadInt32()).Value;
-                        if (argslen == service.ArgsLen)
-                        {
-                            object[] args = new object[argslen];
-
-                            List<IMemoryOwner<byte>> mem_disposetable = new List<IMemoryOwner<byte>>();
-                            for (int i = 0; i < argslen; i++)
-                            {
-                                var (arg, owner) = await base.ReadDataAsync(fiberRw, service.ArgsType[i]);
-                                args[i] = arg;
-                                if (owner != null)
-                                    mem_disposetable.Add(owner);
-                            }
-
-
-                            RunActor(cmdTag, id, runtype, mem_disposetable, args);
-                            return true;
-
-                        }
-                        else
-                        {
-                            Log.WarnFormat("{3} call actor service:{0} Args Error: len {1}->{2} \r\n to {4}", cmd.Value, argslen, service.ArgsType.Length, fiberRw.Async?.AcceptSocket?.RemoteEndPoint, service);
-                            await SendError(id, $"call actor service:{cmd.Value} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
-                            return false;
-                        }
-
-                    }
-                    else
-                    {
-                        Log.WarnFormat("{1} call service:{0} not find cmd ", cmd.Value, fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
-                        await SendError(id, $"call service:{cmd.Value} not find the cmd,please check it", ErrorType.NotCmd);
-                        return false;
-                    }
+                    Log.WarnFormat("{1} call service:{0} not find cmd ", cmd, fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
+                    await SendError(id, $"call service:{cmd} not find the cmd,please check it", ErrorType.NotCmd);
+                    return false;
                 }
             }
-            else
-            {
 
-                Log.WarnFormat("{0} call service not read cmd,cmd is null", fiberRw.Async?.AcceptSocket?.RemoteEndPoint);
-                await SendError(-1, "not read cmd", ErrorType.NotReadCmd);
-                return false;
-            }
 
         }
 

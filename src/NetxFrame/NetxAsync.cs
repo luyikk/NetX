@@ -81,34 +81,30 @@ namespace Netx
         {
             var id = await fiberRw.ReadInt64();
 
-            if (id.HasValue)
+            if (await fiberRw.ReadBoolean()) //is error
             {
-                if ((await fiberRw.ReadBoolean()).Value) //is error
+                AsyncBackResult(new Result()
                 {
-                    AsyncBackResult(new Result()
-                    {
-                        Id = id.Value,
-                        ErrorId = (await fiberRw.ReadInt32()).Value,
-                        ErrorMsg = await fiberRw.ReadString()
-                    });
-                }
-                else
-                {
-                    var count = (await fiberRw.ReadInt32()).Value;
-                    List<byte[]> args = new List<byte[]>(count);
-                    for (int i = 0; i < count; i++)
-                        args.Add(await fiberRw.ReadArray());
-
-                    AsyncBackResult(new Result(args)
-                    {
-                        Id = id.Value
-                    });
-
-                }
-
+                    Id = id,
+                    ErrorId = await fiberRw.ReadInt32(),
+                    ErrorMsg = await fiberRw.ReadString()
+                });
             }
             else
-                throw new NetxException($"data error:2500", ErrorType.ReadErr);
+            {
+                var count = await fiberRw.ReadInt32();
+                List<byte[]> args = new List<byte[]>(count);
+                for (int i = 0; i < count; i++)
+                    args.Add(await fiberRw.ReadArray());
+
+                AsyncBackResult(new Result(args)
+                {
+                    Id = id
+                });
+
+            }
+
+
         }
 
 

@@ -21,13 +21,13 @@ namespace ChatServer
                      p.VerifyKey = "123123";
                      p.ClearSessionTime = 6000;
                  })
-                  .ConfigSSL(p =>
-                  {
-                      p.Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(
-                          $"{new System.IO.DirectoryInfo(Assembly.GetExecutingAssembly().Location).Parent}/server.pfx",
-                          "testPassword");
-                      p.IsUse = true;
-                  })
+                  //.ConfigSSL(p =>
+                  //{
+                  //    p.Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(
+                  //        $"{new System.IO.DirectoryInfo(Assembly.GetExecutingAssembly().Location).Parent}/server.pfx",
+                  //        "testPassword");
+                  //    p.IsUse = true;
+                  //})
                   .ConfigureLogSet(p=>
                   {
                       p.AddConsole();

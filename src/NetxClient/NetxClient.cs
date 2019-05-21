@@ -103,42 +103,33 @@ namespace Netx.Client
 
                     await SendVerify(); //发送KEY和sessionid验证
                     await fiberRw.ReadInt32();//丢弃长度,因为这个Socket框架不需要,留给C++ go java等语言和其他SOCKET框架用
-                    var cmd = await fiberRw.ReadInt32();
 
-                    if (cmd.HasValue)
+                    switch (await fiberRw.ReadInt32())
                     {
-                        switch (cmd)
-                        {
-                            case 1000: //key check
+                        case 1000: //key check
+                            {
+                                var iserror = await fiberRw.ReadBoolean();
+
+                                if (!iserror)
                                 {
-                                    var iserror = await fiberRw.ReadBoolean();
-
-                                    if (iserror.HasValue)
-                                    {
-                                        if (!iserror.Value)
-                                        {
-                                            Log.Trace(await fiberRw.ReadString());
-                                            isConnect = true;
-                                            client.SetConnected();
-                                            await ReadIng(fiberRw);
-                                        }
-                                        else
-                                        {
-                                            var msg = await fiberRw.ReadString();
-                                            Log.Info(msg);
-                                            client.SetConnected(false, msg);
-                                        }
-                                    }
-                                    else
-                                        client.SetConnected(false, "data error");
+                                    Log.Trace(await fiberRw.ReadString());
+                                    isConnect = true;
+                                    client.SetConnected();
+                                    await ReadIng(fiberRw);
                                 }
-                                break;
+                                else
+                                {
+                                    var msg = await fiberRw.ReadString();
+                                    Log.Info(msg);
+                                    client.SetConnected(false, msg);
+                                }
 
-                        }
+                            }
+                            break;
 
                     }
-                    else
-                        client.SetConnected(false, "key error");
+
+
 
                 }
 

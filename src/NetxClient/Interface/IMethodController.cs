@@ -7,15 +7,11 @@ namespace Netx
 {
     public interface IMethodController
     {
-        INetxSClient Current { get; set; }
-
-        T Get<T>();
+        INetxSClient Current { get; set; }       
     }
 
     public class MethodControllerBase : IMethodController
     {
-        public INetxSClient Current { get; set; }
-
-        public T Get<T>() => Current.Get<T>();
+        public INetxSClient Current { get; set; }      
     }
 }

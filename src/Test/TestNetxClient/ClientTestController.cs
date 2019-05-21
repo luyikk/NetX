@@ -43,7 +43,7 @@ namespace TestNetxClient
         {
             a--;
             if (a > 0)
-                return Get<IServer>().RecursiveTest(a);
+                return Current.Get<IServer>().RecursiveTest(a);
             else
                 return Task.FromResult(a);
         }
