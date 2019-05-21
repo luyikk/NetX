@@ -78,7 +78,7 @@ namespace ChatServer.AsyncControllers
         }
         
 
-        public async Task<bool> CheckLogIn()
+        public async Task<(bool,User)> CheckLogIn()
         {
             if (IsLogOn)
             {
@@ -87,8 +87,10 @@ namespace ChatServer.AsyncControllers
                 UserLines.UserList.AddOrUpdate(CurrentUser.UserContent.UserId, CurrentUser, (_, __) => CurrentUser);
 
                 await SetUserStatus(1);
+
+                return (true, CurrentUser.UserContent);
             }
-            return IsLogOn;
+            return (IsLogOn,null);
         }
 
 

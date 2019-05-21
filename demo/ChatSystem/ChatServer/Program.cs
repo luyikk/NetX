@@ -6,6 +6,7 @@ using ChatServer.AsyncControllers;
 using ChatServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace ChatServer
 {
@@ -13,13 +14,14 @@ namespace ChatServer
     {
         static void Main()
         {
+          
            
             var server = new NetxServBuilder()
                  .ConfigBase(p =>
                  {
                      p.ServiceName = "MessageService";
                      p.VerifyKey = "123123";
-                     p.ClearSessionTime = 6000;
+                     p.ClearSessionTime = 60000;
                  })
                   //.ConfigSSL(p =>
                   //{

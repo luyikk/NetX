@@ -12,6 +12,7 @@ namespace ChatClient
 
         public T Get<T>() => Current.Get<T>();
 
+        public User My { get; private set; }
 
         public WinMain()
         {
@@ -75,32 +76,32 @@ namespace ChatClient
 
         private async Task LoginServer()
         {
-            while (true)
+
+            try
             {
-                try
+                var (success, my) = await Get<IServer>().CheckLogIn();
+                if (!success)
                 {
-                    if (!await Get<IServer>().CheckLogIn())
-                    {
-                        LogOn logOn = new LogOn();
-                        logOn.ShowDialog();
+                    LogOn logOn = new LogOn();
+                    logOn.ShowDialog();
 
-                        if (!await Get<IServer>().CheckLogIn())
-                        {
-                            this.Close();
-                        }
+                    (success, my) = await Get<IServer>().CheckLogIn();
 
-                    }
-                    else
-                        break;
+                    if (!success)                    
+                        this.Close();                     
+                    else                    
+                        My = my;                    
                 }
-                catch (Netx.NetxException er)
-                {
-                    MessageBox.Show(er.Message);
-                    this.Close();
-                    break;
-                }
-
+                else                
+                    My = my;
+                 
             }
+            catch (Netx.NetxException er)
+            {
+                MessageBox.Show(er.Message);
+                this.Close(); 
+            }
+
         }
 
 

@@ -17,7 +17,7 @@ namespace Interfaces
         Task<(bool, string)> LogOn(string username, string password);
 
         [TAG(5003)]
-        Task<bool> CheckLogIn();
+        Task<(bool, User)> CheckLogIn();
 
         [TAG(5004)]
         Task<List<User>> GetUsers();

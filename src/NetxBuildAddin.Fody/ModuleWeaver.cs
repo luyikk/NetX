@@ -80,8 +80,11 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 {
                     try
                     {
-                        foreach (var item in method.Body.Instructions)
+                        //foreach (var item in method.Body.Instructions)
+                        for(int i=0;i< method.Body.Instructions.Count;i++)
                         {
+                            var item = method.Body.Instructions[i];
+
                             if (item.OpCode == OpCodes.Callvirt || item.OpCode == OpCodes.Call)
                             {
                                 if (item.Operand is GenericInstanceMethod reference)

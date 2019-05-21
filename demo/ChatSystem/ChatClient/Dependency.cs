@@ -22,13 +22,13 @@ namespace ChatClient
                 {
                     p.AddDebug().SetMinimumLevel(LogLevel.Trace);
                 })
-                .ConfigSSL(p =>
-                {
-                    p.Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(
-                        $"{System.Windows.Forms.Application.StartupPath}/client.pfx"
-                        , "testPassword");
-                    p.IsUse = true;
-                })
+                //.ConfigSSL(p =>
+                //{
+                //    p.Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(
+                //        $"{System.Windows.Forms.Application.StartupPath}/client.pfx"
+                //        , "testPassword");
+                //    p.IsUse = true;
+                //})
                // .ConfigSessionStore(() => new Netx.Client.Session.SessionFile()) //如何需要下次打开 不用登陆
                 .ConfigConnection(p =>
                 {
