@@ -258,6 +258,6 @@ Src:[AKKA.NET VS event next VS NetX](https://github.com/luyikk/NetX/tree/master/
 
 下面是结果图:
 ![AKKA.NET VS event next VS NetX:](https://github.com/luyikk/NetX/blob/master/Images/Test.png)
-在并行的情况下基本上都是能达到2.4M TPS的,如果是单线程测试模式也就是ActorTest里面的例子,可以达到3.2M TPC
 
-我的电脑是I7 4770K 哦
+*在并行的情况下基本上都是能达到2.4M TPS的,如果是单线程测试模式也就是ActorTest里面的例子,可以达到3.2M TPS
+我的电脑是I7 4770K* 
