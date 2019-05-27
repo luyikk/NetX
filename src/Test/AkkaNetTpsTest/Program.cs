@@ -38,8 +38,7 @@ namespace EventNext_AkkaNet
             Container.AddSingleton<IIds, DefaultMakeIds>();          
             Container.AddSingleton<ActorController, NextActorController>();
             Container.AddSingleton<ActorRun>(p => new ActorRun(p));
-            Container.AddSingleton<ISerialization>(p => new ZYSocket.FiberStream.ProtobuffObjFormat());
-         
+            Container.AddSingleton<ISerialization>(p => new ZYSocket.FiberStream.ProtobuffObjFormat());           
             Container.AddLogging(p =>
             {
                 p.AddConsole();
