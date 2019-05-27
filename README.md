@@ -1,5 +1,5 @@
 # NetX
-**一款实用SOCKET实现的 Actor+RPC 服务,使用它你可以随随便便做出高性能服务器,以及彻底解决各种锁的问题**
+**一款使用[ZYSOCKET-V](https://github.com/luyikk/ZYSOCKET-V)实现的 Actor+RPC 服务,使用它你可以随随便便做出高性能服务器,以及彻底解决各种锁的问题**
 
 **使用方式:
 NUGET方式:**
