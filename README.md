@@ -1,6 +1,8 @@
 # NetX
-一款实用SOCKET实现的 Actor+RPC 服务
-NUGET:
+**一款实用SOCKET实现的 Actor+RPC 服务**
+
+**使用方式:
+NUGET方式:**
 
     NetX服务器: Install-Package NetxServer
     NetX客户端: Install-Package NetxClient
@@ -9,6 +11,9 @@ NUGET:
     NetX共享ActorService:暂未开发
     NETXActor(ACTOR本机运行版) : Install-Package NetxActor
     
+**源代码:[github src](https://github.com/luyikk/NetX)**
+
+
 
 ![NetX原理结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX1.png)
 
