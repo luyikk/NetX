@@ -91,7 +91,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor1.CallFunc(i, 1, OpenAccess.Internal, i);
+                        //await NetXActor1.CallFunc(i, 1, OpenAccess.Internal, i);
+                        await server1.Income(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -101,7 +102,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor1.CallFunc(i, 2, OpenAccess.Internal, i);
+                        // await NetXActor1.CallFunc(i, 2, OpenAccess.Internal, i);
+                        await server1.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -112,7 +114,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor2.CallFunc(i, 1, OpenAccess.Internal, i);
+                        //await NetXActor2.CallFunc(i, 1, OpenAccess.Internal, i);
+                        await server2.Income(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -122,7 +125,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor2.CallFunc(i, 2, OpenAccess.Internal, i);
+                        // await NetXActor2.CallFunc(i, 2, OpenAccess.Internal, i);
+                        await server2.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });

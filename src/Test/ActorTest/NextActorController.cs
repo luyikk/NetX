@@ -15,7 +15,7 @@ namespace ActorTest
     {
         public ILog Log { get; }
 
-        public NextActorController(ILogger<TestActorController> logger,int a)
+        public NextActorController(ILogger<TestActorController> logger)
         {
 
             ZYSQL.SqlInstance.Instance.InstallConfig(new DataConnectConfig[]
