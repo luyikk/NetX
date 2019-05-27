@@ -15,7 +15,7 @@ namespace ChatServer.ActorControllers
     /// <summary>
     /// 用户数据库ACTOR
     /// </summary>
-    [ActorOption(1000,1000)]
+    [ActorOption(1000,10000)] //这里最大列队为1000,如果10秒没有任务将进入沉睡
     public class UserActorController : ActorController, IActorService
     {
         public ILog Log { get; }
@@ -158,6 +158,10 @@ namespace ChatServer.ActorControllers
             return list;
         }
 
+        /// <summary>
+        /// 沉睡的时候保存数据
+        /// </summary>
+        /// <returns></returns>
         public async override Task Sleeping()
         {
             if (UserDatabase.ChangeTracker.HasChanges())

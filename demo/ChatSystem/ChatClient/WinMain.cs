@@ -10,7 +10,7 @@ namespace ChatClient
     {
         public INetxSClient Current { get=>Dependency.Client; set { } }
 
-        public T Get<T>() => Current.Get<T>();
+
 
         public User My { get; private set; }
 
@@ -30,7 +30,7 @@ namespace ChatClient
 
         private async Task GetLGetLeaving()
         {
-            foreach (var item in await Get<IServer>().GetLeavingMessage())
+            foreach (var item in await Current.Get<IServer>().GetLeavingMessage())
             {
                 SayMessage(item.FromUserId, item.NickName, item.MsgType, item.MessageContext, item.Time);
             }
@@ -40,7 +40,7 @@ namespace ChatClient
         {
             try
             {
-                var userlist = await Get<IServer>().GetUsers();
+                var userlist = await Current.Get<IServer>().GetUsers();
 
                 this.listView1.Items.Clear();
 
@@ -79,13 +79,13 @@ namespace ChatClient
 
             try
             {
-                var (success, my) = await Get<IServer>().CheckLogIn();
+                var (success, my) = await Current.Get<IServer>().CheckLogIn();
                 if (!success)
                 {
                     LogOn logOn = new LogOn();
                     logOn.ShowDialog();
 
-                    (success, my) = await Get<IServer>().CheckLogIn();
+                    (success, my) = await Current.Get<IServer>().CheckLogIn();
 
                     if (!success)                    
                         this.Close();                     
@@ -209,7 +209,7 @@ namespace ChatClient
                 }
 
 
-                await Get<IServer>().Say(userid, msg);
+                await Current.Get<IServer>().Say(userid, msg);
 
 
             }
