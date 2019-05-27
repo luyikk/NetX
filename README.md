@@ -1,5 +1,5 @@
 # NetX
-**一款实用SOCKET实现的 Actor+RPC 服务**
+**一款使用[ZYSOCKET-V](https://github.com/luyikk/ZYSOCKET-V)实现的 Actor+RPC 服务,使用它你可以随随便便做出高性能服务器,以及彻底解决各种锁的问题**
 
 **使用方式:
 NUGET方式:**
@@ -14,14 +14,19 @@ NUGET方式:**
 **源代码:[github src](https://github.com/luyikk/NetX)**
 
 
-
+NetX原理结构图:
 ![NetX原理结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX1.png)
+OR
+
+![NetX原理结构图2](https://github.com/luyikk/NetX/blob/master/Images/NetX6.png)
 
 通过此框架我们可以轻松的构建 如图这样的服务网络,他的性能非常好的,大概比[Orleans](https://github.com/dotnet/orleans)性能高出5倍以上,内存只需要[orleans](https://github.com/dotnet/orleans)5分之一.功能强大,Actor,RPC,Event Sourcing,Wake up to sleep,负载均衡,服务路由,服务器主动调用客户端...等等功能.可实现Orleans无法实现的功能.
 
 ## 下面逐步介绍各个功能模块:
 
 **NetXServer:**
+
+NetXServer结构图:
 ![NetXServer结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX2.png)
 
 在Server 中 我们一共有2种控制器,一种是RPC控制器,一种是ACTOR控制器.
@@ -157,6 +162,7 @@ DEMO里面RPC控制器的例子:
 
 **关于NetXClient:**
 
+NetXClient结构图:
 ![NetXClient结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX3.png)
 
 我们可以通过NetXClient调用 Server的RPC服务,ACTOR服务,以及提供服务给服务器调用.
@@ -252,3 +258,6 @@ Src:[AKKA.NET VS event next VS NetX](https://github.com/luyikk/NetX/tree/master/
 
 下面是结果图:
 ![AKKA.NET VS event next VS NetX:](https://github.com/luyikk/NetX/blob/master/Images/Test.png)
+
+*在并行的情况下基本上都是能达到2.4M TPS的,如果是单线程测试避免了线程调度开销 也就是ActorTest里面的例子,可以达到3.2M TPS
+我的电脑是I7 4770K* 
