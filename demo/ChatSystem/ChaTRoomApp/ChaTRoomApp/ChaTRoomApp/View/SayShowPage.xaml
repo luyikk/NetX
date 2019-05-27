@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ChaTRoomApp"
+             x:Class="ChaTRoomApp.View.SayShowPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:SelectorDataTemplate x:Key="MessageTemplateSelector"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+       
+            <Grid RowSpacing="0" ColumnSpacing="0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+            <!--<ScrollView Margin="0" Padding="0">-->
+            <ListView 
+                    x:Name="MessagesListView" 
+                    ItemTemplate="{StaticResource MessageTemplateSelector}" 
+                    ItemsSource="{Binding ListMessages}" 
+                    HasUnevenRows="True" SeparatorVisibility="None" IsEnabled="True">
+                <ListView.GestureRecognizers>
+                    <TapGestureRecognizer
+                                Command="{Binding SelectItemCommand}" />
+                </ListView.GestureRecognizers>
+                
+            </ListView>
+            <!--</ScrollView>-->
+
+            <StackLayout Orientation="Horizontal" Grid.Row="1" BackgroundColor="White">
+                    <Entry 
+                HorizontalOptions="FillAndExpand"  
+                Placeholder="Message"  
+                Text="{Binding OutText}" Keyboard="Chat" Margin="4" ReturnCommand="{Binding SendCommand}" />
+
+                    <Image x:Name="Send"  WidthRequest="40" HeightRequest="40" Margin="4">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding SendCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+
+                </StackLayout>
+
+            </Grid>
+
+    </ContentPage.Content>
+</ContentPage>

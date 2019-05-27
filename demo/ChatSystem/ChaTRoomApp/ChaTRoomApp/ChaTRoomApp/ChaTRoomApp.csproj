@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceAssemblyReference>true</ProduceAssemblyReference>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="client.pfx" />
+    <None Remove="Icon\Room.png" />
+    <None Remove="Icon\Send.png" />
+    <None Remove="Icon\User.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="client.pfx" />
+    <EmbeddedResource Include="Icon\Room.png" />
+    <EmbeddedResource Include="Icon\User.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetxClient-Portable" Version="1.2.4" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
+    <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="View\MainPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\RegisterUser.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\SayShowPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CustomCells\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon\Send.png" />
+  </ItemGroup>
+</Project>

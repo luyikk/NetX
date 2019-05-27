@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ChaTRoomApp.ViewModels"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False"
+             x:Name="LogOn_Page"
+             x:Class="ChaTRoomApp.View.LogOnPage">
+
+    <!--<ContentPage.BindingContext>      
+        <viewmodels:LogOnModel>
+            <x:Arguments>
+                <Page>LogOn_Page</Page>
+            </x:Arguments>
+        </viewmodels:LogOnModel>
+    </ContentPage.BindingContext>-->
+    <ContentPage.Content>
+        
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="0.3*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition Width="0.6*"/>
+                <ColumnDefinition Width="0.3*"/>
+
+            </Grid.ColumnDefinitions>
+
+            <Entry Grid.Row="1" 
+                   Grid.Column="1" 
+                   Placeholder="username"
+                   IsSpellCheckEnabled="False"
+                   IsTextPredictionEnabled="False" 
+                   HorizontalOptions ="CenterAndExpand"
+                   WidthRequest="250"
+                   Text="{Binding UserName}"
+                   />
+            <Entry Grid.Row="2"
+                   Grid.Column="1" 
+                   Placeholder="password"
+                   IsPassword="True"  
+                   HorizontalOptions="CenterAndExpand"  
+                   WidthRequest="250"
+                   Text="{Binding PassWord}"
+                   />
+            <StackLayout Grid.Row="3" Grid.Column="1"  Orientation="Horizontal" Spacing="10" >
+                <Label Text="Save password" HorizontalOptions="CenterAndExpand" />
+                <Switch IsToggled="{Binding IsSave}"  Scale="0.5" Margin='{OnPlatform iOS="0,-10,0,0",Android="0,-20,0,0"}' HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+            <Button Grid.Row="4" Grid.Column="1" Text="Log On" Command="{Binding LogOnCommand}"  CommandParameter="{Binding Source={x:Reference LogOn_Page} }"/>
+            <Button Grid.Row="5" Grid.Column="1" Text="Sign up NOW" Command="{Binding RegisterCommand}" CommandParameter="{Binding Source={x:Reference LogOn_Page} }" />
+
+            <ActivityIndicator Grid.Row="6" Grid.Column="1" IsRunning="{Binding IsLogOn}" Scale="0.7" />
+            
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

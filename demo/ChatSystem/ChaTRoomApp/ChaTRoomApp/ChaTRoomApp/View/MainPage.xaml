@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ChaTRoomApp.Converter"
+             xmlns:viewmodels="clr-namespace:ChaTRoomApp.ViewModels"
+             x:Name="Main_Page"
+             x:Class="ChaTRoomApp.View.MainPage" NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:SelectionIdToImageConverter x:Key="ToImageconverter"/>
+            <local:StatusToColorConverter x:Key="ToColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <StackLayout Margin="20,35,20,20">
+            <ListView ItemsSource="{Binding Users}" HasUnevenRows="True" IsVisible="{Binding IsVisible}">               
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectCommand, Source={x:Reference Main_Page}}" CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding Path=ImageId, Converter={StaticResource ToImageconverter }}" WidthRequest="40" HeightRequest="40" Aspect="AspectFill"/>
+                                <Label Grid.Column="1" TextColor="{Binding OnlineStatus,Converter={StaticResource Key=ToColorConverter}}" Text="{Binding Name}"  FontAttributes="Bold,Italic" FontSize="Medium" />
+                                <Label Grid.Column="2" TextColor="{Binding OnlineStatus,Converter={StaticResource Key=ToColorConverter}}" Text="{Binding OnlineStatus}"  FontSize="Micro" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

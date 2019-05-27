@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ChaTRoomApp.TextOutViewCell">
+    <Grid ColumnSpacing="2" Padding="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="2"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="End"  Text="{Binding Time, StringFormat='  {0:MM/dd hh:mm}'}" TextColor="Gray"/>
+        
+        <Frame Grid.Row="1"  Grid.Column="1" CornerRadius="15">
+            <Frame.HasShadow>
+                <OnPlatform x:TypeArguments="x:Boolean" Android="true" iOS="false"/>
+            </Frame.HasShadow>
+            <Frame.BackgroundColor>
+                <OnPlatform x:TypeArguments="Color" Android="#7CB302" iOS="#7CB302"/>
+            </Frame.BackgroundColor>
+
+            <StackLayout>
+                <Label TextColor="#FFFFFF"  Text="{Binding MessageContext}" />
+            </StackLayout>
+        </Frame>        
+      
+
+    </Grid>
+</ViewCell>

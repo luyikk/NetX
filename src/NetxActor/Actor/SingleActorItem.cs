@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources.Copy;
 
 namespace Netx.Actor
 {
@@ -33,7 +34,9 @@ namespace Netx.Actor
 
         internal OpenAccess Access { get; }
 
-        internal ActorResultAwaiter<T> Awaiter { get; }
+        internal ManualResetValueTaskSource<T> TaskSource { get; }
+
+        internal ValueTask<T> Awaiter { get; }
 
         public ActorMessage(long id, int cmd, OpenAccess access, object[] args)            
         {
@@ -43,7 +46,8 @@ namespace Netx.Actor
             PushTime = TimeHelper.GetTime();
             CompleteTime = 0;
             this.Access = access;
-            Awaiter = new ActorResultAwaiter<T>();
+            TaskSource = new ManualResetValueTaskSource<T>();
+            Awaiter = new ValueTask<T>(TaskSource, TaskSource.Version);
         }
     }
 }

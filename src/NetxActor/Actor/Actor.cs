@@ -235,7 +235,7 @@ namespace Netx.Actor
           
             try
             {
-                Runing().Wait();
+                Runing();
             }
             catch (Exception er)
             {                
@@ -252,81 +252,69 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > maxQueuelen)
                     throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, access, args);
-            var task = GetResult(sa);
+            var sa = new ActorMessage<R>(id, cmd, access, args);            
             ActorRunQueue.Enqueue(sa);
-        
-            await Runing();
+            Runing();
 
-            if (sa.Awaiter.IsCompleted)
-                return;
-            else
-                await task;
+            await sa.Awaiter;
         }
 
-        public async ValueTask<R> AsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
+        public  ValueTask<R> AsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
         {
-          
+
             if (status == Disposed)
                 throw new ObjectDisposedException("this actor is dispose");
 
-            if(maxQueuelen > 0)
-                if(ActorRunQueue.Count> maxQueuelen)
-                    throw new NetxException($"this actor queue count >{maxQueuelen}",ErrorType.ActorQueueMaxErr);
+            if (maxQueuelen > 0)
+                if (ActorRunQueue.Count > maxQueuelen)
+                    throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, access, args);
-            var task = GetResult(sa);
-            ActorRunQueue.Enqueue(sa);           
-            await Runing();
-
-            if (sa.Awaiter.IsCompleted)
-                return sa.Awaiter.GetResult();
-            else
-                return await task;          
+            var sa = new ActorMessage<R>(id, cmd, access, args);          
+            ActorRunQueue.Enqueue(sa);
+            Runing();
+            return  sa.Awaiter;
 
         }
 
 
-        private async Task<R> GetResult(ActorMessage<R> actorItem)
+        private void Runing()
         {
-            return await actorItem.Awaiter;
-        }
-
-
-
-
-        private Task Runing()
-        {          
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
-                 async Task RunNext()
-                 {
+                async Task RunNext()
+                {
                     try
                     {
-                       
-
                         while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
                         {
-                           
-                            var res = await Call_runing(msg);
+                            try
+                            {
+                                var res = await Call_runing(msg);
 
-                            msg.Awaiter.Completed(res);
+                                msg.TaskSource.SetResult(res);
 
-                           
-                            lastRuntime = Environment.TickCount; 
 
-                            if (CompletedEvent != null)                            
-                                if (msg.Cmd != SleepCmd)
-                                {
-                                    msg.CompleteTime = TimeHelper.GetTime() ;
-                                    CompletedEvent(ActorController, msg);
-                                }                            
+                                lastRuntime = Environment.TickCount;
 
-                             
+                                if (CompletedEvent != null)
+                                    if (msg.Cmd != SleepCmd)
+                                    {
+                                        msg.CompleteTime = TimeHelper.GetTime();
+                                        CompletedEvent(ActorController, msg);
+                                    }
 
-                            if (status == Disposed)
-                                break;
+                                if (status == Disposed)
+                                    break;
+                            }
+                            catch (Exception er)
+                            {
+                                msg.TaskSource.SetException(er);
+                            }
                         }
+                    }
+                    catch (Exception er)
+                    {
+                        Log.Error(er);
                     }
                     finally
                     {
@@ -334,11 +322,9 @@ namespace Netx.Actor
                     }
                 };
 
-               return  ActorScheduler.Scheduler(RunNext);
-
+               ActorScheduler.Scheduler(RunNext);
             }
 
-            return Task.CompletedTask;
         }
 
         private async Task<R> Call_runing(ActorMessage<R> result)

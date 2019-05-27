@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using Netx.Loggine;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Netx.Actor
 {
@@ -15,10 +18,11 @@ namespace Netx.Actor
 
         }
 
-        protected Dictionary<Type, Type> FodyType { get; set; } = new Dictionary<Type, Type>();
+        protected ConcurrentDictionary<Type, ObjectMethodExecutor> FodyType { get; set; } = new ConcurrentDictionary<Type, ObjectMethodExecutor>();
 
-        public T Get<T>()
+        public virtual T Get<T>()
         {
+
             var interfaceType = typeof(T);
             if (!FodyType.ContainsKey(interfaceType))
             {
@@ -26,13 +30,19 @@ namespace Netx.Actor
                 var implementationType = assembly.GetType(interfaceType.FullName + "_Builder_Netx_Implementation");
                 if (implementationType == null)
                     throw new NetxException($"not find with {interfaceType.FullName} the Implementation", ErrorType.FodyInstallErr);
-                FodyType.Add(interfaceType, implementationType);
-                return (T)Activator.CreateInstance(implementationType, this);
+
+
+                var getImplementation = implementationType.GetMethod("GetImplementation", BindingFlags.Static | BindingFlags.Public);
+
+                var method = ObjectMethodExecutor.Create(getImplementation, null);
+                FodyType.TryAdd(interfaceType, method);
+
+                return (T)method.Execute(null, new object[] { this });
 
             }
             else
             {
-                return (T)Activator.CreateInstance(FodyType[interfaceType], this);
+                return (T)FodyType[interfaceType].Execute(null, new object[] { this });
             }
         }
     }

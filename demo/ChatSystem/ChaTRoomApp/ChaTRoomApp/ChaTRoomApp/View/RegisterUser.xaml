@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ChaTRoomApp.ViewModels"
+             x:Class="ChaTRoomApp.View.RegisterUser"
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="True"
+             x:Name="RegisterPage"
+             Title="Sign up"
+             >
+    <ContentPage.BindingContext>
+        <viewmodels:RegisterModel/>
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Content>
+        <Grid Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.3*"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="0.6*"/>
+            </Grid.RowDefinitions>
+
+            <Entry Grid.Column="1"
+                   Grid.Row="1"
+                   HorizontalOptions="Fill" 
+                   Placeholder="UserName"
+                   IsSpellCheckEnabled="False" 
+                   IsTextPredictionEnabled="False"
+                   Text="{Binding UserName}"
+                   />
+            <Entry Grid.Column="1"
+                   Grid.Row="2"
+                   HorizontalOptions="Fill" 
+                   Placeholder="PassWord" 
+                   IsPassword="True"
+                   Text="{Binding PassWord}"
+                   />
+            <Entry Grid.Column="1"
+                   Grid.Row="3" 
+                   HorizontalOptions="Fill"
+                   Placeholder="NickName"
+                   Text="{Binding NickName}"
+                   />
+            <Button Grid.Column="1" Grid.Row="4" Text="Sign up NOW"
+                    Command="{Binding RegisterCommand}"
+                    CommandParameter="{Binding Source={x:Reference RegisterPage}}}"
+                    />
+            <Button Grid.Column="1" Grid.Row="5" Text="Back"
+                     Command="{Binding BackCommand}"
+                      CommandParameter="{Binding Source={x:Reference RegisterPage}}"
+                    />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

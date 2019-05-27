@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Netx.Async;
+using System.Threading.Tasks.Sources.Copy;
 using ZYSocket;
 using ZYSocket.FiberStream;
 
@@ -11,15 +9,15 @@ namespace Netx
     public abstract class NetxAsync : NetxBuffer
     {
 
-      
+
         /// <summary>
         /// 异步结果返回,回调继续
         /// </summary>
         /// <param name="result"></param>
         protected virtual void AsyncBackResult(Result result)
         {
-            if (AsyncResultDict.TryRemove(result.Id, out AsyncResultAwaiter<Result> asyncback))           
-                    asyncback.Completed(result);               
+            if (AsyncResultDict.TryRemove(result.Id, out ManualResetValueTaskSource<Result> asyncback))
+                asyncback.SetResult(result);
             else
             {
                 if (result.IsError)
@@ -39,11 +37,11 @@ namespace Netx
                 }
             }
         }
-         
+
 
         protected virtual void ReadResult(ReadBytes read)
         {
-            var id = read.ReadInt64();        
+            var id = read.ReadInt64();
 
             if (id.HasValue)
             {

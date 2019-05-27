@@ -46,7 +46,7 @@ namespace Netx.Service
                         WriteObj(wr, arg);
                     }
 
-                    var result = AddAsyncResult(Id);
+                    var result = GetResult(AddAsyncResult(Id));
 
                     await wr.Flush();
 
@@ -86,7 +86,7 @@ namespace Netx.Service
                         WriteObj(wr, arg);
                     }
 
-                    var result = AddAsyncResult(Id);
+                    var result = GetResult(AddAsyncResult(Id));
 
                     await wr.Flush();
 

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using ZYSocket.FiberStream;
-using ZYSocket;
 using System.Buffers;
-using Netx.Async;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Sources.Copy;
+using ZYSocket;
+using ZYSocket.FiberStream;
 
 namespace Netx
 {
-    public abstract class NetxBuffer:NetxBase
+    public abstract class NetxBuffer : NetxBase
     {
 
         /// <summary>
@@ -21,7 +19,7 @@ namespace Netx
         /// <summary>
         /// 当前是否连接
         /// </summary>
-        public bool IsConnect { get=> isConnect; protected set=> isConnect=value; }
+        public bool IsConnect { get => isConnect; protected set => isConnect = value; }
 
         /// <summary>
         /// 异步请求发送,将异步返回结果
@@ -32,15 +30,15 @@ namespace Netx
         /// <returns></returns>
         protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
         {
-           
+
             if (!IsConnect)
-                if(!ConnectIt())
+                if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
             //数据包格式为 0 0000  00000000 0000 .....
             //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
             IWrite.Write(2400);
-            IWrite.Write((byte)2); 
+            IWrite.Write((byte)2);
             IWrite.Write(cmdTag);
             IWrite.Write(Id);
             IWrite.Write(args.Length);
@@ -57,11 +55,11 @@ namespace Netx
                 return result.Result;
             else
                 return await result;
-        }      
+        }
 
-        private async ValueTask<IResult> GetResult(AsyncResultAwaiter<Result> asyncResult)
+        protected ValueTask<IResult> GetResult(ManualResetValueTaskSource<Result> asyncResult)
         {
-            return await asyncResult;
+            return new ValueTask<IResult>(asyncResult, asyncResult.Version);
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace Netx
         /// <param name="Id">Id</param>
         /// <param name="args">参数</param>
         /// <returns>异步等待Task</returns>
-        protected async  override Task SendAsyncAction(int cmdTag, long Id, object[] args)
+        protected async override Task SendAsyncAction(int cmdTag, long Id, object[] args)
         {
             if (!IsConnect)
                 if (!ConnectIt())
@@ -123,11 +121,11 @@ namespace Netx
             else
             {
                 var res = await result;
-                if (res.IsError)                
-                    throw new NetxException(res.ErrorMsg, res.ErrorId);                
+                if (res.IsError)
+                    throw new NetxException(res.ErrorMsg, res.ErrorId);
             }
         }
-         
+
 
         protected abstract bool ConnectIt();
 
@@ -142,7 +140,7 @@ namespace Netx
             switch (p)
             {
                 case sbyte a:
-                    bufferWrite.Write((byte)a);                    
+                    bufferWrite.Write((byte)a);
                     break;
                 case byte a:
                     bufferWrite.Write(a);
@@ -197,7 +195,7 @@ namespace Netx
         }
 
 
-        protected virtual object  ReadData(ReadBytes read, Type type)
+        protected virtual object ReadData(ReadBytes read, Type type)
         {
 
             if (type == typeof(sbyte))
@@ -226,60 +224,60 @@ namespace Netx
                 return read.ReadArray();
             else if (type == typeof(string))
                 return read.ReadString();
-            else if (type == typeof(Memory<byte>))            
-               return read.ReadMemory();              
+            else if (type == typeof(Memory<byte>))
+                return read.ReadMemory();
             else if (type == typeof(ArraySegment<byte>))
             {
-                var mem =  read.ReadMemory();
+                var mem = read.ReadMemory();
                 return mem.GetArray();
             }
             else
-                return  read.ReadObject(type);
+                return read.ReadObject(type);
 
         }
 
 
-        protected virtual async Task<(object arg, IMemoryOwner<byte> ownew)> ReadDataAsync(IBufferAsyncRead fiberR,Type type)
+        protected virtual async Task<(object arg, IMemoryOwner<byte> ownew)> ReadDataAsync(IBufferAsyncRead fiberR, Type type)
         {
-            
-            if (type == typeof(sbyte))            
-                return ((sbyte)await fiberR.ReadByte(),null);            
-            else if (type == typeof(byte))            
-                return (await fiberR.ReadByte(), null);            
-            else if (type == typeof(short))            
-                return (await fiberR.ReadInt16(), null);            
-            else if (type == typeof(ushort))            
-                return (await fiberR.ReadUInt16(), null);            
-            else if (type == typeof(int))            
-                return (await fiberR.ReadInt32(), null);            
-            else if (type == typeof(uint))            
-                return (await fiberR.ReadUInt32(), null);            
-            else if (type == typeof(long))            
-                return (await fiberR.ReadInt64(), null);            
-            else if (type == typeof(ulong))            
-                return (await fiberR.ReadUInt64(), null);            
-            else if (type == typeof(double))            
-                return (await fiberR.ReadDouble(), null);             
-            else if (type == typeof(decimal))            
-                return (Convert.ToDecimal(await fiberR.ReadDouble()),null);            
-            else if (type == typeof(bool))            
-                return (await fiberR.ReadBoolean(),null);            
-            else if (type == typeof(byte[]))            
-                return (await fiberR.ReadArray(),null);            
-            else if (type == typeof(string))            
-                return (await fiberR.ReadString(),null);       
+
+            if (type == typeof(sbyte))
+                return ((sbyte)await fiberR.ReadByte(), null);
+            else if (type == typeof(byte))
+                return (await fiberR.ReadByte(), null);
+            else if (type == typeof(short))
+                return (await fiberR.ReadInt16(), null);
+            else if (type == typeof(ushort))
+                return (await fiberR.ReadUInt16(), null);
+            else if (type == typeof(int))
+                return (await fiberR.ReadInt32(), null);
+            else if (type == typeof(uint))
+                return (await fiberR.ReadUInt32(), null);
+            else if (type == typeof(long))
+                return (await fiberR.ReadInt64(), null);
+            else if (type == typeof(ulong))
+                return (await fiberR.ReadUInt64(), null);
+            else if (type == typeof(double))
+                return (await fiberR.ReadDouble(), null);
+            else if (type == typeof(decimal))
+                return (Convert.ToDecimal(await fiberR.ReadDouble()), null);
+            else if (type == typeof(bool))
+                return (await fiberR.ReadBoolean(), null);
+            else if (type == typeof(byte[]))
+                return (await fiberR.ReadArray(), null);
+            else if (type == typeof(string))
+                return (await fiberR.ReadString(), null);
             else if (type == typeof(Memory<byte>))
             {
-                var mem= await fiberR.ReadMemory();
+                var mem = await fiberR.ReadMemory();
                 return (mem.Value, mem.MemoryOwner);
             }
             else if (type == typeof(ArraySegment<byte>))
             {
-                var mem = await fiberR.ReadMemory();               
-                return (mem.Value.GetArray(),mem.MemoryOwner);
+                var mem = await fiberR.ReadMemory();
+                return (mem.Value.GetArray(), mem.MemoryOwner);
             }
             else
-                return (await fiberR.ReadObject(type),null);
+                return (await fiberR.ReadObject(type), null);
 
         }
 

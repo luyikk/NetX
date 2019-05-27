@@ -16,8 +16,14 @@
     <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
     <PackageTags>NetX</PackageTags>
     <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
-    <Version>1.2.3</Version>
+    <Version>1.2.6</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ValueTaskCopy\**" />
+    <EmbeddedResource Remove="ValueTaskCopy\**" />
+    <None Remove="ValueTaskCopy\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />

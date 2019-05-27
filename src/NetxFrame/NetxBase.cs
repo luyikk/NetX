@@ -1,20 +1,19 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Netx.Async;
-using Netx.Interface;
+﻿using Netx.Interface;
 using Netx.Loggine;
+using System;
+using System.Buffers;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Sources.Copy;
 
 namespace Netx
 {
-    public abstract class NetxBase: INetxBuildInterface
+    public abstract class NetxBase : INetxBuildInterface
     {
 
         protected IIds IdsManager { get; set; }
-     
+
         /// <summary>
         /// 日记输出
         /// </summary>
@@ -23,14 +22,14 @@ namespace Netx
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
         /// </summary>
-        private readonly Lazy<ConcurrentDictionary<long, AsyncResultAwaiter<Result>>> asyncResultDict = new Lazy<ConcurrentDictionary<long, AsyncResultAwaiter<Result>>>(() =>
-          new ConcurrentDictionary<long,AsyncResultAwaiter<Result>>(50,50) 
+        private readonly Lazy<ConcurrentDictionary<long, ManualResetValueTaskSource<Result>>> asyncResultDict = new Lazy<ConcurrentDictionary<long, ManualResetValueTaskSource<Result>>>(() =>
+          new ConcurrentDictionary<long, ManualResetValueTaskSource<Result>>(50, 50)
         , true);
 
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
         /// </summary>
-        protected ConcurrentDictionary<long,AsyncResultAwaiter<Result>> AsyncResultDict { get => asyncResultDict.Value; }
+        protected ConcurrentDictionary<long, ManualResetValueTaskSource<Result>> AsyncResultDict { get => asyncResultDict.Value; }
 
         /// <summary>
         /// 用来超时处理
@@ -42,7 +41,7 @@ namespace Netx
         /// <summary>
         /// 调用超时时间
         /// </summary>
-        public long RequestOutTime { get; protected set; }= 10000;
+        public long RequestOutTime { get; protected set; } = 10000;
 
         /// <summary>
         /// 运行，不等待返回结果,不会阻止当前线程
@@ -99,7 +98,7 @@ namespace Netx
         /// <param name="args"></param>
         /// <returns></returns>
         protected abstract Task SendAsyncAction(int cmdTag, long Id, object[] args);
-        
+
 
         /// <summary>
         /// 运行函数异步方式
@@ -107,7 +106,7 @@ namespace Netx
         /// <param name="cmdTag">命令</param>
         /// <param name="args">参数</param>
         /// <returns></returns>
-        protected abstract Task<IResult> AsyncFuncSend(int cmdTag,long Id, object[] args);
+        protected abstract Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args);
 
 
         public object Func(int cmdTag, Type type, params object[] args)
@@ -120,16 +119,16 @@ namespace Netx
         /// </summary>
         /// <param name="Ids"></param>
         /// <returns></returns>
-        protected virtual AsyncResultAwaiter<Result> AddAsyncResult(long ids)
+        protected virtual ManualResetValueTaskSource<Result> AddAsyncResult(long ids)
         {
-            AsyncResultAwaiter<Result> asyncResult = new AsyncResultAwaiter<Result>();
+            ManualResetValueTaskSource<Result> asyncResult = new ManualResetValueTaskSource<Result>();
             if (!AsyncResultDict.TryAdd(ids, asyncResult))
-            { 
+            {
                 Log.Info($"add async back have id:{ids}");
                 AsyncResultDict[ids] = asyncResult;
             }
 
-            if(RequestOutTime>0)
+            if (RequestOutTime > 0)
                 RequestOutTimeQueue.Enqueue(new RequestKeyTime(ids, TimeHelper.GetTime()));
 
             return asyncResult;
@@ -150,11 +149,11 @@ namespace Netx
 
         protected struct RequestKeyTime
         {
-            public long Key { get;  }
+            public long Key { get; }
 
-            public long Time { get;  }
+            public long Time { get; }
 
-            public RequestKeyTime(long key,long time)
+            public RequestKeyTime(long key, long time)
             {
                 Key = key;
                 Time = time;

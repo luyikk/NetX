@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ChaTRoomApp.TextInViewCell">
+
+    <Grid ColumnSpacing="2" Padding="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>          
+        </Grid.RowDefinitions>
+
+        <StackLayout Grid.Column="1" Orientation="Horizontal" Padding="0" Margin="0" >
+            <Label  HorizontalOptions="Start" HorizontalTextAlignment="Start"  Text="{Binding Time, StringFormat=' {0:MM/dd hh:mm}'}" TextColor="Gray"/>
+            <Label  HorizontalOptions="Start" HorizontalTextAlignment="Start"  Text="{Binding FromName}" TextColor="Gray"/>       
+        </StackLayout>
+        <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="#007ACC" CornerRadius="15">
+            <Frame.HasShadow>
+                <OnPlatform x:TypeArguments="x:Boolean" iOS="false" Android="true"/>
+            </Frame.HasShadow>
+            <StackLayout Margin="0" Padding="0">
+                <Label TextColor="#FFFFFF" Text="{Binding MessageContext}" />
+            </StackLayout>
+        </Frame>
+    </Grid>
+</ViewCell>
