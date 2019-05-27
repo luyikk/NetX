@@ -10,7 +10,7 @@ namespace ActorTest
     /// <summary>
     /// 整个Actor 容器为全局唯一
     /// </summary>
-    [ActorOption(maxQueueCount:1000, ideltime: 10000)] //设置最大列队数1000, 设置多久没有订单后进入休眠状态
+    [ActorOption(maxQueueCount:1000, ideltime: 3000)] //设置最大列队数1000, 设置多久没有订单后进入休眠状态
     public class NextActorController : ActorController
     {
         public ILog Log { get; }
@@ -109,6 +109,21 @@ namespace ActorTest
             }
 
         }
+
+        [TAG(10005)]
+        public async Task TestWait()
+        {
+            Log.Info("Wait 5s Next...");
+            await Task.Delay(500);
+            
+        }
+
+        [TAG(10006)]
+        public void TestWrite(string msg)
+        {
+            Log.Info(msg);
+        }
+
 
         public override Task Sleeping()
         {

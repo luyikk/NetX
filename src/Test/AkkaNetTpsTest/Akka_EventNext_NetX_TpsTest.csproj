@@ -10,7 +10,7 @@
     <PackageReference Include="EventNext" Version="0.5.8.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="NetxActor" Version="1.2.6" />
+    <PackageReference Include="NetxActor" Version="1.2.7" />
   </ItemGroup>
 
 </Project>

@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 namespace Netx.Actor
 {
 
-    public class ActorRun<R> : ActorRunFodyInstance, IActorGet, IDisposable where R:class
+    public class ActorRun: ActorRunFodyInstance, IActorGet, IDisposable
     {
 
-        private readonly Lazy<ConcurrentDictionary<int, Actor<R>>> actorCollect;
+        private readonly Lazy<ConcurrentDictionary<int, Actor>> actorCollect;
 
-        public ConcurrentDictionary<int, Actor<R>> ActorCollect { get => actorCollect.Value; }
+        public ConcurrentDictionary<int, Actor> ActorCollect { get => actorCollect.Value; }
 
         public event EventHandler<IActorMessage> CompletedEvent;
 
         public ActorRun(IServiceProvider container)
             : base(container)
         {
-            actorCollect = new Lazy<ConcurrentDictionary<int, Actor<R>>>();
+            actorCollect = new Lazy<ConcurrentDictionary<int, Actor>>();
             Load();
 
             if(ActorCollect.Count>0)
@@ -37,7 +37,7 @@ namespace Netx.Actor
                     {
                         try
                         {
-                            await item.AsyncAction(-1, Actor<R>.SleepCmd, OpenAccess.Private, null);
+                            await item.AsyncAction(-1, Actor.SleepCmd, OpenAccess.Private, null);
                         }
                         catch (Exception er)
                         {
@@ -52,7 +52,7 @@ namespace Netx.Actor
         {
             foreach (var controller in Container.GetServices<ActorController>())
             {
-                var actor = new Actor<R>(Container,this,ActorScheduler,controller);
+                var actor = new Actor(Container,this,ActorScheduler,controller);
                 actor.CompletedEvent += Actor_CompletedEvent;
                 foreach (int cmd in actor.CmdDict.Keys)
                     ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);
@@ -84,16 +84,16 @@ namespace Netx.Actor
 
         public ValueTask AsyncAction(long id, int cmd, OpenAccess access, params object[] args)
         {
-            if (ActorCollect.TryGetValue(cmd, out Actor<R> m))
+            if (ActorCollect.TryGetValue(cmd, out Actor m))
                 return m.AsyncAction(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
-        public  ValueTask<R> CallFunc(long id, int cmd, OpenAccess access, params object[] args)
+        public  ValueTask<T> CallFunc<T>(long id, int cmd, OpenAccess access, params object[] args)
         {
-            if (ActorCollect.TryGetValue(cmd,out Actor<R> m))
-                return  m.AsyncFunc(id, cmd, access, args);
+            if (ActorCollect.TryGetValue(cmd,out Actor m))
+                return  m.AsyncFunc<T>(id, cmd, access, args);
             else
                 throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
         }
@@ -104,7 +104,7 @@ namespace Netx.Actor
         {
             var Id = IdsManager.MakeId;
 
-            var result = await this.CallFunc(Id, cmdTag, OpenAccess.Internal, args);
+            var result = await this.CallFunc<object>(Id, cmdTag, OpenAccess.Internal, args);
 
             switch (result)
             {
@@ -119,11 +119,9 @@ namespace Netx.Actor
             }
         }
 
-        public async override Task<T> AsyncFunc<T>(int cmdTag, params object[] args)
-        {
-           
-            var result =(dynamic) await this.CallFunc(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args);
-            return (T)result;
+        public  override Task<T> AsyncFunc<T>(int cmdTag, params object[] args)
+        {           
+            return this.CallFunc<T>(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args).AsTask();           
         }
 
         public async override Task AsyncAction(int cmdTag, params object[] args)
@@ -148,12 +146,5 @@ namespace Netx.Actor
         }
 
      
-    }
-
-    public class ActorRun : ActorRun<dynamic>
-    {
-        public ActorRun(IServiceProvider container) : base(container)
-        {
-        }
     }
 }

@@ -35,8 +35,12 @@ namespace ActorTest
 
 
             var server = Actor.Get<ICallServer>();
+
+        
+
             await server.Add(0, 0);
 
+         
 
 
             await server.SetUserCoin(1, 100);
@@ -46,7 +50,7 @@ namespace ActorTest
 
             var task1 = Task.Run(() =>
               {
-                  for (int i = 0; i < 100; i++)
+                  for (int i = 0; i < 10; i++)
                   {
                       server.AddUserCoin(1, 100);
                   }
@@ -55,7 +59,7 @@ namespace ActorTest
 
             var task2 = Task.Run(() =>
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     server.SubUserCoin(1, 100);
                 }
@@ -67,7 +71,8 @@ namespace ActorTest
             user = await server.GetUser(1);
             Console.WriteLine($"{user.Name} current coin:{user.Coin}");
 
-            Console.ReadLine();
+            await server.TestWait();
+            server.TestWrite($"{user.Name} coin is Reset");
             await server.SetUserCoin(1, 100);
 
 
@@ -76,8 +81,8 @@ namespace ActorTest
             var stop = System.Diagnostics.Stopwatch.StartNew();
 
             var x = 0;
-          
-            long count = 0;            
+
+            long count = 0;
 
             for (int i = 0; i < 2000000; i++)
             {
@@ -100,7 +105,7 @@ namespace ActorTest
 
             for (int i = 0; i < 2000000; i++)
             {
-                x = await Actor.CallFunc(i, 2000, OpenAccess.Internal, i, x);
+                x = await Actor.CallFunc<int>(i, 2000, OpenAccess.Internal, i, x);
                 count++;
             }
 

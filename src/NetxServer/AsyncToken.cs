@@ -270,7 +270,7 @@ namespace Netx.Service
                         break;
                     case 2:
                         {
-                            var ret_value = await ActorRun.CallFunc(id, cmd, OpenAccess.Public, args);
+                            var ret_value = await ActorRun.CallFunc<object>(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             switch (ret_value)
                             {

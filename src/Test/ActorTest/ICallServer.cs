@@ -38,5 +38,11 @@ namespace ActorTest
 
         [TAG(10004)]
         Task<bool> SetUserCoin(int Id, int coin);
+
+        [TAG(10005)]
+        Task TestWait();
+
+        [TAG(10006)]
+        void TestWrite(string msg);
     }
 }

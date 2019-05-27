@@ -20,7 +20,8 @@ namespace Netx.Actor
      
     }
 
-    public class ActorMessage<T>: IActorMessage
+
+    public abstract class ActorMessage : IActorMessage
     {
         public long Id { get; }
 
@@ -34,11 +35,7 @@ namespace Netx.Actor
 
         internal OpenAccess Access { get; }
 
-        internal ManualResetValueTaskSource<T> TaskSource { get; }
-
-        internal ValueTask<T> Awaiter { get; }
-
-        public ActorMessage(long id, int cmd, OpenAccess access, object[] args)            
+        protected ActorMessage(long id, int cmd, OpenAccess access, object[] args)
         {
             Id = id;
             Cmd = cmd;
@@ -46,8 +43,42 @@ namespace Netx.Actor
             PushTime = TimeHelper.GetTime();
             CompleteTime = 0;
             this.Access = access;
+           
+        }
+
+        public abstract void Completed(object result);
+        public abstract void SetException(Exception error);
+    }
+
+
+    public class ActorMessage<T>: ActorMessage
+    {
+      
+        internal ManualResetValueTaskSource<T> TaskSource { get; }
+
+        internal ValueTask<T> Awaiter { get; }
+
+        public ActorMessage(long id, int cmd, OpenAccess access, object[] args)
+            :base(id,cmd,access,args)
+        {                   
+           
             TaskSource = new ManualResetValueTaskSource<T>();
             Awaiter = new ValueTask<T>(TaskSource, TaskSource.Version);
+        }
+
+        public override void Completed(object result)
+        {
+            TaskSource.SetResult((T)result);
+        }
+
+        public override void SetException(Exception error)
+        {
+            TaskSource.SetException(error);
+        }
+
+        public override string ToString()
+        {
+            return Cmd.ToString();
         }
     }
 }

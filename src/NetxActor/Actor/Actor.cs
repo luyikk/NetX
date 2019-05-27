@@ -13,7 +13,7 @@ using Netx.Loggine;
 
 namespace Netx.Actor
 {
-    public class Actor<R> : IActor<R> where R:class
+    public class Actor : IActor
     {
         public const int Idle = 0;
         public const int Open = 1;
@@ -30,9 +30,9 @@ namespace Netx.Actor
 
         public Dictionary<int, ActorMethodRegister> CmdDict { get; }
 
-        private readonly Lazy<ConcurrentQueue<ActorMessage<R>>> actorRunQueue;
+        private readonly Lazy<ConcurrentQueue<ActorMessage>> actorRunQueue;
 
-        public ConcurrentQueue<ActorMessage<R>> ActorRunQueue { get => actorRunQueue.Value; }
+        public ConcurrentQueue<ActorMessage> ActorRunQueue { get => actorRunQueue.Value; }
 
         public ILog Log { get; }
 
@@ -97,7 +97,7 @@ namespace Netx.Actor
             ActorController.Status = this;
             this.Container = container;
            
-            actorRunQueue = new Lazy<ConcurrentQueue<ActorMessage<R>>>();
+            actorRunQueue = new Lazy<ConcurrentQueue<ActorMessage>>();
             Log = new DefaultLog(container.GetRequiredService<ILoggerFactory>().CreateLogger($"Actor-{instance.GetType().Name}"));
             this.CmdDict = LoadRegister(instance.GetType());
             
@@ -230,17 +230,19 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > maxQueuelen)
                     throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, access,args);
+            var sa = new ActorMessage<object>(id, cmd, access, args);
             ActorRunQueue.Enqueue(sa);
-          
+
+
             try
             {
-                Runing();
+                 Runing().Wait();
             }
             catch (Exception er)
-            {                
+            {
                 Log.Error(er);
             }
+
         }
 
         public async ValueTask AsyncAction(long id, int cmd, OpenAccess access, params object[] args)
@@ -252,14 +254,13 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > maxQueuelen)
                     throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, access, args);            
+            var sa = new ActorMessage<object>(id, cmd, access, args);            
             ActorRunQueue.Enqueue(sa);
-            Runing();
-
+            await Runing();
             await sa.Awaiter;
         }
 
-        public  ValueTask<R> AsyncFunc(long id, int cmd, OpenAccess access, params object[] args)
+        public ValueTask<T> AsyncFunc<T>(long id, int cmd, OpenAccess access, params object[] args)
         {
 
             if (status == Disposed)
@@ -269,15 +270,15 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > maxQueuelen)
                     throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<R>(id, cmd, access, args);          
+            var sa = new ActorMessage<T>(id, cmd, access, args);
             ActorRunQueue.Enqueue(sa);
-            Runing();
-            return  sa.Awaiter;
+            Runing().Wait();
+            return sa.Awaiter;
 
         }
 
 
-        private void Runing()
+        private Task  Runing()
         {
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
@@ -285,14 +286,13 @@ namespace Netx.Actor
                 {
                     try
                     {
-                        while (ActorRunQueue.TryDequeue(out ActorMessage<R> msg))
+                        while (ActorRunQueue.TryDequeue(out ActorMessage msg))
                         {
                             try
                             {
                                 var res = await Call_runing(msg);
 
-                                msg.TaskSource.SetResult(res);
-
+                                msg.Completed(res);
 
                                 lastRuntime = Environment.TickCount;
 
@@ -308,26 +308,23 @@ namespace Netx.Actor
                             }
                             catch (Exception er)
                             {
-                                msg.TaskSource.SetException(er);
+                                msg.SetException(er);
                             }
                         }
-                    }
-                    catch (Exception er)
-                    {
-                        Log.Error(er);
-                    }
+                    }                  
                     finally
                     {
                         Interlocked.CompareExchange(ref status, Idle, Open);
                     }
                 };
 
-               ActorScheduler.Scheduler(RunNext);
+               return ActorScheduler.Scheduler(RunNext);
             }
 
+            return Task.CompletedTask;
         }
 
-        private async Task<R> Call_runing(ActorMessage<R> result)
+        private async Task<object> Call_runing(ActorMessage result)
         {
             var cmd = result.Cmd;
             var args = result.Args;
@@ -385,7 +382,7 @@ namespace Netx.Actor
                     }
                     else
                     {
-                        return (R)GetErrorResult($"actor cmd:{cmd} args count error", result.Id);
+                        return GetErrorResult($"actor cmd:{cmd} args count error", result.Id);
                     }
                 }
                 else
@@ -395,7 +392,7 @@ namespace Netx.Actor
             }
             else
             {
-                return (R)GetErrorResult($"not find actor cmd:{cmd}", result.Id);              
+                return GetErrorResult($"not find actor cmd:{cmd}", result.Id);              
             }           
         }
 
