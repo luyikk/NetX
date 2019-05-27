@@ -9,7 +9,7 @@ NUGET:
     NetX共享ActorService:暂未开发
     NETXActor(ACTOR本机运行版) : Install-Package NetxActor
     
-NetX原理结构图:
+
 ![NetX原理结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX1.png)
 
 通过此框架我们可以轻松的构建 如图这样的服务网络,他的性能非常好的,大概比[Orleans](https://github.com/dotnet/orleans)性能高出5倍以上,内存只需要[orleans](https://github.com/dotnet/orleans)5分之一.功能强大,Actor,RPC,Event Sourcing,Wake up to sleep,负载均衡,服务路由,服务器主动调用客户端...等等功能.可实现Orleans无法实现的功能.
@@ -17,7 +17,6 @@ NetX原理结构图:
 ## 下面逐步介绍各个功能模块:
 
 **NetXServer:**
-NetXServer结构图:
 ![NetXServer结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX2.png)
 
 在Server 中 我们一共有2种控制器,一种是RPC控制器,一种是ACTOR控制器.
@@ -184,8 +183,14 @@ NetXClient提供给服务器调用的服务是线程安全的.
        var Client= icontainer.Build(); //生成一个CLIENT
 
 还记得上面的IServer吗?
+
+调用服务器是需要通过TAG的,至于你CLIENT的IServer不一定要和服务器一致,我们甚至可以换个名字,或者把IActorServer和IServer2个接口的功能整合在一起. 但要注意的是TAG和 参数必须和服务器提供的一致哦
+
 关于服务的调用方式图解:
 ![关于服务的调用方式图解](https://github.com/luyikk/NetX/blob/master/Images/NetX5.png)
+
+
+
 我们通过IServer调用服务器:
 
     var service = Client.Get<IServer>();
@@ -224,7 +229,6 @@ NetXClient提供给服务器调用的服务是线程安全的.
   
 详情我们可以查看
 [ClientDemo](https://github.com/luyikk/NetX/blob/master/demo/ChatSystem/ChatClient/)
-
 
 
 **NetX代理网关和NetX共享ActorService 我还没有时间开发,但是通过Server和CLIENT我们已经可以实现很多功能了!**
