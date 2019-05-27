@@ -242,9 +242,23 @@ NetXClient提供给服务器调用的服务是线程安全的.
 [ClientDemo](https://github.com/luyikk/NetX/blob/master/demo/ChatSystem/ChatClient/)
 
 
+**关于NETXClient-Portable:**
+一款用于手机的客户端组件,可以完美的运行于安卓和IOS系统.
+[我特地提供了DEMO](https://github.com/luyikk/NetX/tree/master/demo/ChatSystem/ChaTRoomApp)
+
+IOS 实体机 测试:
+![IOS DEMO](https://github.com/luyikk/NetX/blob/master/Images/IOS.png)
+
+
+
+
+
 **NetX代理网关和NetX共享ActorService 我还没有时间开发,但是通过Server和CLIENT我们已经可以实现很多功能了!**
 下面是 网关图解:
 ![NetXProxy](https://github.com/luyikk/NetX/blob/master/Images/NetX4.png)
+
+
+
 
 **NETXActor:**
 我提供了一个 ActorRun 本机版,你可以单独拿出来使用就像 AKKA.NET. 他的性能是AKKA.NET本机运行的3倍以上,达到了3M TPS, 也就是1秒钟可以处理300W个事务.
