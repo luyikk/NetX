@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ZYSocket.Interface;
 
@@ -67,7 +68,7 @@ namespace Netx
 
         }
 
-    
+
 
         /// <summary>
         /// 反序列化对象
@@ -76,7 +77,7 @@ namespace Netx
         /// <param name="data">二进制数据</param>
         /// <param name="offset">偏移</param>
         /// <param name="length">长度</param>
-        /// <returns></returns>
+        /// <returns></returns>       
         public static object UnpackSingleObject(Type type, byte[] data)
         {
 
@@ -169,6 +170,7 @@ namespace Netx
         /// </summary>
         /// <param name="ms"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ReadString(byte[] Data)
         {
             string values = Encoding.UTF8.GetString(Data);

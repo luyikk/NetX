@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Netx
@@ -12,6 +13,7 @@ namespace Netx
         /// <param name="type">当前类型</param>
         /// <param name="targetType">目标类型</param>
         /// <returns>结果</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsTypeOfBaseTypeIs(Type type, Type targetType)
         {
             if (type == targetType)

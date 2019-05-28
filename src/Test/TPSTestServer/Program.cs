@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Netx.Actor;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -28,7 +29,8 @@ namespace TestServer
                 {                    
                     p.VerifyKey = "123123";
                     p.ClearSessionTime = 5000;
-                })             
+                })       
+                //.ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)
                 .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            
                 .Build();
 
