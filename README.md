@@ -1,4 +1,4 @@
-# NetX
+﻿# NetX
 **一款使用[ZYSOCKET-V](https://github.com/luyikk/ZYSOCKET-V)实现的 Actor+RPC 服务,使用它你可以随随便便做出高性能服务器,以及彻底解决各种锁的问题**
 
 **使用方式:
@@ -273,5 +273,4 @@ Src:[AKKA.NET VS event next VS NetX](https://github.com/luyikk/NetX/tree/master/
 下面是结果图:
 ![AKKA.NET VS event next VS NetX:](https://github.com/luyikk/NetX/blob/master/Images/Test.png)
 
-*在并行的情况下基本上都是能达到2.4M TPS的,如果是单线程测试避免了线程调度开销 也就是ActorTest里面的例子,可以达到3.2M TPS
-我的电脑是I7 4770K* 
+*在并行的情况下基本上都是能达到4M TPS的,如果是单线程测试避免了线程调度开销 也就是ActorTest里面的例子,可以达到3.2M TPS
