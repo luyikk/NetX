@@ -23,6 +23,9 @@ namespace Netx.Actor
 
             if(ActorCollect.Count>0)
                 Task.Factory.StartNew(SleepingHandler);
+
+            foreach (var @event in container.GetServices<ActorEventBase>())
+                this.CompletedEvent += @event.ActorEventCompleted;
         }
 
         private async void SleepingHandler()

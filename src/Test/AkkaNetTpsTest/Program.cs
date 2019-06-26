@@ -9,7 +9,6 @@ using Netx.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZYSocket.Interface;
 
 namespace EventNext_AkkaNet
 {
@@ -33,20 +32,11 @@ namespace EventNext_AkkaNet
 
         static void Main(string[] args)
         {
-
-            IServiceCollection Container = new ServiceCollection();
-            Container.AddSingleton<IIds, DefaultMakeIds>();          
-            Container.AddSingleton<ActorController, NextActorController>();
-            Container.AddSingleton<ActorRun>(p => new ActorRun(p));
-            Container.AddSingleton<ISerialization>(p => new ZYSocket.FiberStream.ProtobuffObjFormat());           
-            Container.AddLogging(p =>
-            {
-                p.AddConsole();
-                p.SetMinimumLevel(LogLevel.Trace);
-            });
-
-            NetXActorSP = Container.BuildServiceProvider();
-
+           
+            var actor = new Netx.Actor.Builder.ActorBuilder();
+            actor.RegisterService<NextActorController>();
+            actor.Build();
+            NetXActorSP = actor.Provider;
 
             EventCenter.Register(typeof(Program).Assembly);
             EventCenter.LogOutput += (o, e) =>
@@ -90,8 +80,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor1.CallFunc<int>(i, 1, OpenAccess.Internal, i);
-                       // await server1.Income(i);
+                        //await NetXActor1.CallFunc<int>(i, 1, OpenAccess.Internal, i);
+                        await server1.Income(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -101,8 +91,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                         await NetXActor1.CallFunc<int>(i, 2, OpenAccess.Internal, i);
-                      //  await server1.Payout(i);
+                         //await NetXActor1.CallFunc<int>(i, 2, OpenAccess.Internal, i);
+                        await server1.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -113,8 +103,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                        await NetXActor2.CallFunc<int>(i, 1, OpenAccess.Internal, i);
-                      //  await server2.Income(i);
+                        //await NetXActor2.CallFunc<int>(i, 1, OpenAccess.Internal, i);
+                        await server2.Income(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });
@@ -124,8 +114,8 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                         await NetXActor2.CallFunc<int>(i, 2, OpenAccess.Internal, i);
-                        //await server2.Payout(i);
+                         //await NetXActor2.CallFunc<int>(i, 2, OpenAccess.Internal, i);
+                        await server2.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
                 });

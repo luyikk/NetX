@@ -16,7 +16,7 @@
     <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
     <PackageTags>NetX</PackageTags>
     <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
-    <Version>1.2.7</Version>
+    <Version>1.2.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.2" />
   </ItemGroup>
 

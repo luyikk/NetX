@@ -40,9 +40,7 @@ namespace Netx.Service
             SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
             Container = container;
 
-            var actor_run = container.GetRequiredService<ActorRun>();
-            foreach (var @event in container.GetServices<ActorEventBase>())            
-                actor_run.CompletedEvent += @event.ActorEventCompleted;
+            var actor_run = container.GetRequiredService<ActorRun>();         
 
             ServiceOption = container.GetRequiredService<IOptions<ServiceOption>>().Value;
         }

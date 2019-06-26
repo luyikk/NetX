@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Netx.Service
+namespace Netx.Actor
 {
     public abstract class ActorEventBase
     {

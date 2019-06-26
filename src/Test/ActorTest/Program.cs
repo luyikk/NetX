@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Netx;
 using Netx.Actor;
+using Netx.Actor.Builder;
 using Netx.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,31 +18,13 @@ namespace ActorTest
         static async Task Main(string[] args)
         {
 
-            Container.AddSingleton<IIds, DefaultMakeIds>();
-            Container.AddSingleton<ActorController, TestActorController>();
-            Container.AddSingleton<ActorController, NextActorController>();
-            Container.AddSingleton<ActorRun>(p => new ActorRun(p));
-            Container.AddSingleton<ISerialization>(p => new ZYSocket.FiberStream.ProtobuffObjFormat());
-            Container.AddLogging(p =>
-            {
-                p.AddConsole();
-                p.SetMinimumLevel(LogLevel.Trace);
-            });
-
-            var build = Container.BuildServiceProvider();
-
-            var Actor = build.GetRequiredService<ActorRun>();
-
-
+            var Actor = new ActorBuilder()
+                 .RegisterService<TestActorController>()
+                 .RegisterService<NextActorController>().Build();
 
             var server = Actor.Get<ICallServer>();
 
-        
-
             await server.Add(0, 0);
-
-         
-
 
             await server.SetUserCoin(1, 100);
             var user = await server.GetUser(1);
