@@ -22,5 +22,7 @@ namespace Netx.Actor.Builder
         IActorBuilder RegisterService(Assembly assembly);
         IActorBuilder RegisterService(Type controller_instance_type);
         IActorBuilder RegisterService<ActorType>() where ActorType : ActorController;
+        IActorBuilder RegisterDescriptors(Action<IServiceCollection> serviceDescriptors);
+        IActorBuilder UseActorLambda();
     }
 }

@@ -256,7 +256,7 @@ namespace Netx.Actor
 
             var sa = new ActorMessage<object>(id, cmd, access, args);            
             ActorRunQueue.Enqueue(sa);
-            await Runing();
+            Runing().Wait();
             await sa.Awaiter;
         }
 

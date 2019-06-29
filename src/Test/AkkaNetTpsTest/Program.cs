@@ -32,10 +32,19 @@ namespace EventNext_AkkaNet
 
         static void Main(string[] args)
         {
+
+           
+
+         
            
             var actor = new Netx.Actor.Builder.ActorBuilder();
             actor.RegisterService<NextActorController>();
             actor.Build();
+
+
+            var x = System.Runtime.InteropServices.Marshal.SizeOf<Netx.Actor.Builder.ActorBuilder>(actor);
+
+
             NetXActorSP = actor.Provider;
 
             EventCenter.Register(typeof(Program).Assembly);

@@ -195,11 +195,12 @@ public partial class ModuleWeaver : BaseModuleWeaver
         NewMethod.Parameters.Add(new ParameterDefinition("args", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(object[]))));
 
              
-        Dictionary<int, MethodDefinition> methods = new Dictionary<int, MethodDefinition>();
+        Dictionary<int, MethodReference> methods = new Dictionary<int, MethodReference>();
+
+     
 
         foreach (var ifacer in typeDefinition.Interfaces)
         {
-
             var iface = ifacer.InterfaceType.Resolve();
 
             if (iface != null)
@@ -227,7 +228,15 @@ public partial class ModuleWeaver : BaseModuleWeaver
                                 break;
                         }
 
-                        methods[cmd] = method;
+
+                        if (typeDefinition.GenericParameters.Count>0)
+                        {
+                            var types = typeDefinition.GenericParameters.ToArray();
+                            var genericmethod = ModuleDefinition.ImportReference(MakeGeneric(method, types));
+                            methods[cmd] = genericmethod;
+                        }
+                        else
+                            methods[cmd] = method;
 
                     }
                 }

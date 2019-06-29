@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZYSocket.Interface;
 using ZYSQL;
+using System.Diagnostics;
 
 namespace ActorTest
 {
@@ -19,9 +20,118 @@ namespace ActorTest
         {
 
             var Actor = new ActorBuilder()
-                 .RegisterService<TestActorController>()
+                 .UseActorLambda()
+                 //.ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)
+                 .RegisterService<TestActorController>()                 
                  .RegisterService<NextActorController>().Build();
 
+
+            #region use akka model
+
+            var lambda = Actor.Get<IActorLambda>();
+            {
+                int icount = 0;            
+
+                List<Task> waitlist = new List<Task>();
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew((p) =>
+                    {
+                        lambda.Tell(() =>
+                        {                          
+                            icount +=(int)p;
+                        });
+
+                    },i));
+                }
+
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew((p) =>
+                    {
+                        lambda.Tell(() =>
+                        {                           
+                            icount -= (int)p;
+                        });
+                    },i));
+                }
+               
+
+                await Task.WhenAll(waitlist);
+
+                Debug.Assert(icount == 0);
+                Console.WriteLine($"tell:{icount}");
+            }
+
+            {
+                int icount = 0;
+
+                List<Task> waitlist = new List<Task>();
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew(async (p) =>
+                    {
+                        var res = await lambda.Ask(() =>p);
+                        icount -= res;
+                    },i));
+                }
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew(async (p) =>
+                    {
+                        var res = await lambda.Ask(() =>p);
+                        icount += res;
+                    },i));
+                }
+
+                await Task.WhenAll(waitlist);
+
+                Debug.Assert(icount == 0);
+
+                Console.WriteLine($"tell:{icount}");
+            }
+
+            {
+                int icount = 0;
+
+                List<Task> waitlist = new List<Task>();
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew(async (p) =>
+                     {
+                         await lambda.Ask(() =>
+                         {
+                             icount += (int)p;
+                         });
+
+                     }, i));
+                }
+
+                for (int i = 0; i < 10000; i++)
+                {
+                    waitlist.Add(Task.Factory.StartNew(async (p) =>
+                      {
+                          await lambda.Ask(() =>
+                          {
+                              icount -= (int)p;
+                          });
+
+                      }, i));
+                }
+
+                await Task.WhenAll(waitlist);
+
+                Debug.Assert(icount == 0);
+
+                Console.WriteLine($"tell:{icount}");
+            }
+
+            #endregion
+
+            #region testsql
             var server = Actor.Get<ICallServer>();
 
             await server.Add(0, 0);
@@ -58,7 +168,7 @@ namespace ActorTest
             server.TestWrite($"{user.Name} coin is Reset");
             await server.SetUserCoin(1, 100);
 
-
+            #endregion
 
             #region TestCount
             var stop = System.Diagnostics.Stopwatch.StartNew();
@@ -89,6 +199,25 @@ namespace ActorTest
             for (int i = 0; i < 2000000; i++)
             {
                 x = await Actor.CallFunc<int>(i, 2000, OpenAccess.Internal, i, x);
+                count++;
+            }
+
+            stop.Stop();
+
+            t = await server.GetV();
+            Console.WriteLine(x);
+            Console.WriteLine(t);
+            Console.WriteLine($"Count:{count} time {stop.ElapsedMilliseconds}");
+
+
+            stop.Restart();
+
+            x = 0;
+            count = 0;
+
+            for (int i = 0; i < 2000000; i++)
+            {
+                await lambda.Ask(() => { x += i; });
                 count++;
             }
 

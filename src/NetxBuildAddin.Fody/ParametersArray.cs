@@ -286,7 +286,7 @@ public partial class ModuleWeaver
         }
         else
         {
-            Debug.Assert(IsAssignableFrom(source, target) || target.Resolve().IsInterface || source.Resolve().IsInterface);
+           
             if (target.IsGenericParameter)
             {
                 opCodes.Add(il.Create(OpCodes.Unbox_Any, ModuleDefinition.ImportReference(target)));

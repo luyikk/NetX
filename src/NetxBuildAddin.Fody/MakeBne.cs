@@ -8,7 +8,7 @@ using System.Text;
 public class MakeBne
 {
     public ILProcessor Processor { get; set; }
-    public MethodDefinition Method { get; set; }
+    public MethodReference Method { get; set; }
     public int Cmd { get; set; }
     public Instruction Start { get; set; }
     public Instruction Next { get; set; }

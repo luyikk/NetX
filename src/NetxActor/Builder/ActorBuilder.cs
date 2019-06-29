@@ -149,6 +149,16 @@ namespace Netx.Actor.Builder
         }
 
         /// <summary>
+        /// 支持Lambda 方式
+        /// </summary>
+        /// <returns></returns>
+        public IActorBuilder UseActorLambda()
+        {
+            this.RegisterService<LambdaController>();
+            return this;
+        }
+
+        /// <summary>
         /// 配置日记输出
         /// </summary>
         /// <typeparam name="T"></typeparam>
