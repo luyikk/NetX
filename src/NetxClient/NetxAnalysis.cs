@@ -48,7 +48,7 @@ namespace Netx.Client
                 {
                     case 2000: //set session
                         {
-                            var sessionid = (read.ReadInt64()).GetValueOrDefault(0);
+                            var sessionid = read.ReadInt64();
                             Log.TraceFormat("save sessionid {0}", sessionid);
                             Session.SaveSessionId(sessionid);
                         }
@@ -64,7 +64,7 @@ namespace Netx.Client
                         }
                         break;
                     default:
-                        throw new NetxException($"data error:{cmd.GetValueOrDefault()}", ErrorType.ReadErr);
+                        throw new NetxException($"data error:{cmd}", ErrorType.ReadErr);
                 }
 
             }

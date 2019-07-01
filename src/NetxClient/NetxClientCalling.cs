@@ -54,35 +54,23 @@ namespace Netx.Client
         private async Task DataOnByRead(ReadBytes read, byte runtype)
         {
             var cmd = read.ReadInt32();
-            if (cmd.HasValue)
+            var id = read.ReadInt64();
+            if (MethodInstanceDict.TryGetValue(cmd, out InstanceRegister service))
             {
-
-                var id = (read.ReadInt64()).GetValueOrDefault(-1);
-                if (MethodInstanceDict.TryGetValue(cmd.Value, out InstanceRegister service))
+                var argslen = read.ReadInt32();
+                if (argslen == service.ArgsLen)
                 {
-                    var argslen = (read.ReadInt32()).Value;
-                    if (argslen == service.ArgsLen)
-                    {
-                        object[] args = new object[argslen];
-                        for (int i = 0; i < argslen; i++)
-                            args[i] = base.ReadData(read, service.ArgsType[i]);
+                    object[] args = new object[argslen];
+                    for (int i = 0; i < argslen; i++)
+                        args[i] = base.ReadData(read, service.ArgsType[i]);
 
-
-                        RunCall(service, cmd.Value, id, runtype, args);
-                    }
-                    else
-                    {
-                        Log.WarnFormat("call method tag :{0} Args Error: len {1}->{2}  to\r\n  {3}", cmd.Value, argslen, service.ArgsType.Length, service);
-                        await SendError(id, $"call method tag :{ cmd.Value} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
-                    }
+                    RunCall(service, cmd, id, runtype, args);
                 }
-
-
-            }
-            else
-            {
-                Log.WarnFormat("call read cmd error");
-                await SendError(-1, "not read cmd", ErrorType.NotReadCmd);
+                else
+                {
+                    Log.WarnFormat("call method tag :{0} Args Error: len {1}->{2}  to\r\n  {3}", cmd, argslen, service.ArgsType.Length, service);
+                    await SendError(id, $"call method tag :{ cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
+                }
             }
         }
 

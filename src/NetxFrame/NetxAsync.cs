@@ -43,36 +43,31 @@ namespace Netx
         {
             var id = read.ReadInt64();
 
-            if (id.HasValue)
+            if (read.ReadBoolean()) //is error
             {
-                if ((read.ReadBoolean()).Value) //is error
+                AsyncBackResult(new Result()
                 {
-                    AsyncBackResult(new Result()
-                    {
-                        Id = id.Value,
-                        ErrorId = (read.ReadInt32()).Value,
-                        ErrorMsg = read.ReadString()
-                    });
-                }
-                else
-                {
-                    var count = (read.ReadInt32()).Value;
-                    List<byte[]> args = new List<byte[]>(count);
-                    for (int i = 0; i < count; i++)
-                    {
-                        args.Add(read.ReadArray());
-                    }
-
-                    AsyncBackResult(new Result(args)
-                    {
-                        Id = id.Value
-                    });
-
-                }
-
+                    Id = id,
+                    ErrorId = (read.ReadInt32()),
+                    ErrorMsg = read.ReadString()
+                });
             }
             else
-                throw new NetxException($"data error:2500", ErrorType.ReadErr);
+            {
+                var count = (read.ReadInt32());
+                List<byte[]> args = new List<byte[]>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    args.Add(read.ReadArray());
+                }
+
+                AsyncBackResult(new Result(args)
+                {
+                    Id = id
+                });
+
+            }
+
         }
 
         protected virtual async Task ReadResultAsync(IFiberRw fiberRw)
