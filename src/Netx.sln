@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Test\InterfaceTag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka_EventNext_NetX_TpsTest", "Test\AkkaNetTpsTest\Akka_EventNext_NetX_TpsTest.csproj", "{FB4CE23B-D63B-4661-BDD5-1A13779802A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientFx", "Test\InterfaceTag\ClientFx\ClientFx.csproj", "{BA70FE10-8827-48D9-9B0A-B48019833F7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{FB4CE23B-D63B-4661-BDD5-1A13779802A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB4CE23B-D63B-4661-BDD5-1A13779802A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB4CE23B-D63B-4661-BDD5-1A13779802A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA70FE10-8827-48D9-9B0A-B48019833F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA70FE10-8827-48D9-9B0A-B48019833F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA70FE10-8827-48D9-9B0A-B48019833F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA70FE10-8827-48D9-9B0A-B48019833F7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{849936B3-9718-4D60-B372-21E166B6C21F} = {E01D165A-1E31-42A4-A434-7F6CA530C810}
 		{73AAA1C8-C539-41A3-95B8-76E76A157C0F} = {E01D165A-1E31-42A4-A434-7F6CA530C810}
 		{FB4CE23B-D63B-4661-BDD5-1A13779802A3} = {C8632105-893E-488D-8C7C-15E510ED475C}
+		{BA70FE10-8827-48D9-9B0A-B48019833F7F} = {E01D165A-1E31-42A4-A434-7F6CA530C810}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09FC1CD3-66A1-4D86-BFBB-65B13B170C01}
