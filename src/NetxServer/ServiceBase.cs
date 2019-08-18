@@ -46,26 +46,32 @@ namespace Netx.Service
         }
 
 
-        protected Task SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")
+        protected async Task SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")
         {
             using (var wrtokenerr = new WriteBytes(fiberRw))
             {
-                wrtokenerr.WriteLen();
-                wrtokenerr.Cmd(1000);
-                wrtokenerr.Write(iserr);
-                wrtokenerr.Write(msg);
-                return wrtokenerr.Flush();
+                await await fiberRw.Sync.Ask(() =>
+                {
+                    wrtokenerr.WriteLen();
+                    wrtokenerr.Cmd(1000);
+                    wrtokenerr.Write(iserr);
+                    wrtokenerr.Write(msg);
+                    return wrtokenerr.Flush();
+                });
             }
         }
 
-        protected Task SendToMessage(IFiberRw fiberRw, string msg)
+        protected async Task SendToMessage(IFiberRw fiberRw, string msg)
         {
             using (var wrtokenerr = new WriteBytes(fiberRw))
             {
-                wrtokenerr.WriteLen();
-                wrtokenerr.Cmd(1001);
-                wrtokenerr.Write(msg);
-                return wrtokenerr.Flush();
+                await await fiberRw.Sync.Ask(() =>
+                {
+                    wrtokenerr.WriteLen();
+                    wrtokenerr.Cmd(1001);
+                    wrtokenerr.Write(msg);
+                    return wrtokenerr.Flush();
+                });
             }
         }
     }

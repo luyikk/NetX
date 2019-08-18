@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.Client;
+using ZYSocket.FiberStream.Synchronization;
 
 namespace Netx.Client
 {
@@ -89,6 +90,8 @@ namespace Netx.Client
 
             try
             {
+                fiberRw.Sync = new SyncRun();
+
 
                 if (fiberRw == null)
                 {

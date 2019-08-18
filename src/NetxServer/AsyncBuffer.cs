@@ -31,29 +31,36 @@ namespace Netx.Service
             if (FiberRw != null)
             {
 
+
+
                 //数据包格式为0000 0 0000  00000000 0000 .....
                 //功能len(int)  标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)2);
-                    wr.Write(cmdTag);
-                    wr.Write(Id);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
-                    {
-                        WriteObj(wr, arg);
-                    }
-
                     var result = GetResult(AddAsyncResult(Id));
 
-                    await wr.Flush();
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)2);
+                        wr.Write(cmdTag);
+                        wr.Write(Id);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }
+
+                        return wr.Flush();
+                    });
 
                     return await result;
                 }
+
             }
-            else 
+            else
                 throw new NullReferenceException("FiberRw is null!");
           
         }
@@ -75,20 +82,23 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)1);
-                    wr.Write(cmdTag);
-                    wr.Write(Id);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
-                    {
-                        WriteObj(wr, arg);
-                    }
-
                     var result = GetResult(AddAsyncResult(Id));
 
-                    await wr.Flush();
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)1);
+                        wr.Write(cmdTag);
+                        wr.Write(Id);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }                      
+
+                        return wr.Flush();
+                    });
 
                     var res = await result;
 
@@ -119,17 +129,20 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)0);
-                    wr.Write(cmdTag);
-                    wr.Write((long)-1);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
+                    FiberRw.Sync.Tell(() =>
                     {
-                        WriteObj(wr, arg);
-                    }
-                    wr.Flush();
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)0);
+                        wr.Write(cmdTag);
+                        wr.Write((long)-1);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }
+                        wr.Flush();
+                    });
                 }
             }
             else
@@ -143,102 +156,106 @@ namespace Netx.Service
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        protected virtual Task SendResult(long id, object argument)
+        protected virtual async Task SendResult(long id, object argument)
         {
             if (FiberRw != null)
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(false);
-                    wr.Write(1);
-                    wr.Write(SerializationPacker.PackSingleObject(argument));
-                    return wr.Flush();
-                }
-            }
-            else
-            {
-                Log.Error("Send fail,is not fiber");
-                return Task.CompletedTask;
-            }
-
-        }
-
-        /// <summary>
-        /// 发送结果
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        protected virtual Task SendResult(long id, byte[][] arguments = null)
-        {
-            if (FiberRw != null)
-            {
-                using (var wr = new WriteBytes(FiberRw))
-                {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-
-                    wr.Write(false);
-
-                    if (arguments is null)
-                        wr.Write(0);
-                    else
+                    await await FiberRw.Sync.Ask(() =>
                     {
-                        wr.Write(arguments.Length);
-                        foreach (var item in arguments)
-                            wr.Write(item);
-                    }
-
-                    return wr.Flush();
-                }
-            }
-            else
-            {
-                Log.Error("Send fail,is not fiber");
-                return Task.CompletedTask;
-            }
-
-        }
-
-        /// <summary>
-        /// 发送结果
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        protected virtual Task SendResult(Result result)
-        {
-            if (FiberRw != null)
-            {
-                using (var wr = new WriteBytes(FiberRw))
-                {
-                    wr.WriteLen(); //为了兼容其他框架和其他的语言,还是发个长度吧
-                    wr.Cmd(2500);
-                    wr.Write(result.Id);
-
-                    if (result.IsError)
-                    {
-                        wr.Write(true);
-                        wr.Write(result.ErrorId);
-                        wr.Write(result.ErrorMsg);
-                    }
-                    else
-                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
                         wr.Write(false);
-                        wr.Write(result.Arguments.Count);
-                        foreach (var item in result.Arguments)
-                            wr.Write(item);
-                    }
-
-                    return wr.Flush();
+                        wr.Write(1);
+                        wr.Write(SerializationPacker.PackSingleObject(argument));
+                        return wr.Flush();
+                    });
                 }
             }
             else
             {
-                Log.Error("Send fail,is not fiber");
-                return Task.CompletedTask;
+                Log.Error("Send fail,is not fiber");               
+            }
+
+        }
+
+        /// <summary>
+        /// 发送结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        protected virtual async Task SendResult(long id, byte[][] arguments = null)
+        {
+            if (FiberRw != null)
+            {
+                using (var wr = new WriteBytes(FiberRw))
+                {
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(false);
+                        if (arguments is null)
+                            wr.Write(0);
+                        else
+                        {
+                            wr.Write(arguments.Length);
+                            foreach (var item in arguments)
+                                wr.Write(item);
+                        }
+
+                        return wr.Flush();
+                    });
+                }
+            }
+            else
+            {
+                Log.Error("Send fail,is not fiber");               
+            }
+
+        }
+
+        /// <summary>
+        /// 发送结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        protected virtual async Task SendResult(Result result)
+        {
+            if (FiberRw != null)
+            {
+                using (var wr = new WriteBytes(FiberRw))
+                {
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+                        wr.WriteLen(); //为了兼容其他框架和其他的语言,还是发个长度吧
+                        wr.Cmd(2500);
+                        wr.Write(result.Id);
+
+                        if (result.IsError)
+                        {
+                            wr.Write(true);
+                            wr.Write(result.ErrorId);
+                            wr.Write(result.ErrorMsg);
+                        }
+                        else
+                        {
+                            wr.Write(false);
+                            wr.Write(result.Arguments.Count);
+                            foreach (var item in result.Arguments)
+                                wr.Write(item);
+                        }
+
+                        return wr.Flush();
+                    });
+                }
+            }
+            else
+            {
+                Log.Error("Send fail,is not fiber");               
             }
 
         }
@@ -250,27 +267,28 @@ namespace Netx.Service
         /// <param name="msg"></param>
         /// <param name="errorType"></param>
         /// <returns></returns>
-        protected virtual Task SendError(long id, string msg, ErrorType errorType)
+        protected virtual async Task SendError(long id, string msg, ErrorType errorType)
         {
 
             if (FiberRw != null)
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(true);
-                    wr.Write((int)errorType);
-                    wr.Write(msg);
-
-                    return wr.Flush();
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(true);
+                        wr.Write((int)errorType);
+                        wr.Write(msg);
+                        return wr.Flush();
+                    });
                 }
             }
             else
             {
-                Log.Error("Send fail,is not fiber");
-                return Task.CompletedTask;
+                Log.Error("Send fail,is not fiber");               
             }
         }
 
@@ -278,22 +296,24 @@ namespace Netx.Service
         /// 发送Session
         /// </summary>
         /// <returns></returns>
-        public virtual Task SendSessionId()
+        public virtual async Task SendSessionId()
         {
             if (FiberRw != null)
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2000);
-                    wr.Write(SessionId);
-                    return wr.Flush();
+                    await await FiberRw.Sync.Ask(() =>
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2000);
+                        wr.Write(SessionId);
+                        return wr.Flush();
+                    });
                 }
             }
             else
             {
-                Log.Error("Send fail,is not fiber");
-                return Task.CompletedTask;
+                Log.Error("Send fail,is not fiber");               
             }
         }
 
