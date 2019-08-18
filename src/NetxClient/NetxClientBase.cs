@@ -60,14 +60,16 @@ namespace Netx.Client
         /// <returns></returns>
         protected async Task<int> SendVerify()
         {
-           return await await IWrite.Sync.Ask(() =>
+            Task<int> WSend()
             {
                 IWrite.Write(1000);
                 IWrite.Write(ConnectOption.ServiceName ?? "");
                 IWrite.Write(ConnectOption.VerifyKey ?? "");
                 IWrite.Write(Session.GetSessionId());
                 return IWrite.Flush();
-            });
+            }
+
+           return await await IWrite.Sync.Ask(WSend);
         }
 
 
@@ -85,7 +87,7 @@ namespace Netx.Client
 
             if (IWrite != null)
             {
-                await await IWrite.Sync.Ask(() =>
+                Task<int> WSend()
                 {
                     IWrite.Write(2500);
                     IWrite.Write(id);
@@ -93,8 +95,10 @@ namespace Netx.Client
                     IWrite.Write((int)errorType);
                     IWrite.Write(msg);
                     return IWrite.Flush();
-                });
-                
+                }
+
+                await await IWrite.Sync.Ask(WSend);
+
             }
             else
                 throw new NullReferenceException("IWrite is null!");
@@ -109,7 +113,7 @@ namespace Netx.Client
         {
             if (IWrite != null)
             {
-                await await IWrite.Sync.Ask(() =>
+                Task<int> WSend()
                 {
                     IWrite.Write(2500);
                     IWrite.Write(id);
@@ -117,7 +121,8 @@ namespace Netx.Client
                     IWrite.Write(1);
                     IWrite.Write(SerializationPacker.PackSingleObject(argument));
                     return IWrite.Flush();
-                });
+                }
+                await await IWrite.Sync.Ask(WSend);
 
             }
             else
@@ -134,7 +139,7 @@ namespace Netx.Client
         {
             if (IWrite != null)
             {
-                await await IWrite.Sync.Ask(() =>
+                Task<int> WSend()
                 {
                     IWrite.Write(2500);
                     IWrite.Write(id);
@@ -151,7 +156,9 @@ namespace Netx.Client
                     }
 
                     return IWrite.Flush();
-                });
+                }
+
+                await await IWrite.Sync.Ask(WSend);
 
             }
             else
@@ -168,9 +175,8 @@ namespace Netx.Client
         {
             if (IWrite != null)
             {
-                await await IWrite.Sync.Ask(() =>
+                Task<int> WSend()
                 {
-
                     IWrite.Write(2500);
                     IWrite.Write(result.Id);
 
@@ -189,7 +195,9 @@ namespace Netx.Client
                     }
 
                     return IWrite.Flush();
-                });
+                }
+
+                await await IWrite.Sync.Ask(WSend);
 
             }
             else

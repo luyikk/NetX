@@ -90,9 +90,7 @@ namespace Netx.Client
 
             try
             {
-                fiberRw.Sync = new SyncRun();
-
-
+             
                 if (fiberRw == null)
                 {
                     client.SetConnected(false, "ssl error");

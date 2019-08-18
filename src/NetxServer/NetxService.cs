@@ -73,8 +73,6 @@ namespace Netx.Service
                 return;
             }
 
-            fiberRw.Sync = new SyncRun();
-
 
             for (; ; )
             {

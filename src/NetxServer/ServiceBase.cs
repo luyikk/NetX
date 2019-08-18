@@ -50,14 +50,16 @@ namespace Netx.Service
         {
             using (var wrtokenerr = new WriteBytes(fiberRw))
             {
-                await await fiberRw.Sync.Ask(() =>
+                Task<int> WSend()
                 {
                     wrtokenerr.WriteLen();
                     wrtokenerr.Cmd(1000);
                     wrtokenerr.Write(iserr);
                     wrtokenerr.Write(msg);
                     return wrtokenerr.Flush();
-                });
+                }
+
+                await await fiberRw.Sync.Ask(WSend);
             }
         }
 
@@ -65,13 +67,14 @@ namespace Netx.Service
         {
             using (var wrtokenerr = new WriteBytes(fiberRw))
             {
-                await await fiberRw.Sync.Ask(() =>
+                Task<int> WSend()
                 {
                     wrtokenerr.WriteLen();
                     wrtokenerr.Cmd(1001);
                     wrtokenerr.Write(msg);
                     return wrtokenerr.Flush();
-                });
+                }
+                await await fiberRw.Sync.Ask(WSend);
             }
         }
     }
