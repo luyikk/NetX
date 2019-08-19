@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.FiberStream;
+using ZYSocket.FiberStream.Synchronization;
 using ZYSocket.Server;
 
 namespace Netx.Service
@@ -65,11 +66,13 @@ namespace Netx.Service
 
             var fiberRw = await GetFiberRw(socketAsync);
 
+
             if (fiberRw == null)
             {
                 socketAsync.Disconnect();
                 return;
             }
+
 
             for (; ; )
             {

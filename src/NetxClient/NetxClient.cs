@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.Client;
+using ZYSocket.FiberStream.Synchronization;
 
 namespace Netx.Client
 {
@@ -89,7 +90,7 @@ namespace Netx.Client
 
             try
             {
-
+             
                 if (fiberRw == null)
                 {
                     client.SetConnected(false, "ssl error");

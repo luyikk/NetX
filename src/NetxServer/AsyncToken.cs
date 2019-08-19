@@ -205,8 +205,8 @@ namespace Netx.Service
             }
             else
             {
-                var cmdTag = cmd;
-                service = ActorRun.GetCmdService(cmdTag);
+                
+                service = ActorRun.GetCmdService(cmd);
                 if (service != null)
                 {
                     var argslen = await fiberRw.ReadInt32();
@@ -224,7 +224,7 @@ namespace Netx.Service
                         }
 
 
-                        RunActor(cmdTag, id, runtype, mem_disposetable, args);
+                        RunActor(cmd, id, runtype, mem_disposetable, args);
                         return true;
 
                     }
@@ -270,6 +270,7 @@ namespace Netx.Service
                         break;
                     case 2:
                         {
+
                             var ret_value = await ActorRun.CallFunc<object>(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             switch (ret_value)
@@ -281,7 +282,7 @@ namespace Netx.Service
                                     }
                                     break;
                                 default:
-                                    {                                     
+                                    {
                                         await SendResult(id, ret_value);
                                     }
                                     break;

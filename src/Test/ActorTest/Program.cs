@@ -53,7 +53,7 @@ namespace ActorTest
                     {
                         lambda.Tell(() =>
                         {                           
-                            icount -= (int)p;
+                            icount -= (int)p;                           
                         });
                     },i));
                 }

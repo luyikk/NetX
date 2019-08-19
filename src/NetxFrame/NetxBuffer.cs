@@ -35,21 +35,26 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            //数据包格式为 0 0000  00000000 0000 .....
-            //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
-            IWrite.Write(2400);
-            IWrite.Write((byte)2);
-            IWrite.Write(cmdTag);
-            IWrite.Write(Id);
-            IWrite.Write(args.Length);
-            foreach (var arg in args)
+            Task<int> WSend()
             {
-                WriteObj(IWrite, arg);
+                //数据包格式为 0 0000  00000000 0000 .....
+                //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
+                IWrite.Write(2400);
+                IWrite.Write((byte)2);
+                IWrite.Write(cmdTag);
+                IWrite.Write(Id);
+                IWrite.Write(args.Length);
+                foreach (var arg in args)
+                {
+                    WriteObj(IWrite, arg);
+                }
+
+                return IWrite.Flush();
             }
 
             var result = GetResult(AddAsyncResult(Id));
 
-            await IWrite.Flush();
+            await await IWrite.Sync.Ask(WSend);
 
             if (result.IsCompleted)
                 return result.Result;
@@ -73,16 +78,23 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            IWrite.Write(2400);
-            IWrite.Write((byte)0);
-            IWrite.Write(cmdTag);
-            IWrite.Write((long)-1);
-            IWrite.Write(args.Length);
-            foreach (var arg in args)
+            void WSend()
             {
-                WriteObj(IWrite, arg);
+                IWrite.Write(2400);
+                IWrite.Write((byte)0);
+                IWrite.Write(cmdTag);
+                IWrite.Write((long)-1);
+                IWrite.Write(args.Length);
+                foreach (var arg in args)
+                {
+                    WriteObj(IWrite, arg);
+                }
+
+                IWrite.Flush();
+
             }
-            IWrite.Flush();
+
+            IWrite.Sync.Tell(WSend);
         }
 
         /// <summary>
@@ -98,19 +110,24 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            IWrite.Write(2400);
-            IWrite.Write((byte)1);
-            IWrite.Write(cmdTag);
-            IWrite.Write(Id);
-            IWrite.Write(args.Length);
-            foreach (var arg in args)
+            Task<int> WSend()
             {
-                WriteObj(IWrite, arg);
+                IWrite.Write(2400);
+                IWrite.Write((byte)1);
+                IWrite.Write(cmdTag);
+                IWrite.Write(Id);
+                IWrite.Write(args.Length);
+                foreach (var arg in args)
+                {
+                    WriteObj(IWrite, arg);
+                }
+
+                return IWrite.Flush();
             }
 
             var result = GetResult(AddAsyncResult(Id));
 
-            await IWrite.Flush();
+            await await IWrite.Sync.Ask(WSend);
 
             if (result.IsCompleted)
             {
