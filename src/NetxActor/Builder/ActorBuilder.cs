@@ -19,6 +19,10 @@ namespace Netx.Actor.Builder
         {
             if (serviceDescriptors is null)
                 Container = new ServiceCollection();
+            else
+                Container = serviceDescriptors;
+
+            Container.AddScoped<IActorRun, ActorRun>();
             Container.AddOptions();           
             ConfigDefualt();
 
@@ -173,19 +177,20 @@ namespace Netx.Actor.Builder
         /// 编译
         /// </summary>
         /// <returns></returns>
-        public ActorRun Build()
+        public IActorRun Build()
         {
             lock (this)
             {
                 if (Provider is null)
-                {
-                    Container.AddScoped<ActorRun>(p => new ActorRun(p));
+                {                   
                     Provider = Container.BuildServiceProvider();
                 }
             }
 
-            return Provider.GetRequiredService<ActorRun>();
+            return Provider.GetRequiredService<IActorRun>();
         }
+
+
 
         public void Dispose()
         {

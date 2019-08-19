@@ -14,7 +14,7 @@ namespace Netx.Actor.Builder
         IServiceProvider Provider { get; }
 
         IActorBuilder AddActorEvent<T>() where T : ActorEventBase;
-        ActorRun Build();
+        IActorRun Build();
         IActorBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null);
         IActorBuilder ConfigObjFormat(Func<ISerialization> func = null);
         IActorBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null);
