@@ -7,7 +7,7 @@ namespace TestFody
     {
         static void Main(string[] args)
         {
-            string assemblyPath =Environment.CurrentDirectory+ "\\ConsoleApp2.dll";
+            string assemblyPath =Environment.CurrentDirectory+ "\\XY_Game_Lobby.dll";
             new ModuleWeaver().ExecuteTestRun(assemblyPath, false);
         }
     }

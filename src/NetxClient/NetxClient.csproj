@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
-    <Version>1.4.0</Version>
+    <Version>1.4.2</Version>
   </PropertyGroup>
 
 
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="ZYSocketClientV" Version="1.5.2" />
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.7" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.8" />
   </ItemGroup>
 
   <ItemGroup>

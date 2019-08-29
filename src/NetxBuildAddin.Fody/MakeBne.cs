@@ -56,6 +56,13 @@ public class MakeBne
                 codes.Add(Processor.Create(OpCodes.Ret));
             }
 
+            int size = 0;
+            foreach (var il in codes)            
+                size += il.GetSize();           
+
+            if (size > 120)
+                codes[2] = Processor.Create(OpCodes.Bne_Un, Next);
+
             return codes;
         }
         else
@@ -78,10 +85,20 @@ public class MakeBne
                 i++;
             }
 
+
+
+
             codes.Add(Processor.Create(OpCodes.Call, Method));
 
             if(Method.ReturnType.Name!= "Void")
                 codes.Add(Processor.Create(OpCodes.Ret));
+
+            int size = 0;
+            foreach (var il in codes)
+                size += il.GetSize();
+
+            if (size > 120)
+                codes[2] = Processor.Create(OpCodes.Bne_Un, End);
 
             codes.Add(End);
             codes.Add(Processor.Create(OpCodes.Ret));

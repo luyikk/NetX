@@ -30,9 +30,7 @@ namespace Netx.Service
 
             if (FiberRw != null)
             {
-
-
-
+                
                 //数据包格式为0000 0 0000  00000000 0000 .....
                 //功能len(int)  标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
                 using (var wr = new WriteBytes(FiberRw))
