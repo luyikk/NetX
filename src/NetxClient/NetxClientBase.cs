@@ -113,13 +113,14 @@ namespace Netx.Client
         {
             if (IWrite != null)
             {
+                var buffer = SerializationPacker.PackSingleObject(argument);
                 Task<int> WSend()
                 {
                     IWrite.Write(2500);
                     IWrite.Write(id);
                     IWrite.Write(false);
                     IWrite.Write(1);
-                    IWrite.Write(SerializationPacker.PackSingleObject(argument));
+                    IWrite.Write(buffer);
                     return IWrite.Flush();
                 }
                 await await IWrite.Sync.Ask(WSend);

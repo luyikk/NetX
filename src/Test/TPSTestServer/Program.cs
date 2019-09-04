@@ -30,8 +30,7 @@ namespace TestServer
                     p.VerifyKey = "123123";
                     p.ClearSessionTime = 5000;
                 })       
-               // .ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)
-                .RegisterDescriptors(p => p.AddSingleton<List<string>>(_ => new List<string>() { "1", "2", "3" }))            
+               // .ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)                  
                 .Build();
 
             service.Start();

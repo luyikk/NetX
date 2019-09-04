@@ -17,7 +17,7 @@ namespace TestClient
         static async Task Main(string[] args)
         {
 
-            int clientCout = Environment.ProcessorCount*4;
+            int clientCout = Environment.ProcessorCount*8;
 
 
             var clientBuilder = new NetxSClientBuilder()
@@ -41,6 +41,45 @@ namespace TestClient
 
 
             var client0 = clientBuilder.Build();
+
+            var server= client0.Get<IServer>();
+
+            List<Task> RunList = new List<Task>();
+
+            int cc = 100000;
+
+            int threadcount = 50;
+
+            var x = System.Diagnostics.Stopwatch.StartNew();
+
+            for (int i = 0; i < threadcount; i++)
+            {
+                async Task Runs()
+                {
+                    int xcount = i + cc;
+                    while (i < xcount)
+                    {
+                        int c = i + 1;
+                        i = await server.AddOne(i);
+                        if (c != i)
+                            throw new Exception("error value");
+                    }
+                }
+
+                RunList.Add(Runs());
+            }
+            
+
+            await Task.WhenAny(RunList);
+
+            x.Stop();
+
+            var time = x.ElapsedMilliseconds;
+            double all = cc * threadcount;
+            Console.WriteLine(time+" ms");
+            Console.WriteLine((all/time*1000.0)+" TPS");
+            Console.ReadLine();
+
 
             List<Task<(long m, int count)>> tasks = new List<Task<(long m, int count)>>(clientCout);
 
@@ -86,7 +125,7 @@ namespace TestClient
             while (i < xcount)
             {
                 int c = i+1;
-                i = await server.AddOneActor(i);              
+                i = await server.AddOne(i);              
                 if (c != i)
                     throw new Exception("error value");
             }
