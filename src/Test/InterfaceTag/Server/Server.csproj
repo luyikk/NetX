@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetxServer" Version="1.4.2" />
+    <PackageReference Include="NetxServer" Version="1.4.3" />
   </ItemGroup>
 
 </Project>
