@@ -35,19 +35,22 @@ namespace Netx.Service
                 //功能len(int)  标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)2);
-                    wr.Write(cmdTag);
-                    wr.Write(Id);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
-                    {
-                        WriteObj(wr, arg);
-                    }
+                   
 
                     Task<int> WSend()
-                        => wr.Flush();                    
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)2);
+                        wr.Write(cmdTag);
+                        wr.Write(Id);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }
+                        return wr.Flush();
+                    }
 
                     var result = GetResult(AddAsyncResult(Id));
                     await await FiberRw.Sync.Ask(WSend);
@@ -77,21 +80,22 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    var result = GetResult(AddAsyncResult(Id));
-
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)1);
-                    wr.Write(cmdTag);
-                    wr.Write(Id);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
-                    {
-                        WriteObj(wr, arg);
-                    }
+                    var result = GetResult(AddAsyncResult(Id));                 
 
                     Task<int> WSend()
-                        => wr.Flush();
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)1);
+                        wr.Write(cmdTag);
+                        wr.Write(Id);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }
+                        return wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
 
@@ -124,19 +128,22 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2400);
-                    wr.Write((byte)0);
-                    wr.Write(cmdTag);
-                    wr.Write((long)-1);
-                    wr.Write(args.Length);
-                    foreach (var arg in args)
-                    {
-                        WriteObj(wr, arg);
-                    }
-
+                   
                     void WSend()
-                       => wr.Flush();
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2400);
+                        wr.Write((byte)0);
+                        wr.Write(cmdTag);
+                        wr.Write((long)-1);
+                        wr.Write(args.Length);
+                        foreach (var arg in args)
+                        {
+                            WriteObj(wr, arg);
+                        }
+
+                        wr.Flush();
+                    }
                     
 
                     FiberRw.Sync.Tell(WSend);
@@ -158,16 +165,17 @@ namespace Netx.Service
             if (FiberRw != null)
             {
                 using (var wr = new WriteBytes(FiberRw))
-                {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(false);
-                    wr.Write(1);
-                    wr.Write(SerializationPacker.PackSingleObject(argument));
-
+                {                  
                     Task<int> WSend()
-                     => wr.Flush();
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(false);
+                        wr.Write(1);
+                        wr.Write(SerializationPacker.PackSingleObject(argument));
+                        return wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
                 }
@@ -190,21 +198,23 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(false);
-                    if (arguments is null)
-                        wr.Write(0);
-                    else
-                    {
-                        wr.Write(arguments.Length);
-                        foreach (var item in arguments)
-                            wr.Write(item);
-                    }
-
+                   
                     Task<int> WSend()
-                        => wr.Flush();
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(false);
+                        if (arguments is null)
+                            wr.Write(0);
+                        else
+                        {
+                            wr.Write(arguments.Length);
+                            foreach (var item in arguments)
+                                wr.Write(item);
+                        }
+                        return  wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
                 }
@@ -227,26 +237,28 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen(); //为了兼容其他框架和其他的语言,还是发个长度吧
-                    wr.Cmd(2500);
-                    wr.Write(result.Id);
-
-                    if (result.IsError)
-                    {
-                        wr.Write(true);
-                        wr.Write(result.ErrorId);
-                        wr.Write(result.ErrorMsg);
-                    }
-                    else
-                    {
-                        wr.Write(false);
-                        wr.Write(result.Arguments.Count);
-                        foreach (var item in result.Arguments)
-                            wr.Write(item);
-                    }
-
+                  
                     Task<int> WSend()
-                         => wr.Flush();
+                    {
+                        wr.WriteLen(); //为了兼容其他框架和其他的语言,还是发个长度吧
+                        wr.Cmd(2500);
+                        wr.Write(result.Id);
+
+                        if (result.IsError)
+                        {
+                            wr.Write(true);
+                            wr.Write(result.ErrorId);
+                            wr.Write(result.ErrorMsg);
+                        }
+                        else
+                        {
+                            wr.Write(false);
+                            wr.Write(result.Arguments.Count);
+                            foreach (var item in result.Arguments)
+                                wr.Write(item);
+                        }
+                        return wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
                 }
@@ -272,15 +284,16 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(true);
-                    wr.Write((int)errorType);
-                    wr.Write(msg);
-
                     Task<int> WSend()
-                        => wr.Flush();                    
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(true);
+                        wr.Write((int)errorType);
+                        wr.Write(msg);
+                        return wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
                 }
@@ -301,12 +314,14 @@ namespace Netx.Service
             {
                 using (var wr = new WriteBytes(FiberRw))
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2000);
-                    wr.Write(SessionId);
-
                     Task<int> WSend()
-                        => wr.Flush();
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2000);
+                        wr.Write(SessionId);
+
+                        return wr.Flush();
+                    }
 
                     await await FiberRw.Sync.Ask(WSend);
                 }
