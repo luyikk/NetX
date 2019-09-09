@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="ZYSocketClientV" Version="1.5.3" />
+    <PackageReference Include="ZYSocketClientV" Version="1.5.7" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.8" />
   </ItemGroup>
 
