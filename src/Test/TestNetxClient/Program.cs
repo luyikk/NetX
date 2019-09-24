@@ -24,7 +24,8 @@ namespace TestNetxClient
 
             client.LoadInstance(new ClientTestController()); //加载客户端控制器供服务区主动调用,
 
-             //client.Open(); 你可以先连接服务器,或者不连接,如果你没有OPEN 那么调用的时候
+            client.Open(); //你可以先连接服务器,或者不连接,如果你没有OPEN 那么调用的时候
+
 
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
