@@ -186,6 +186,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     void AddMethod(TypeDefinition typeDefinition)
     {
+        if (typeDefinition.Methods.FirstOrDefault(p => p.Name == "Runs__Make")!=null)
+            return;
        
         var NewMethod = new MethodDefinition("Runs__Make", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual, ModuleDefinition.ImportReference(typeof(object)));
 
@@ -196,7 +198,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
              
         Dictionary<int, MethodReference> methods = new Dictionary<int, MethodReference>();
-
      
 
         foreach (var ifacer in typeDefinition.Interfaces)
@@ -229,15 +230,23 @@ public partial class ModuleWeaver : BaseModuleWeaver
                         }
 
 
-                        if (typeDefinition.GenericParameters.Count>0)
+                        var childmethod = typeDefinition.Methods.FirstOrDefault(p => CheckMethod(p, method));
+
+                        if (childmethod != null)
                         {
-                            var types = typeDefinition.GenericParameters.ToArray();
-                            var genericmethod = ModuleDefinition.ImportReference(MakeGeneric(method, types));
-                            methods[cmd] = genericmethod;
+                            if (typeDefinition.GenericParameters.Count > 0)
+                            {
+                                var types = typeDefinition.GenericParameters.ToArray();
+                                var genericmethod = ModuleDefinition.ImportReference(MakeGeneric(childmethod, types));
+                                methods[cmd] = genericmethod;
+                            }
+                            else
+                                methods[cmd] = childmethod;
                         }
                         else
-                            methods[cmd] = method;
-
+                        {
+                            LogError("not find " + method.Name);
+                        }
                     }
                 }
             }
@@ -248,13 +257,9 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 {
                     var module = Mono.Cecil.ModuleDefinition.ReadModule(dllname);
 
+                    var ifacec = module?.GetType(ifacer.InterfaceType.FullName);
 
-                     
-
-                   var ifacec = module?.GetType(ifacer.InterfaceType.FullName);
-
-
-                      ifacec = module.ImportReference(ifacec).Resolve();
+                    ifacec = module.ImportReference(ifacec).Resolve();
 
                     var build = ifacec.CustomAttributes.FirstOrDefault(p => p.AttributeType.Name == "Build");
                     if (build != null)
@@ -279,11 +284,11 @@ public partial class ModuleWeaver : BaseModuleWeaver
                                     break;
                             }
 
-                            var mc = typeDefinition.Methods.Where(p => p.Name == method.Name && p.Parameters.Count == method.Parameters.Count).ToArray();
-                            if (mc.Length > 0)
-                                methods[cmd] = mc[0];
+                            var childmethod = typeDefinition.Methods.FirstOrDefault(p => CheckMethod(p, method));
+                            if (childmethod != null)
+                                methods[cmd] = childmethod;
                             else
-                                LogError("not find "+ method.Name);
+                                LogError("not find " + method.Name);
 
                         }
                     }
@@ -317,8 +322,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
             methods[cmd] = method;
 
         }
-
-
 
 
         if(methods.Count > 0)
@@ -364,6 +367,21 @@ public partial class ModuleWeaver : BaseModuleWeaver
     }
 
   
+    private bool CheckMethod(MethodDefinition A,MethodDefinition B)
+    {
+        if (A.Name != B.Name)
+            return false;
+        if (A.Parameters.Count != B.Parameters.Count)
+            return false;
+
+        for (int i = 0; i < A.Parameters.Count; i++)
+        {
+            if (A.Parameters[i].ParameterType.FullName != B.Parameters[i].ParameterType.FullName)
+                return false;
+        }
+
+        return true;
+    }
 
     public List<Instruction> MakeBneCall(ILProcessor processor,MethodDefinition method,int cmd,Instruction next)
     {

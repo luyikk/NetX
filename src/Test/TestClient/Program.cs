@@ -21,6 +21,9 @@ namespace TestClient
 
             var a=await client.Get<ITestServer>().SayHello(new HelloRequest { Name = "123123" });
 
+            Console.WriteLine(a.Message);
+            Console.ReadLine();
+
         }
     }
 }

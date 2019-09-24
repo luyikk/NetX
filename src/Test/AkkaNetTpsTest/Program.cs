@@ -33,17 +33,9 @@ namespace EventNext_AkkaNet
         static void Main(string[] args)
         {
 
-           
-
-         
-           
             var actor = new Netx.Actor.Builder.ActorBuilder();
             actor.RegisterService<NextActorController>();
             actor.Build();
-
-
-            var x = System.Runtime.InteropServices.Marshal.SizeOf<Netx.Actor.Builder.ActorBuilder>(actor);
-
 
             NetXActorSP = actor.Provider;
 
@@ -74,8 +66,8 @@ namespace EventNext_AkkaNet
         {
             mCount = 0;
 
-            var NetXActor1 = NetXActorSP.GetRequiredService<ActorRun>();
-            var NetXActor2 = NetXActorSP.CreateScope().ServiceProvider.GetRequiredService<ActorRun>();
+            var NetXActor1 = NetXActorSP.GetRequiredService<IActorRun>();
+            var NetXActor2 = NetXActorSP.CreateScope().ServiceProvider.GetRequiredService<IActorRun>();
 
             var server1 = NetXActor1.Get<INetxServer>();
             var server2 = NetXActor2.Get<INetxServer>();

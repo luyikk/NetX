@@ -30,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.8" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.1" />
     <PackageReference Include="ZYSocketClientV-Portable" Version="1.5.2" />
   </ItemGroup>
 

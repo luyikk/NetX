@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Netx.Service</RootNamespace>
     <LangVersion>7.2</LangVersion>
     <Authors>luyikk</Authors>
-    <Description>NetX Server Package</Description>
+    <Description>NetX Server Package .net standard 2.1</Description>
     <PackageReleaseNotes>NetX Server Package</PackageReleaseNotes>
     <Copyright>luyikk</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -13,13 +13,13 @@
     <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NetX;Netx;ZYSocket;</PackageTags>
-    <Version>1.4.6</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="ZYSocketServerV" Version="1.5.7" />
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.1.8" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
+    <PackageReference Include="ZYSocketServerV" Version="1.6.0" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetxActor\NetxActor.csproj" />
