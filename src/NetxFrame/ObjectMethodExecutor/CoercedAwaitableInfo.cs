@@ -16,8 +16,8 @@ namespace Microsoft.Extensions.Internal
         public CoercedAwaitableInfo(AwaitableInfo awaitableInfo)
         {
             AwaitableInfo = awaitableInfo;
-            CoercerExpression = null;
-            CoercerResultType = null;
+            CoercerExpression = null!;
+            CoercerResultType = null!;
         }
 
         public CoercedAwaitableInfo(Expression coercerExpression, Type coercerResultType, AwaitableInfo coercedAwaitableInfo)

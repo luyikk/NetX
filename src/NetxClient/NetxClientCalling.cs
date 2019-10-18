@@ -68,7 +68,7 @@ namespace Netx.Client
                 }
                 else
                 {
-                    Log.WarnFormat("call method tag :{0} Args Error: len {1}->{2}  to\r\n  {3}", cmd, argslen, service.ArgsType.Length, service);
+                    Log!.WarnFormat($"call method tag :{cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}");
                     await SendError(id, $"call method tag :{ cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
                 }
             }
@@ -140,19 +140,19 @@ namespace Netx.Client
             }
             catch (NetxException er)
             {
-                Log.Error(er);
+                Log!.Error(er);
                 await SendError(id, $"Client Method Tag:{cmd} Call Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {
-                Log.Error(er);
+                Log!.Error(er);
                 await SendError(id, $"Client Method Tag:{cmd} Call Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
         protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
         {
-            Log.WarnFormat("call method:{0} not find runtype:{1} ", service, runtype);
+            Log!.WarnFormat("call method:{0} not find runtype:{1} ", service, runtype);
             return SendError(id, $"call method:{service}  not find runtype:{runtype}", ErrorType.NotRunType);
         }
 

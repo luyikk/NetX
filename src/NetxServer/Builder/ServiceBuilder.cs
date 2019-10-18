@@ -21,9 +21,9 @@ namespace Netx.Service.Builder
     public class NetxServBuilder : INetxServBuilder
     {
         public IServiceCollection Container { get; }
-        public IServiceProvider Provider { get; private set; }
+        public IServiceProvider? Provider { get; private set; }
         private readonly ConcurrentDictionary<int, MethodRegister> AsyncServicesRegisterDict;
-        public SockServBuilder SockServConfig { get; private set; }
+        public SockServBuilder? SockServConfig { get; private set; }
 
         public NetxServBuilder()
         {
@@ -167,44 +167,45 @@ namespace Netx.Service.Builder
 
 
 
-        public INetxServBuilder ConfigEncode(Func<Encoding> func = null)
+        public INetxServBuilder ConfigEncode(Func<Encoding>? func = null)
         {
-            SockServConfig.ConfigEncode(func);
+
+            SockServConfig!.ConfigEncode(func);
             return this;
         }
 
-        public INetxServBuilder ConfigIAsyncSend(Func<IAsyncSend> func = null)
+        public INetxServBuilder ConfigIAsyncSend(Func<IAsyncSend>? func = null)
         {
-            SockServConfig.ConfigIAsyncSend(func);
+            SockServConfig!.ConfigIAsyncSend(func);
             return this;
         }
 
-        public INetxServBuilder ConfigISend(Func<ISend> func = null)
+        public INetxServBuilder ConfigISend(Func<ISend>? func = null)
         {
-            SockServConfig.ConfigISend(func);
+            SockServConfig!.ConfigISend(func);
             return this;
         }
 
-        public INetxServBuilder ConfigMemoryPool(Func<MemoryPool<byte>> func = null)
+        public INetxServBuilder ConfigMemoryPool(Func<MemoryPool<byte>>? func = null)
         {
-            SockServConfig.ConfigMemoryPool(func);
+            SockServConfig!.ConfigMemoryPool(func);
             return this;
         }
 
-        public INetxServBuilder ConfigObjFormat(Func<ISerialization> func = null)
+        public INetxServBuilder ConfigObjFormat(Func<ISerialization>? func = null)
         {
-            SockServConfig.ConfigObjFormat(func);
+            SockServConfig!.ConfigObjFormat(func);
             return this;
         }
 
-        public INetxServBuilder ConfigNetWork(Action<SocketServerOptions> config = null)
+        public INetxServBuilder ConfigNetWork(Action<SocketServerOptions>? config = null)
         {
-            SockServConfig.ConfigServer(config);
+            SockServConfig!.ConfigServer(config);
             return this;
         }
         
 
-        public INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null)
+        public INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null)
         {
             if (config is null)
             {
@@ -223,7 +224,7 @@ namespace Netx.Service.Builder
         }             
 
 
-        public INetxServBuilder ConfigIIds(Func<IServiceProvider,IIds> func = null)
+        public INetxServBuilder ConfigIIds(Func<IServiceProvider,IIds>? func = null)
         {
             if (func is null)
                 Container.AddSingleton<IIds, DefaultMakeIds>();
@@ -233,7 +234,7 @@ namespace Netx.Service.Builder
             return this;
         }
 
-        public INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null)
+        public INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null)
         {
             if (func is null)
                 Container.AddSingleton<ActorScheduler>(_=> ActorScheduler.LineByLine);
@@ -243,7 +244,7 @@ namespace Netx.Service.Builder
             return this;
         }
 
-        public INetxServBuilder ConfigSSL(Action<SslOption> config=null)
+        public INetxServBuilder ConfigSSL(Action<SslOption>? config=null)
         {
             if (config != null)
                 Container.Configure<SslOption>(config);
@@ -251,7 +252,7 @@ namespace Netx.Service.Builder
         }
 
 
-        public INetxServBuilder ConfigBase(Action<ServiceOption> config=null)
+        public INetxServBuilder ConfigBase(Action<ServiceOption>? config=null)
         {
             if (config != null)
                 Container.Configure<ServiceOption>(config);

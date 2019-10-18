@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.Internal
     public class ObjectMethodExecutor
     {
         private readonly object[] _parameterDefaultValues;
-        private readonly MethodExecutorAsync _executorAsync;
+        private readonly MethodExecutorAsync? _executorAsync;
         private readonly MethodExecutor _executor;
 
         private static readonly ConstructorInfo _objectMethodExecutorAwaitableConstructor =
@@ -61,7 +61,7 @@ namespace Microsoft.Extensions.Internal
 
         public TypeInfo TargetTypeInfo { get; }
 
-        public Type AsyncResultType { get; }
+        public Type? AsyncResultType { get; }
 
         // This field is made internal set because it is set in unit tests.
         public Type MethodReturnType { get; internal set; }
@@ -70,7 +70,7 @@ namespace Microsoft.Extensions.Internal
 
         public static ObjectMethodExecutor Create(MethodInfo methodInfo, TypeInfo targetTypeInfo)
         {
-            return new ObjectMethodExecutor(methodInfo, targetTypeInfo, null);
+            return new ObjectMethodExecutor(methodInfo, targetTypeInfo, null!);
         }
 
         public static ObjectMethodExecutor Create(MethodInfo methodInfo, TypeInfo targetTypeInfo, object[] parameterDefaultValues)
@@ -125,7 +125,7 @@ namespace Microsoft.Extensions.Internal
         /// <returns>An object that you can "await" to get the method return value.</returns>
         public ObjectMethodExecutorAwaitable ExecuteAsync(object target, object[] parameters)
         {
-            return _executorAsync(target, parameters);
+            return _executorAsync!(target, parameters);
         }
 
         public object GetDefaultValueForParameter(int index)
@@ -212,7 +212,7 @@ namespace Microsoft.Extensions.Internal
             return delegate (object target, object[] parameters)
             {
                 executor(target, parameters);
-                return null;
+                return null!;
             };
         }
 
@@ -313,7 +313,7 @@ namespace Microsoft.Extensions.Internal
                 onCompletedParam1,
                 onCompletedParam2).Compile();
 
-            Action<object, Action> unsafeOnCompletedFunc = null;
+            Action<object, Action> unsafeOnCompletedFunc = null!;
             if (awaitableInfo.AwaiterUnsafeOnCompletedMethod != null)
             {
                 // var unsafeOnCompletedFunc = (object awaiter, Action continuation) => {

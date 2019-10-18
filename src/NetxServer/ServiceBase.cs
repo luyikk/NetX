@@ -30,7 +30,7 @@ namespace Netx.Service
         /// </summary>
         protected ServiceOption ServiceOption { get; }
 
-        public string OpenKey { get => ServiceOption.VerifyKey; }
+        public string OpenKey { get => ServiceOption.VerifyKey??""; }
 
 
         public ServiceBase(IServiceProvider container)
@@ -38,9 +38,7 @@ namespace Netx.Service
             LoggerFactory = container.GetRequiredService<ILoggerFactory>();
             Log = new DefaultLog(LoggerFactory.CreateLogger("NetxService"));
             SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
-            Container = container;
-
-            var actor_run = container.GetRequiredService<ActorRun>();         
+            Container = container;            
 
             ServiceOption = container.GetRequiredService<IOptions<ServiceOption>>().Value;
         }
@@ -48,33 +46,29 @@ namespace Netx.Service
 
         protected async Task SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")
         {
-            using (var wrtokenerr = new WriteBytes(fiberRw))
-            {
-                wrtokenerr.WriteLen();
-                wrtokenerr.Cmd(1000);
-                wrtokenerr.Write(iserr);
-                wrtokenerr.Write(msg);
+            using var wrtokenerr = new WriteBytes(fiberRw);
+            wrtokenerr.WriteLen();
+            wrtokenerr.Cmd(1000);
+            wrtokenerr.Write(iserr);
+            wrtokenerr.Write(msg);
 
-                Task<int> WSend()
-                    => wrtokenerr.Flush();                
+            Task<int> WSend()
+                => wrtokenerr.Flush();
 
-                await await fiberRw.Sync.Ask(WSend);
-            }
+            await await fiberRw.Sync.Ask(WSend);
         }
 
         protected async Task SendToMessage(IFiberRw fiberRw, string msg)
         {
-            using (var wrtokenerr = new WriteBytes(fiberRw))
-            {
-                wrtokenerr.WriteLen();
-                wrtokenerr.Cmd(1001);
-                wrtokenerr.Write(msg);
+            using var wrtokenerr = new WriteBytes(fiberRw);
+            wrtokenerr.WriteLen();
+            wrtokenerr.Cmd(1001);
+            wrtokenerr.Write(msg);
 
-                Task<int> WSend()
-                  =>wrtokenerr.Flush();
-                
-                await await fiberRw.Sync.Ask(WSend);
-            }
+            Task<int> WSend()
+              => wrtokenerr.Flush();
+
+            await await fiberRw.Sync.Ask(WSend);
         }
     }
 }

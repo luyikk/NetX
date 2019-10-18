@@ -28,7 +28,7 @@ namespace Netx.Client
                 }
                 catch (Exception er)
                 {
-                    Log.Error(this, er);
+                    Log!.Error(this, er);
                     break;
                 }
             }
@@ -39,34 +39,31 @@ namespace Netx.Client
         protected virtual async Task DataOnByLine(IFiberRw fiberRw)
         {
 
-            using (ReadBytes read = new ReadBytes(fiberRw))
+            using ReadBytes read = new ReadBytes(fiberRw);
+            await read.Init();
+            var cmd = read.ReadInt32();
+
+            switch (cmd)
             {
-                await read.Init();
-                var cmd = read.ReadInt32();
-
-                switch (cmd)
-                {
-                    case 2000: //set session
-                        {
-                            var sessionid = read.ReadInt64();
-                            Log.TraceFormat("save sessionid {0}", sessionid);
-                            Session.SaveSessionId(sessionid);
-                        }
-                        break;
-                    case 2400: //Call It
-                        {
-                            await Calling(read);
-                        }
-                        break;
-                    case 2500: //set result
-                        {
-                             ReadResult(read);
-                        }
-                        break;
-                    default:
-                        throw new NetxException($"data error:{cmd}", ErrorType.ReadErr);
-                }
-
+                case 2000: //set session
+                    {
+                        var sessionid = read.ReadInt64();
+                        Log!.TraceFormat($"save sessionid {sessionid}");
+                        Session.SaveSessionId(sessionid);
+                    }
+                    break;
+                case 2400: //Call It
+                    {
+                        await Calling(read);
+                    }
+                    break;
+                case 2500: //set result
+                    {
+                        ReadResult(read);
+                    }
+                    break;
+                default:
+                    throw new NetxException($"data error:{cmd}", ErrorType.ReadErr);
             }
         }
     }

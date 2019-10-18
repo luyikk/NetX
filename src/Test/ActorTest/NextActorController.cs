@@ -22,7 +22,7 @@ namespace ActorTest
             {
                 new DataConnectConfig()
                 {
-                    Name="DefautConnectionString",
+                    Name="DefautConnection",
                     ConnectionString="Data Source=|DataDirectory|./Test.db3;Pooling=true;FailIfMissing=false",
                     SqlType="SQLite",
                     MaxCount=100

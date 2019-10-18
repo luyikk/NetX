@@ -22,10 +22,10 @@ namespace Microsoft.Extensions.Internal
     public static class ObjectMethodExecutorFSharpSupport
     {
         private static readonly object _fsharpValuesCacheLock = new object();
-        private static Assembly _fsharpCoreAssembly;
-        private static MethodInfo _fsharpAsyncStartAsTaskGenericMethod;
-        private static PropertyInfo _fsharpOptionOfTaskCreationOptionsNoneProperty;
-        private static PropertyInfo _fsharpOptionOfCancellationTokenNoneProperty;
+        private static Assembly? _fsharpCoreAssembly;
+        private static MethodInfo? _fsharpAsyncStartAsTaskGenericMethod;
+        private static PropertyInfo? _fsharpOptionOfTaskCreationOptionsNoneProperty;
+        private static PropertyInfo? _fsharpOptionOfCancellationTokenNoneProperty;
 
         public static bool TryBuildCoercerFromFSharpAsyncToAwaitable(
             Type possibleFSharpAsyncType,
@@ -36,10 +36,10 @@ namespace Microsoft.Extensions.Internal
                 ? possibleFSharpAsyncType.GetGenericTypeDefinition()
                 : null;
 
-            if (!IsFSharpAsyncOpenGenericType(methodReturnGenericType))
+            if (!IsFSharpAsyncOpenGenericType(methodReturnGenericType!))
             {
-                coerceToAwaitableExpression = null;
-                awaitableType = null;
+                coerceToAwaitableExpression = null!;
+                awaitableType = null!;
                 return false;
             }
 
@@ -53,7 +53,7 @@ namespace Microsoft.Extensions.Internal
             //         FSharpOption<TaskCreationOptions>.None,
             //         FSharpOption<CancellationToken>.None);
             // };
-            var startAsTaskClosedMethod = _fsharpAsyncStartAsTaskGenericMethod
+            var startAsTaskClosedMethod = _fsharpAsyncStartAsTaskGenericMethod!
                 .MakeGenericMethod(awaiterResultType);
             var coerceToAwaitableParam = Expression.Parameter(typeof(object));
             coerceToAwaitableExpression = Expression.Lambda(
@@ -83,13 +83,13 @@ namespace Microsoft.Extensions.Internal
                 {
                     // Since we've already found the real FSharpAsync.Core assembly, we just have
                     // to check that the supplied FSharpAsync`1 type is the one from that assembly.
-                    return possibleFSharpAsyncGenericType.Assembly == _fsharpCoreAssembly;
+                    return possibleFSharpAsyncGenericType!.Assembly == _fsharpCoreAssembly;
                 }
                 else
                 {
                     // We'll keep trying to find the FSharp types/values each time any type called
                     // FSharpAsync`1 is supplied.
-                    return TryPopulateFSharpValueCaches(possibleFSharpAsyncGenericType);
+                    return TryPopulateFSharpValueCaches(possibleFSharpAsyncGenericType!);
                 }
             }
         }

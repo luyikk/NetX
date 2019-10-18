@@ -11,7 +11,7 @@ namespace Netx
         /// <summary>
         /// 序列化接口,可以自定义实现序列化方法
         /// </summary>
-        public static ISerialization Serialization { get; set; }
+        public static ISerialization? Serialization { get; set; }
 
         /// <summary>
         /// 序列化对象
@@ -20,7 +20,7 @@ namespace Netx
         /// <returns></returns>
         public static byte[] PackSingleObject(object obj)
         {
-
+           
             switch (obj)
             {
                 case string arg:
@@ -53,14 +53,21 @@ namespace Netx
                     return BitConverter.GetBytes(Convert.ToDouble(arg));
                 case Array array:
                     {
+                        if (Serialization is null)
+                            throw new NullReferenceException("Serialization is null");
+
                         List<byte[]> arlist = new List<byte[]>(array.Length);
                         for (int i = 0; i < array.Length; i++)
                             arlist.Add(PackSingleObject(array.GetValue(i)));
+                
 
                         return Serialization.Serialize(arlist);
                     }
                 default:
                     {
+                        if (Serialization is null)
+                            throw new NullReferenceException("Serialization is null");
+
                         return Serialization.Serialize(obj);
                     }
 
@@ -80,6 +87,7 @@ namespace Netx
         /// <returns></returns>       
         public static object UnpackSingleObject(Type type, byte[] data)
         {
+
 
             if (type == typeof(string))
             {
@@ -143,6 +151,9 @@ namespace Netx
             }
             else if (type.BaseType == typeof(Array))
             {
+                if (Serialization is null)
+                    throw new NullReferenceException("Serialization is null");
+
                 List<byte[]> list = Serialization.Deserialize<List<byte[]>>(data, 0, data.Length);
 
                 Type memberType = type.GetMethod("Get").ReturnType;
@@ -157,9 +168,13 @@ namespace Netx
                 return array;
             }
             else
+            {
+                if (Serialization is null)
+                    throw new NullReferenceException("Serialization is null");
+
                 return Serialization.Deserialize(type, data, 0, data.Length);
 
-
+            }
         }
 
 

@@ -13,7 +13,7 @@ namespace Netx
         /// <summary>
         /// ZYSOCKET V 的fiberRw 对象用于发送接收数据
         /// </summary>
-        protected IBufferWrite IWrite { get; set; }
+        protected IBufferWrite? IWrite { get; set; }
 
         protected bool isConnect;
         /// <summary>
@@ -35,15 +35,16 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
+
             Task<int> WSend()
             {
                 //数据包格式为 0 0000  00000000 0000 .....
                 //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
-                IWrite.Write(2400);
-                IWrite.Write((byte)2);
-                IWrite.Write(cmdTag);
-                IWrite.Write(Id);
-                IWrite.Write(args.Length);
+                IWrite!.Write(2400);
+                IWrite!.Write((byte)2);
+                IWrite!.Write(cmdTag);
+                IWrite!.Write(Id);
+                IWrite!.Write(args.Length);
                 foreach (var arg in args)
                 {
                     WriteObj(IWrite, arg);
@@ -54,7 +55,7 @@ namespace Netx
 
             var result = GetResult(AddAsyncResult(Id));
 
-            await await IWrite.Sync.Ask(WSend);
+            await await IWrite!.Sync.Ask(WSend);
 
             if (result.IsCompleted)
                 return result.Result;
@@ -80,21 +81,21 @@ namespace Netx
 
             void WSend()
             {
-                IWrite.Write(2400);
-                IWrite.Write((byte)0);
-                IWrite.Write(cmdTag);
-                IWrite.Write((long)-1);
-                IWrite.Write(args.Length);
+                IWrite!.Write(2400);
+                IWrite!.Write((byte)0);
+                IWrite!.Write(cmdTag);
+                IWrite!.Write((long)-1);
+                IWrite!.Write(args.Length);
                 foreach (var arg in args)
                 {
                     WriteObj(IWrite, arg);
                 }
 
-                IWrite.Flush();
+                IWrite!.Flush();
 
             }
 
-            IWrite.Sync.Tell(WSend);
+            IWrite!.Sync.Tell(WSend);
         }
 
         /// <summary>
@@ -112,22 +113,22 @@ namespace Netx
 
             Task<int> WSend()
             {
-                IWrite.Write(2400);
-                IWrite.Write((byte)1);
-                IWrite.Write(cmdTag);
-                IWrite.Write(Id);
-                IWrite.Write(args.Length);
+                IWrite!.Write(2400);
+                IWrite!.Write((byte)1);
+                IWrite!.Write(cmdTag);
+                IWrite!.Write(Id);
+                IWrite!.Write(args.Length);
                 foreach (var arg in args)
                 {
                     WriteObj(IWrite, arg);
                 }
 
-                return IWrite.Flush();
+                return IWrite!.Flush();
             }
 
             var result = GetResult(AddAsyncResult(Id));
 
-            await await IWrite.Sync.Ask(WSend);
+            await await IWrite!.Sync.Ask(WSend);
 
             if (result.IsCompleted)
             {
@@ -254,7 +255,7 @@ namespace Netx
         }
 
 
-        protected virtual async Task<(object arg, IMemoryOwner<byte> ownew)> ReadDataAsync(IBufferAsyncRead fiberR, Type type)
+        protected virtual async Task<(object arg, IMemoryOwner<byte>? ownew)> ReadDataAsync(IBufferAsyncRead fiberR, Type type)
         {
 
             if (type == typeof(sbyte))

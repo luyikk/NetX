@@ -14,7 +14,7 @@ namespace Netx.Service
     {
 
         protected readonly bool is_use_ssl;
-        protected X509Certificate Certificate { get; }
+        protected X509Certificate? Certificate { get; }
 
         public ServiceSslSetter(IServiceProvider container) : base(container)
         {
@@ -31,15 +31,16 @@ namespace Netx.Service
         /// </summary>
         /// <param name="socketAsync"></param>
         /// <returns></returns>
-        protected virtual async Task<IFiberRw<AsyncToken>> GetFiberRw(ISockAsyncEventAsServer socketAsync)
+        protected virtual async Task<IFiberRw<AsyncToken>?> GetFiberRw(ISockAsyncEventAsServer socketAsync)
         {
             if (is_use_ssl) //SSL Config
             {
-                var (fiber, msg) = await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate);
+                var (fiber, msg) = await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!);
 
                 if (fiber is null)
                 {
-                    Log.Error(msg);                  
+                    if(msg!=null)
+                        Log.Error(msg);                  
                     return null;
                 }
                 else

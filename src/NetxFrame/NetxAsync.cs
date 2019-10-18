@@ -24,16 +24,16 @@ namespace Netx
                 {
                     try
                     {
-                        Log.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log!.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
                     }
                     catch
                     {
-                        Log.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log!.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
                     }
                 }
                 else
                 {
-                    Log.ErrorFormat("not find back ruest id:{0}", result.Id);
+                    Log!.ErrorFormat("not find back ruest id:{0}", result.Id);
                 }
             }
         }

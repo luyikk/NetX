@@ -100,7 +100,7 @@ namespace Microsoft.Extensions.Internal
             }
             else
             {
-                unsafeOnCompletedMethod = null;
+                unsafeOnCompletedMethod = null!;
             }
 
             // Awaiter must have method matching "void GetResult" or "T GetResult()"

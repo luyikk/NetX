@@ -15,22 +15,22 @@ namespace Netx.Service.Builder
     public interface INetxServBuilder : IDisposable
     {
         IServiceCollection Container { get; }
-        IServiceProvider Provider { get; }
-        SockServBuilder SockServConfig { get; }
+        IServiceProvider? Provider { get; }
+        SockServBuilder? SockServConfig { get; }
 
         NetxService Build();
-        INetxServBuilder ConfigEncode(Func<Encoding> func = null);
-        INetxServBuilder ConfigIAsyncSend(Func<IAsyncSend> func = null);
-        INetxServBuilder ConfigISend(Func<ISend> func = null);
-        INetxServBuilder ConfigMemoryPool(Func<MemoryPool<byte>> func = null);
-        INetxServBuilder ConfigObjFormat(Func<ISerialization> func = null);
-        INetxServBuilder ConfigNetWork(Action<SocketServerOptions> config = null);
-        INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null);
+        INetxServBuilder ConfigEncode(Func<Encoding>? func = null);
+        INetxServBuilder ConfigIAsyncSend(Func<IAsyncSend>? func = null);
+        INetxServBuilder ConfigISend(Func<ISend>? func = null);
+        INetxServBuilder ConfigMemoryPool(Func<MemoryPool<byte>>? func = null);
+        INetxServBuilder ConfigObjFormat(Func<ISerialization>? func = null);
+        INetxServBuilder ConfigNetWork(Action<SocketServerOptions>? config = null);
+        INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null);
         INetxServBuilder ConfigureDefaults();     
-        INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null);
-        INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null);
-        INetxServBuilder ConfigSSL(Action<SslOption> config = null);
-        INetxServBuilder ConfigBase(Action<ServiceOption> config = null);
+        INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null);
+        INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null);
+        INetxServBuilder ConfigSSL(Action<SslOption>? config = null);
+        INetxServBuilder ConfigBase(Action<ServiceOption>? config = null);
         INetxServBuilder AddActorEvent<T>() where T : ActorEventBase;
         INetxServBuilder RegisterService(Assembly assembly);
         INetxServBuilder RegisterService(Type controller_instance_type);

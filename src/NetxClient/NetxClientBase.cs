@@ -60,20 +60,23 @@ namespace Netx.Client
         /// <returns></returns>
         protected async Task<int> SendVerify()
         {
+            if (IWrite == null)
+                throw new NullReferenceException("IWrite is null!");
+
             Task<int> WSend()
             {
-                IWrite.Write(1000);
-                IWrite.Write(ConnectOption.ServiceName ?? "");
-                IWrite.Write(ConnectOption.VerifyKey ?? "");
-                IWrite.Write(Session.GetSessionId());
-                return IWrite.Flush();
+                IWrite!.Write(1000);
+                IWrite!.Write(ConnectOption.ServiceName ?? "");
+                IWrite!.Write(ConnectOption.VerifyKey ?? "");
+                IWrite!.Write(Session.GetSessionId());
+                return IWrite!.Flush();
             }
 
            return await await IWrite.Sync.Ask(WSend);
         }
 
 
-     
+
 
         /// <summary>
         /// 发送错误
@@ -85,23 +88,20 @@ namespace Netx.Client
         protected virtual async Task SendError(long id, string msg, ErrorType errorType)
         {
 
-            if (IWrite != null)
-            {
-                Task<int> WSend()
-                {
-                    IWrite.Write(2500);
-                    IWrite.Write(id);
-                    IWrite.Write(true);
-                    IWrite.Write((int)errorType);
-                    IWrite.Write(msg);
-                    return IWrite.Flush();
-                }
-
-                await await IWrite.Sync.Ask(WSend);
-
-            }
-            else
+            if (IWrite == null)
                 throw new NullReferenceException("IWrite is null!");
+
+            Task<int> WSend()
+            {
+                IWrite!.Write(2500);
+                IWrite!.Write(id);
+                IWrite!.Write(true);
+                IWrite!.Write((int)errorType);
+                IWrite!.Write(msg);
+                return IWrite!.Flush();
+            }
+
+            await await IWrite.Sync.Ask(WSend);
         }
 
         /// <summary>
@@ -111,24 +111,21 @@ namespace Netx.Client
         /// <returns></returns>
         protected virtual async Task SendResult(long id, object argument)
         {
-            if (IWrite != null)
-            {
-                var buffer = SerializationPacker.PackSingleObject(argument);
-                Task<int> WSend()
-                {
-                    IWrite.Write(2500);
-                    IWrite.Write(id);
-                    IWrite.Write(false);
-                    IWrite.Write(1);
-                    IWrite.Write(buffer);
-                    return IWrite.Flush();
-                }
-                await await IWrite.Sync.Ask(WSend);
-
-            }
-            else
+            if (IWrite == null)
                 throw new NullReferenceException("IWrite is null!");
 
+            var buffer = SerializationPacker.PackSingleObject(argument);
+
+            Task<int> WSend()
+            {
+                IWrite!.Write(2500);
+                IWrite!.Write(id);
+                IWrite!.Write(false);
+                IWrite!.Write(1);
+                IWrite!.Write(buffer);
+                return IWrite!.Flush();
+            }
+            await await IWrite.Sync.Ask(WSend);
         }
 
         /// <summary>
@@ -136,35 +133,31 @@ namespace Netx.Client
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        protected virtual async Task SendResult(long id, byte[][] arguments = null)
+        protected virtual async Task SendResult(long id, byte[][]? arguments = null)
         {
-            if (IWrite != null)
-            {
-                Task<int> WSend()
-                {
-                    IWrite.Write(2500);
-                    IWrite.Write(id);
-
-                    IWrite.Write(false);
-
-                    if (arguments is null)
-                        IWrite.Write(0);
-                    else
-                    {
-                        IWrite.Write(arguments.Length);
-                        foreach (var item in arguments)
-                            IWrite.Write(item);
-                    }
-
-                    return IWrite.Flush();
-                }
-
-                await await IWrite.Sync.Ask(WSend);
-
-            }
-            else
+            if (IWrite == null)
                 throw new NullReferenceException("IWrite is null!");
 
+            Task<int> WSend()
+            {
+                IWrite!.Write(2500);
+                IWrite!.Write(id);
+
+                IWrite!.Write(false);
+
+                if (arguments is null)
+                    IWrite!.Write(0);
+                else
+                {
+                    IWrite!.Write(arguments.Length);
+                    foreach (var item in arguments)
+                        IWrite!.Write(item);
+                }
+
+                return IWrite!.Flush();
+            }
+
+            await await IWrite.Sync.Ask(WSend);
         }
 
         /// <summary>
@@ -174,35 +167,33 @@ namespace Netx.Client
         /// <returns></returns>
         protected virtual async Task SendResult(Result result)
         {
-            if (IWrite != null)
+            if (IWrite == null)
+                throw new NullReferenceException("IWrite is null!");
+
+            Task<int> WSend()
             {
-                Task<int> WSend()
+                IWrite!.Write(2500);
+                IWrite!.Write(result.Id);
+
+                if (result.IsError)
                 {
-                    IWrite.Write(2500);
-                    IWrite.Write(result.Id);
-
-                    if (result.IsError)
-                    {
-                        IWrite.Write(true);
-                        IWrite.Write(result.ErrorId);
-                        IWrite.Write(result.ErrorMsg);
-                    }
-                    else
-                    {
-                        IWrite.Write(false);
-                        IWrite.Write(result.Arguments.Count);
+                    IWrite!.Write(true);
+                    IWrite!.Write(result.ErrorId);
+                    IWrite!.Write(result.ErrorMsg ?? "");
+                }
+                else
+                {
+                    IWrite!.Write(false);
+                    IWrite!.Write(result.Arguments?.Count ?? 0);
+                    if (result.Arguments != null)
                         foreach (var item in result.Arguments)
-                            IWrite.Write(item);
-                    }
-
-                    return IWrite.Flush();
+                            IWrite!.Write(item);
                 }
 
-                await await IWrite.Sync.Ask(WSend);
-
+                return IWrite.Flush();
             }
-            else
-                throw new NullReferenceException("IWrite is null!");
+
+            await await IWrite.Sync.Ask(WSend);
 
         }
     }

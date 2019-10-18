@@ -44,10 +44,10 @@ namespace Netx.Actor
 
         public int QueueCount => ActorRunQueue.Count;
 
-        private long maxQueuelen;
+        private readonly long maxQueuelen;
         public ActorOptionAttribute Option { get; }
 
-        internal event EventHandler<IActorMessage> CompletedEvent;
+        internal event EventHandler<IActorMessage>? CompletedEvent;
 
         public bool IsSleep { get; private set; } = true;
 
@@ -84,12 +84,12 @@ namespace Netx.Actor
 
             var options= instance.GetType().GetCustomAttributes<ActorOptionAttribute>(false);
 
+            Option = new ActorOptionAttribute();
+
             foreach (var attr in options)
                 if (attr is ActorOptionAttribute option)
-                    Option = option;
-
-            if (Option == null)
-                Option = new ActorOptionAttribute();
+                    Option = option;         
+              
 
             maxQueuelen = Option.MaxQueueCount;
 
@@ -132,7 +132,7 @@ namespace Netx.Actor
                         if (taglist.Count > 0)
                         {
 
-                            if (TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) || method.ReturnType == null)
+                            if (method.ReturnType == null||TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void))
                             {
                                 var type = from xx in method.GetParameters()
                                            select xx.ParameterType;
@@ -194,7 +194,7 @@ namespace Netx.Actor
                     if (taglist.Count > 0)
                     {
 
-                        if (TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) || method.ReturnType == null)
+                        if (method.ReturnType == null|| TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) )
                         {
                             foreach (var tag in taglist)
                             {
@@ -324,7 +324,7 @@ namespace Netx.Actor
             return Task.CompletedTask;
         }
 
-        private async Task<object> Call_runing(ActorMessage result)
+        private async Task<object?> Call_runing(ActorMessage result)
         {
             var cmd = result.Cmd;
             var args = result.Args;

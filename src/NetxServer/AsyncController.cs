@@ -7,14 +7,14 @@ namespace Netx.Service
 {
     public abstract class AsyncController
     {
-        internal AsyncToken Async { get; set; }       
+        internal AsyncToken? Async { get; set; }
 
-        protected AsyncToken Current{get=>Async; }
+        protected AsyncToken? Current { get => Async; }
 
-        public T Get<T>() => Current.Get<T>();
-        public T Actor<T>() => Current.Actor<T>();
+        public T? Get<T>() where T:class => Current?.Get<T>();
+        public T? Actor<T>() where T : class => Current?.Actor<T>();
 
-        public virtual object Runs__Make(int tag, object[] args) => null;
+        public virtual object Runs__Make(int tag, object[] args) => null!;
 
         /// <summary>
         /// 断线处理
@@ -31,7 +31,7 @@ namespace Netx.Service
         {
 
         }
-      
+
 
     }
 }

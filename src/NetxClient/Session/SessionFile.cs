@@ -13,7 +13,7 @@ namespace Netx.Client.Session
     {
         public string SessionFilePath { get; set; }
 
-        public SessionFile(string sessionpath = null)
+        public SessionFile(string? sessionpath = null)
         {
             if (sessionpath == null) //默认保存到当前用户的temp文件夹
                 sessionpath = Path.GetTempPath();
@@ -25,10 +25,8 @@ namespace Netx.Client.Session
         {
             if (File.Exists(SessionFilePath))
             {
-                using (BinaryReader read = new BinaryReader(new MemoryStream(File.ReadAllBytes(SessionFilePath))))
-                {
-                    return read.ReadInt64();
-                }
+                using BinaryReader read = new BinaryReader(new MemoryStream(File.ReadAllBytes(SessionFilePath)));
+                return read.ReadInt64();
             }
             else
                 return 0;
@@ -36,10 +34,8 @@ namespace Netx.Client.Session
 
         public void SaveSessionId(long sessionid)
         {
-            using (BinaryWriter wr = new BinaryWriter(new FileStream(SessionFilePath, FileMode.Create)))
-            {
-                wr.Write(sessionid);
-            }
+            using BinaryWriter wr = new BinaryWriter(new FileStream(SessionFilePath, FileMode.Create));
+            wr.Write(sessionid);
         }
     }
 }

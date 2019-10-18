@@ -12,7 +12,7 @@ namespace Netx
         /// <summary>
         /// 错误信息
         /// </summary>
-        public string ErrorMsg { get; private set; }
+        public string? ErrorMsg { get; private set; }
 
         /// <summary>
         /// 错误类型
@@ -24,7 +24,7 @@ namespace Netx
         /// </summary>
         public int ErrorId { get; private set; }
 
-        public NetxException(string msg, ErrorType errorType)
+        public NetxException(string? msg, ErrorType errorType)
             :base(msg)
         {
             this.ErrorMsg = msg;
@@ -32,7 +32,7 @@ namespace Netx
             this.ErrorId = (int)errorType;
         }
 
-        public NetxException(string msg,int errorId)
+        public NetxException(string? msg,int errorId)
         {
             this.ErrorMsg = msg;
             ErrorId = errorId;

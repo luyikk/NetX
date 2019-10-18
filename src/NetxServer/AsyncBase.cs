@@ -15,7 +15,7 @@ namespace Netx.Service
     {
         public IServiceProvider Container { get; }
 
-        public IFiberRw<AsyncToken> FiberRw { get; protected set; }
+        public IFiberRw<AsyncToken>? FiberRw { get; protected set; }
 
         public long SessionId { get; }      
 

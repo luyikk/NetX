@@ -13,9 +13,9 @@ namespace Netx.Actor.Builder
     public class ActorBuilder : IActorBuilder
     {
         public IServiceCollection Container { get; }
-        public IServiceProvider Provider { get; private set; }
+        public IServiceProvider? Provider { get; private set; }
 
-        public ActorBuilder(IServiceCollection serviceDescriptors = null)
+        public ActorBuilder(IServiceCollection? serviceDescriptors = null)
         {
             if (serviceDescriptors is null)
                 Container = new ServiceCollection();
@@ -41,7 +41,7 @@ namespace Netx.Actor.Builder
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public IActorBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null)
+        public IActorBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null)
         {
             if (func is null)
                 Container.AddSingleton<IIds, DefaultMakeIds>();
@@ -57,7 +57,7 @@ namespace Netx.Actor.Builder
         /// </summary>
         /// <param name="serviceDescriptors"></param>
         /// <returns></returns>
-        public IActorBuilder RegisterDescriptors(Action<IServiceCollection> serviceDescriptors)
+        public IActorBuilder RegisterDescriptors(Action<IServiceCollection>? serviceDescriptors)
         {
             serviceDescriptors?.Invoke(Container);
             return this;
@@ -104,7 +104,7 @@ namespace Netx.Actor.Builder
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public IActorBuilder ConfigObjFormat(Func<ISerialization> func = null)
+        public IActorBuilder ConfigObjFormat(Func<ISerialization>? func = null)
         {
             if (func is null)
                 Container.AddSingleton<ISerialization>(p => new ZYSocket.FiberStream.ProtobuffObjFormat());
@@ -119,7 +119,7 @@ namespace Netx.Actor.Builder
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public IActorBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null)
+        public IActorBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null)
         {
             if (config is null)
             {
@@ -142,7 +142,7 @@ namespace Netx.Actor.Builder
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        public IActorBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler> func = null)
+        public IActorBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null)
         {
             if (func is null)
                 Container.AddScoped<ActorScheduler>(_ => ActorScheduler.LineByLine);

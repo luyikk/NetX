@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Netx.Interface;
+using Netx.Loggine;
 using System;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.Client;
+using ZYSocket.FiberStream;
 using ZYSocket.FiberStream.Synchronization;
 
 namespace Netx.Client
@@ -17,12 +19,14 @@ namespace Netx.Client
 
         public SocketClient SocketClient { get; private set; }
 
-        public event DisconnectHandler Disconnect;
+        public event DisconnectHandler? Disconnect;
 
         internal NetxSClient(IServiceProvider container)
             : base(container)
         {
-            Init();
+            SocketClient = Container.GetRequiredService<SocketClient>();
+            SocketClient.BinaryInput += SocketClient_BinaryInput;
+            SocketClient.Disconnect += SocketClient_Disconnect;
         }
 
         private void Init()
@@ -69,7 +73,7 @@ namespace Netx.Client
             }
             catch (NetxException er)
             {
-                Log.Error(this, er);
+                Log!.Error(this, er);
                 return false;
             }
         }
@@ -77,7 +81,7 @@ namespace Netx.Client
 
         private void SocketClient_Disconnect(ISocketClient client, ISockAsyncEventAsClient socketAsync, string msg)
         {
-            Log.Info($"{ConnectOption.Host}:{ConnectOption.Port}->{msg}");
+            Log!.Info($"{ConnectOption.Host}:{ConnectOption.Port}->{msg}");
             Close();
             Disconnect?.Invoke(client, socketAsync, msg);
         }
@@ -113,7 +117,7 @@ namespace Netx.Client
 
                                 if (!iserror)
                                 {
-                                    Log.Trace(await fiberRw.ReadString());
+                                    Log!.Trace(await fiberRw.ReadString());
                                     isConnect = true;
                                     client.SetConnected();
                                     await ReadIng(fiberRw);
@@ -121,7 +125,7 @@ namespace Netx.Client
                                 else
                                 {
                                     var msg = await fiberRw.ReadString();
-                                    Log.Info(msg);
+                                    Log!.Info(msg);
                                     client.SetConnected(false, msg);
                                 }
 
@@ -145,7 +149,7 @@ namespace Netx.Client
                 }
                 else
                 {
-                    Log.Error(er);
+                    Log!.Error(er);
                     client.ShutdownBoth(true);
                 }
             }

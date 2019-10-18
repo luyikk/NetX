@@ -16,7 +16,7 @@ namespace Netx.Client
     public class NetxSClientBuilder : INetxSClientBuilder
     {
         public IServiceCollection Container { get; }
-        public IServiceProvider Provider { get; private set; }
+        public IServiceProvider? Provider { get; private set; }
 
         public NetxSClientBuilder()
         {
@@ -38,7 +38,7 @@ namespace Netx.Client
             ConfigIIds();
         }
 
-        public INetxSClientBuilder ConfigConnection(Action<ConnectOption> config=null)
+        public INetxSClientBuilder ConfigConnection(Action<ConnectOption>? config=null)
         {
             if (config != null)
                 Container.Configure<ConnectOption>(config);
@@ -47,7 +47,7 @@ namespace Netx.Client
         }
 
 
-        public INetxSClientBuilder ConfigEncode(Func<Encoding> func = null)
+        public INetxSClientBuilder ConfigEncode(Func<Encoding>? func = null)
         {
             Container.AddSingleton<Encoding>(p =>
             {
@@ -60,7 +60,7 @@ namespace Netx.Client
             return this;
         }
 
-        public INetxSClientBuilder ConfigMemoryPool(Func<MemoryPool<byte>> func = null)
+        public INetxSClientBuilder ConfigMemoryPool(Func<MemoryPool<byte>>? func = null)
         {
             Container.AddTransient<MemoryPool<byte>>(p =>
             {
@@ -74,7 +74,7 @@ namespace Netx.Client
         }
 
 
-        public INetxSClientBuilder ConfigISend(Func<ISend> func = null)
+        public INetxSClientBuilder ConfigISend(Func<ISend>? func = null)
         {
             Container.AddTransient<ISend>(p =>
             {
@@ -88,7 +88,7 @@ namespace Netx.Client
         }
 
 
-        public INetxSClientBuilder ConfigIAsyncSend(Func<IAsyncSend> func = null)
+        public INetxSClientBuilder ConfigIAsyncSend(Func<IAsyncSend>? func = null)
         {
             Container.AddTransient<IAsyncSend>(p =>
             {
@@ -101,7 +101,7 @@ namespace Netx.Client
             return this;
         }
 
-        public INetxSClientBuilder ConfigSessionStore(Func<ISessionStore> func=null)
+        public INetxSClientBuilder ConfigSessionStore(Func<ISessionStore>? func=null)
         {
 
             Container.AddTransient<ISessionStore>(p =>
@@ -114,7 +114,7 @@ namespace Netx.Client
             return this;
         }
 
-        public INetxSClientBuilder ConfigObjFormat(Func<ISerialization> func = null)
+        public INetxSClientBuilder ConfigObjFormat(Func<ISerialization>? func = null)
         {
             Container.AddTransient<ISerialization>(p =>
             {
@@ -128,7 +128,7 @@ namespace Netx.Client
         }
 
 
-        public INetxSClientBuilder ConfigIIds(Func<IServiceProvider, IIds> func = null)
+        public INetxSClientBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null)
         {
             if (func is null)
                 Container.AddScoped<IIds, DefaultMakeIds>();
@@ -138,14 +138,14 @@ namespace Netx.Client
             return this;
         }
 
-        public INetxSClientBuilder ConfigSSL(Action<SslOption> config = null)
+        public INetxSClientBuilder ConfigSSL(Action<SslOption>? config = null)
         {
             if (config != null)
                 Container.Configure<SslOption>(config);
             return this;
         }
 
-        public INetxSClientBuilder ConfigureLogSet(Action<ILoggingBuilder> config = null)
+        public INetxSClientBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null)
         {
             if (config is null)
             {

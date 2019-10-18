@@ -10,12 +10,12 @@ namespace Netx.Service
         /// <summary>
         /// 钥匙
         /// </summary>
-        public string VerifyKey { get; set; }
+        public string? VerifyKey { get; set; }
 
         /// <summary>
         /// 当前服务名
         /// </summary>
-        public string ServiceName { get; set; }
+        public string? ServiceName { get; set; }
 
 
         /// <summary>

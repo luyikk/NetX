@@ -15,6 +15,6 @@ namespace Netx
         /// <summary>
         /// 证书
         /// </summary>
-        public X509Certificate Certificate { get; set; } = null;
+        public X509Certificate? Certificate { get; set; } = null;
     }
 }

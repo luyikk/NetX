@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Netx</RootNamespace>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <Authors>luyikk</Authors>
     <Company>luyikk</Company>
     <Product>Netx Actor Package</Product>
@@ -16,7 +16,8 @@
     <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
     <PackageTags>NetX</PackageTags>
     <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

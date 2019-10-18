@@ -48,7 +48,7 @@ namespace Netx.Loggine
             this.Trace(obj, null);
         }
 
-        public void Trace(object obj, Exception exception)
+        public void Trace(object obj, Exception? exception)
         {
             if (!this.IsTraceEnabled)
             {
@@ -91,7 +91,7 @@ namespace Netx.Loggine
             this.Debug(obj, null);
         }
 
-        public void Debug(object obj, Exception exception)
+        public void Debug(object obj, Exception? exception)
         {
             if (!this.IsDebugEnabled)
             {
@@ -134,7 +134,7 @@ namespace Netx.Loggine
             this.Info(obj, null);
         }
 
-        public void Info(object obj, Exception exception)
+        public void Info(object obj, Exception? exception)
         {
             if (!this.IsInfoEnabled)
             {
@@ -177,7 +177,7 @@ namespace Netx.Loggine
             this.Warn(obj, null);
         }
 
-        public void Warn(object obj, Exception exception)
+        public void Warn(object obj, Exception? exception)
         {
             if (!this.IsWarnEnabled)
             {
@@ -220,7 +220,7 @@ namespace Netx.Loggine
             this.Error(obj, null);
         }
 
-        public void Error(object obj, Exception exception)
+        public void Error(object obj, Exception? exception)
         {
             if (!this.IsErrorEnabled)
             {
@@ -263,7 +263,7 @@ namespace Netx.Loggine
             this.Critical(obj, null);
         }
 
-        public void Critical(object obj, Exception exception)
+        public void Critical(object obj, Exception? exception)
         {
             if (!this.IsCriticalEnabled)
             {

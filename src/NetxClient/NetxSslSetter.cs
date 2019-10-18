@@ -13,7 +13,7 @@ namespace Netx.Client
     public abstract class NetxSslSetter : NetxAnalysis
     {
         protected readonly bool is_use_ssl;
-        protected X509Certificate Certificate { get; }
+        protected X509Certificate? Certificate { get; }
 
         public NetxSslSetter(IServiceProvider container)
         : base(container)
@@ -31,15 +31,16 @@ namespace Netx.Client
         /// </summary>
         /// <param name="socketAsync"></param>
         /// <returns></returns>
-        protected virtual async Task<IFiberRw> GetFiberRw(ISockAsyncEventAsClient socketAsync)
+        protected virtual async Task<IFiberRw?> GetFiberRw(ISockAsyncEventAsClient socketAsync)
         {
             if (is_use_ssl) //SSL Config
             {
-                var result =await socketAsync.GetFiberRwSSL(Certificate);
+                var result =await socketAsync.GetFiberRwSSL(Certificate!);
 
                 if (result.IsError)
                 {
-                    Log.Error(result.ErrMsg);
+                    if (result.ErrMsg != null)
+                        Log!.Error(result.ErrMsg);
                     return null;
                 }
                 else

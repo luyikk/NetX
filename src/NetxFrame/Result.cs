@@ -17,7 +17,7 @@ namespace Netx
         /// <summary>
         /// 返回值
         /// </summary>
-        public List<byte[]> Arguments { get; }
+        public List<byte[]>? Arguments { get; }
 
         /// <summary>
         /// 是否发生错误
@@ -27,7 +27,7 @@ namespace Netx
         /// <summary>
         /// 错误消息
         /// </summary>
-        public string ErrorMsg { get; set; }
+        public string? ErrorMsg { get; set; }
         /// <summary>
         /// 错误ID,如果错误有
         /// </summary>
@@ -48,7 +48,7 @@ namespace Netx
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public IResultValue this[int index]
+        public IResultValue? this[int index]
         {
             get
             {
@@ -70,7 +70,7 @@ namespace Netx
         /// <summary>
         /// 第一个返回值
         /// </summary>
-        public IResultValue First
+        public IResultValue? First
         {
             get
             {
@@ -120,8 +120,10 @@ namespace Netx
             if (IsError)
                 throw new NetxException(ErrorMsg, ErrorId);
 
-            if (Length <= 0)
+            if (Length <= 0 || Arguments is null)
                 throw new NetxException("null value", ErrorType.NotValue);
+
+
 
             return (T)SerializationPacker.UnpackSingleObject(typeof(T), Arguments[index]);
         }
@@ -136,7 +138,7 @@ namespace Netx
             if (IsError)
                 throw new NetxException(ErrorMsg, ErrorId);
 
-            if (Length <= 0)
+            if (Length <= 0 || Arguments is null)
                 throw new NetxException("null value", ErrorType.NotValue);
 
             return (T)SerializationPacker.UnpackSingleObject(typeof(T), Arguments[0]);
@@ -153,7 +155,7 @@ namespace Netx
             if (IsError)
                 throw new NetxException(ErrorMsg, ErrorId);
 
-            if (Length <= 0)
+            if (Length <= 0 || Arguments is null)
                 throw new NetxException("null value", ErrorType.NotValue);
 
             if (index > Length)

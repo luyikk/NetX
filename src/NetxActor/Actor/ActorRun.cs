@@ -13,7 +13,7 @@ namespace Netx.Actor
 
         public ConcurrentDictionary<int, Actor> ActorCollect { get => actorCollect.Value; }
 
-        public event EventHandler<IActorMessage> CompletedEvent;
+        public event EventHandler<IActorMessage>? CompletedEvent;
 
         public ActorRun(IServiceProvider container)
             : base(container)
@@ -40,7 +40,7 @@ namespace Netx.Actor
                     {
                         try
                         {
-                            await item.AsyncAction(-1, Actor.SleepCmd, OpenAccess.Private, null);
+                            await item.AsyncAction(-1, Actor.SleepCmd, OpenAccess.Private, null!);
                         }
                         catch (Exception er)
                         {
@@ -67,7 +67,7 @@ namespace Netx.Actor
             CompletedEvent?.Invoke(sender, e);
         }
 
-        public MethodRegister GetCmdService(int cmd)
+        public MethodRegister? GetCmdService(int cmd)
         {
             if (ActorCollect.ContainsKey(cmd))
                 return ActorCollect[cmd].CmdDict[cmd];

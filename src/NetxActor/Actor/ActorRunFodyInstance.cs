@@ -34,15 +34,15 @@ namespace Netx.Actor
 
                 var getImplementation = implementationType.GetMethod("GetImplementation", BindingFlags.Static | BindingFlags.Public);
 
-                var method = ObjectMethodExecutor.Create(getImplementation, null);
+                var method = ObjectMethodExecutor.Create(getImplementation, null!);
                 FodyType.TryAdd(interfaceType, method);
 
-                return (T)method.Execute(null, new object[] { this });
+                return (T)method.Execute(null!, new object[] { this });
 
             }
             else
             {
-                return (T)FodyType[interfaceType].Execute(null, new object[] { this });
+                return (T)FodyType[interfaceType].Execute(null!, new object[] { this });
             }
         }
     }
