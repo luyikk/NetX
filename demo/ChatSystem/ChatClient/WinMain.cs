@@ -82,7 +82,7 @@ namespace ChatClient
                 var (success, my) = await Current.Get<IServer>().CheckLogIn();
                 if (!success)
                 {
-                    LogOn logOn = new LogOn();
+                    using LogOn logOn = new LogOn();
                     logOn.ShowDialog();
 
                     (success, my) = await Current.Get<IServer>().CheckLogIn();

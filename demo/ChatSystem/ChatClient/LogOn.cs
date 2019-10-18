@@ -15,7 +15,7 @@ namespace ChatClient
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            Register register = new Register();
+            using Register register = new Register();
             register.ShowDialog();
         }
 

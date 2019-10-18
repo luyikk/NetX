@@ -16,7 +16,7 @@ namespace ChatServer
         {
           
            
-            var server = new NetxServBuilder()
+           using var server = new NetxServBuilder()
                  .ConfigBase(p =>
                  {
                      p.ServiceName = "MessageService"; //服务名
