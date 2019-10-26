@@ -48,7 +48,7 @@ namespace Netx.Service
                     try { item.Closed(); }
                     catch (Exception er)
                     {
-                        Log!.Error(er);
+                        Log.Error(er);
                     }
 
                 }
@@ -203,7 +203,7 @@ namespace Netx.Service
                 }
                 else
                 {
-                    Log!.WarnFormat($"{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd} Args Error: len {argslen}->{ service.ArgsType.Length} \r\n to {service}");
+                    Log.WarnFormat($"{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd} Args Error: len {argslen}->{ service.ArgsType.Length} \r\n to {service}");
                     await SendError(id, $"call async service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
                     return false;
                 }
@@ -235,7 +235,7 @@ namespace Netx.Service
                     }
                     else
                     {
-                        Log!.WarnFormat($"{ fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length} \r\n to {service}");
+                        Log.WarnFormat($"{ fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length} \r\n to {service}");
                         await SendError(id, $"call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
                         return false;
                     }
@@ -243,7 +243,7 @@ namespace Netx.Service
                 }
                 else
                 {
-                    Log!.WarnFormat($"{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call service:{cmd} not find cmd ");
+                    Log.WarnFormat($"{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call service:{cmd} not find cmd ");
                     await SendError(id, $"call service:{cmd} not find the cmd,please check it", ErrorType.NotCmd);
                     return false;
                 }
@@ -306,12 +306,12 @@ namespace Netx.Service
             catch (NetxException er)
             {
                 if(er.ErrorType!=ErrorType.ActorQueueMaxErr)
-                    Log!.Error(er);
+                    Log.Error(er);
                 await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {
-                Log!.Error(er);
+                Log.Error(er);
                 await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
@@ -336,7 +336,7 @@ namespace Netx.Service
             }
             catch (Exception er)
             {
-                Log!.Error(er);
+                Log.Error(er);
                 await SendError(id, $"Async Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
@@ -417,28 +417,28 @@ namespace Netx.Service
                             }
                             catch (InvalidOperationException er)
                             {
-                                Log!.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  not create instance from {instanceType.FullName} Error:\r\n{er}");
+                                Log.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  not create instance from {instanceType.FullName} Error:\r\n{er}");
                                 await SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er.ToString()}", ErrorType.CreateInstanceErr);
                                 return null;
                             }
                         }
                         else
                         {
-                            Log!.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  Constructor  not is public");
+                            Log.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  Constructor  not is public");
                             await SendError(id, $"call async service:{cmd} Constructor not is public", ErrorType.ConstructorsErr);
                             return null;
                         }
                     }
                     else
                     {
-                        Log!.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  Constructor  not is Generic");
+                        Log.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd}  Constructor  not is Generic");
                         await SendError(id, $"call async service:{cmd} Constructor not is Generic", ErrorType.ConstructorsErr);
                         return null;
                     }
                 }
                 else
                 {
-                    Log!.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd} Constructor count error,need use 1 Constructor ");
+                    Log.WarnFormat($"{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} call async service:{cmd} Constructor count error,need use 1 Constructor ");
                     await SendError(id, $"call async service:{cmd} Constructor count error,need use 1 Constructor", ErrorType.ConstructorsErr);
                     return null;
                 }

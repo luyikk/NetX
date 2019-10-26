@@ -123,8 +123,6 @@ namespace Netx
             if (Length <= 0 || Arguments is null)
                 throw new NetxException("null value", ErrorType.NotValue);
 
-
-
             return (T)SerializationPacker.UnpackSingleObject(typeof(T), Arguments[index]);
         }
 

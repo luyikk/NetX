@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Internal;
+using Netx.Interface;
+using Netx.Loggine;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,7 +11,8 @@ namespace Netx
 {
   
     public abstract class NetxFodyInstance:NetxAsync
-    {    
+    {
+        public NetxFodyInstance(ILog log, IIds idsManager) : base(log, idsManager) { }
 
         protected Dictionary<Type, ObjectMethodExecutor> FodyType { get; set; } = new Dictionary<Type, ObjectMethodExecutor>();
 

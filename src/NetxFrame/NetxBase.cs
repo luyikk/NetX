@@ -13,12 +13,19 @@ namespace Netx
     public abstract class NetxBase : INetxBuildInterface
     {
 
-        protected IIds? IdsManager { get; set; }
+        protected IIds IdsManager { get; set; }
 
         /// <summary>
         /// 日记输出
         /// </summary>
-        public ILog? Log { get; protected set; }
+        public ILog Log { get; protected set; }
+
+        public NetxBase(ILog log,IIds idsManager)
+        {
+            Log = log;
+            IdsManager = idsManager;
+        }
+
 
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
@@ -58,7 +65,7 @@ namespace Netx
         /// <param name="cmdTag"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task AsyncAction(int cmdTag, params object[] args) => SendAsyncAction(cmdTag, IdsManager!.MakeId, args);
+        public Task AsyncAction(int cmdTag, params object[] args) => SendAsyncAction(cmdTag, IdsManager.MakeId, args);
 
 
         /// <summary>
@@ -67,7 +74,7 @@ namespace Netx
         /// <param name="cmdTag">命令</param>
         /// <param name="args">参数</param>
         /// <returns>返回结果</returns>
-        public Task<IResult> AsyncFunc(int cmdTag, params object[] args) => AsyncFuncSend(cmdTag, IdsManager!.MakeId, args);
+        public Task<IResult> AsyncFunc(int cmdTag, params object[] args) => AsyncFuncSend(cmdTag, IdsManager.MakeId, args);
 
 
         /// <summary>

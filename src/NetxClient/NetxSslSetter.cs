@@ -40,7 +40,7 @@ namespace Netx.Client
                 if (result.IsError)
                 {
                     if (result.ErrMsg != null)
-                        Log!.Error(result.ErrMsg);
+                        Log.Error(result.ErrMsg);
                     return null;
                 }
                 else

@@ -102,7 +102,7 @@ namespace Netx.Service
 
             }
             else
-                Log!.Error("Send fail,is not fiber");
+                Log.Error("Send fail,is not fiber");
 
         }
 
@@ -140,7 +140,7 @@ namespace Netx.Service
                 FiberRw.Sync.Tell(WSend);
             }
             else
-                Log!.Error("Send fail,is not fiber");
+                Log.Error("Send fail,is not fiber");
 
         }
 
@@ -170,7 +170,7 @@ namespace Netx.Service
             }
             else
             {
-                Log!.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");               
             }
 
         }
@@ -206,7 +206,7 @@ namespace Netx.Service
             }
             else
             {
-                Log!.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");               
             }
 
         }
@@ -248,7 +248,7 @@ namespace Netx.Service
             }
             else
             {
-                Log!.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");               
             }
 
         }
@@ -281,7 +281,7 @@ namespace Netx.Service
             }
             else
             {
-                Log!.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");               
             }
         }
 
@@ -307,14 +307,14 @@ namespace Netx.Service
             }
             else
             {
-                Log!.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");               
             }
         }
 
 
         protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
         {          
-            Log!.WarnFormat($"{service} call async service:{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} not find RunType:{runtype}");
+            Log.WarnFormat($"{service} call async service:{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} not find RunType:{runtype}");
             return SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);
         }
 
