@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Netx.Interface;
+using Netx.Loggine;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources.Copy;
 using ZYSocket;
@@ -9,6 +11,7 @@ namespace Netx
     public abstract class NetxAsync : NetxBuffer
     {
 
+        public NetxAsync(ILog log, IIds idsManager) : base(log, idsManager) { }
 
         /// <summary>
         /// 异步结果返回,回调继续
@@ -24,16 +27,16 @@ namespace Netx
                 {
                     try
                     {
-                        Log!.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
                     }
                     catch
                     {
-                        Log!.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
                     }
                 }
                 else
                 {
-                    Log!.ErrorFormat("not find back ruest id:{0}", result.Id);
+                    Log.ErrorFormat("not find back ruest id:{0}", result.Id);
                 }
             }
         }

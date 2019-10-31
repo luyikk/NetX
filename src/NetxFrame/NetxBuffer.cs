@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Netx.Interface;
+using Netx.Loggine;
+using System;
 using System.Buffers;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources.Copy;
@@ -20,6 +22,8 @@ namespace Netx
         /// 当前是否连接
         /// </summary>
         public bool IsConnect { get => isConnect; protected set => isConnect = value; }
+
+        public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }        
 
         /// <summary>
         /// 异步请求发送,将异步返回结果

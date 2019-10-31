@@ -22,14 +22,14 @@ namespace Netx.Service
     
 
         public AsyncBase(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, long sessionId)
+            :base(new DefaultLog(container.GetRequiredService<ILogger<AsyncToken>>())
+                 , container.GetRequiredService<IIds>())
         {
             Container = container;
             SessionId = sessionId;
             FiberRw = fiberRw;
             IsConnect = true;
-            IWrite = fiberRw;           
-            Log = new DefaultLog(container.GetRequiredService<ILogger<AsyncToken>>());
-            IdsManager = container.GetRequiredService<IIds>();
+            IWrite = fiberRw;
         }
 
 

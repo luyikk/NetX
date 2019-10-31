@@ -32,14 +32,13 @@ namespace Netx.Client
         public IServiceProvider Container { get; } 
 
         public NetxClientBase(IServiceProvider container)
+            :base(new DefaultLog(container.GetRequiredService<ILogger<NetxSClient>>())
+                 , container.GetRequiredService<IIds>())
         {
-            Container = container;          
-            Log = new DefaultLog(container.GetRequiredService<ILogger<NetxSClient>>());
+            Container = container;
             ConnectOption = container.GetRequiredService<IOptions<ConnectOption>>().Value;
             Session = container.GetRequiredService<ISessionStore>();
-            SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
-            IdsManager = container.GetRequiredService<IIds>();
-
+            SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();          
             Task.Factory.StartNew(RunRequestCheck);
         }
 

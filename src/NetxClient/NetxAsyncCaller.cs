@@ -31,20 +31,20 @@ namespace Netx.Client
                 var methods = ainterface.GetMethods();
 
                 foreach (var method in methods)
-                    foreach (var attr in method.GetCustomAttributes< TAG >(true))
+                    foreach (var attr in method.GetCustomAttributes<TAG>(true))
                         IsRegisterCmd(instance, attr.CmdTag, instancetype, method);
             }
-                        
+
 
             {
                 var methods = instancetype.GetMethods();
                 foreach (var method in methods)
                     if (method.IsPublic)
-                        foreach (var attr in method.GetCustomAttributes<TAG>(true))                            
-                                IsRegisterCmd(instance, attr.CmdTag, instancetype, method);
+                        foreach (var attr in method.GetCustomAttributes<TAG>(true))
+                            IsRegisterCmd(instance, attr.CmdTag, instancetype, method);
 
             }
-           
+
         }
 
         /// <summary>
@@ -74,20 +74,20 @@ namespace Netx.Client
         {
             if (IsTypeOfBaseTypeIs(methodInfo.ReturnType, typeof(Task)) || methodInfo.ReturnType == typeof(void) || methodInfo.ReturnType == null)
             {
-                var sr = new InstanceRegister(instance,instanceType, methodInfo);
+                var sr = new InstanceRegister(instance, instanceType, methodInfo);
                 if (!MethodInstanceDict.ContainsKey(cmd))
                 {
-                    Log!.Info($"Add cmd:{cmd} to {sr}");
+                    Log.Info($"Add cmd:{cmd} to {sr}");
                     MethodInstanceDict.Add(cmd, sr);
                 }
                 else
                 {
-                    Log!.Info($"Replace cmd:{cmd} to {sr}");
+                    Log.Info($"Replace cmd:{cmd} to {sr}");
                     MethodInstanceDict[cmd] = sr;
                 }
             }
             else
-                Log!.Error($"RegisterService Return Type {methodInfo.Name} Err,Use void, Task or Task<T>");
+                Log.Error($"RegisterService Return Type {methodInfo.Name} Err,Use void, Task or Task<T>");
         }
 
         /// <summary>

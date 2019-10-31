@@ -73,7 +73,7 @@ namespace Netx.Client
             }
             catch (NetxException er)
             {
-                Log!.Error(this, er);
+                Log.Error(this, er);
                 return false;
             }
         }
@@ -81,7 +81,7 @@ namespace Netx.Client
 
         private void SocketClient_Disconnect(ISocketClient client, ISockAsyncEventAsClient socketAsync, string msg)
         {
-            Log!.Info($"{ConnectOption.Host}:{ConnectOption.Port}->{msg}");
+            Log.Info($"{ConnectOption.Host}:{ConnectOption.Port}->{msg}");
             Close();
             Disconnect?.Invoke(client, socketAsync, msg);
         }
@@ -117,7 +117,7 @@ namespace Netx.Client
 
                                 if (!iserror)
                                 {
-                                    Log!.Trace(await fiberRw.ReadString());
+                                    Log.Trace(await fiberRw.ReadString());
                                     isConnect = true;
                                     client.SetConnected();
                                     await ReadIng(fiberRw);
@@ -125,7 +125,7 @@ namespace Netx.Client
                                 else
                                 {
                                     var msg = await fiberRw.ReadString();
-                                    Log!.Info(msg);
+                                    Log.Info(msg);
                                     client.SetConnected(false, msg);
                                 }
 
@@ -149,7 +149,7 @@ namespace Netx.Client
                 }
                 else
                 {
-                    Log!.Error(er);
+                    Log.Error(er);
                     client.ShutdownBoth(true);
                 }
             }
