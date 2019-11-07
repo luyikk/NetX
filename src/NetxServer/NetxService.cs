@@ -24,6 +24,9 @@ namespace Netx.Service
             SocketServer.BinaryInput = new BinaryInputHandler(BinaryInputHandler);
             SocketServer.Connetions = new ConnectionFilter(ConnectionFilter);
             SocketServer.MessageInput = new DisconnectHandler(DisconnectHandler);
+
+            foreach (var initialization in container.GetServices<Initialization>())
+                initialization.initialize();
            
         }
 
