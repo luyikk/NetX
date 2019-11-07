@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration.Json;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-
+using Serilog;
 namespace TestNetxServer
 {
     class Program
@@ -16,6 +16,16 @@ namespace TestNetxServer
             var builtConfig = new ConfigurationBuilder()
             .AddJsonFile("logger.json")            
             .Build();
+
+       
+
+            Log.Logger = new LoggerConfiguration()             
+              .Enrich.FromLogContext()
+              .ReadFrom.Configuration(builtConfig)
+              .CreateLogger();
+          
+            //Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme.Literate
+
 
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
@@ -33,8 +43,9 @@ namespace TestNetxServer
                    
                 })
                 .ConfigureLogSet(p =>
-                {                  
-                    p.AddConfiguration(builtConfig.GetSection("Logging"));
+                {
+                    p.ClearProviders();                   
+                    p.AddSerilog();
                 })
                 .Build();
 
