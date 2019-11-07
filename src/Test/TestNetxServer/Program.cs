@@ -1,4 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,6 +13,10 @@ namespace TestNetxServer
     {
         static void Main(string[] args)
         {
+            var builtConfig = new ConfigurationBuilder()
+            .AddJsonFile("logger.json")            
+            .Build();
+
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
                 .AddActorEvent<ActorEvent2>() //添加绑定事件2
@@ -23,7 +31,11 @@ namespace TestNetxServer
                     p.MaxConnectCout = 100;
                     p.Port = 1006;
                    
-                })        
+                })
+                .ConfigureLogSet(p =>
+                {                  
+                    p.AddConfiguration(builtConfig.GetSection("Logging"));
+                })
                 .Build();
 
           

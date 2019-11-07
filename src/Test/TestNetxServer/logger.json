@@ -1,0 +1,11 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"   
+    },
+    "Console": {
+      "IncludeScopes": false,
+      "TimestampFormat": "MM/dd HH:mm:ss.fff "
+    }
+  }
+}

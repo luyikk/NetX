@@ -10,7 +10,7 @@ namespace Netx.Loggine
         readonly ILogger logger;
 
         public DefaultLog(ILogger logger)
-        {
+        {          
             this.logger = logger;
         }
 
