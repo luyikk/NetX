@@ -125,7 +125,7 @@ namespace TestClient
             while (i < xcount)
             {
                 int c = i+1;
-                i = await server.AddOne(i);              
+                i = await server.AddOneActor(i);              
                 if (c != i)
                     throw new Exception("error value");
             }
