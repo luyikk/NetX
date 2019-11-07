@@ -119,7 +119,9 @@ namespace Netx.Service.Builder
             }
             else if (instanceType.BaseType == typeof(ActorController))
             {
-                Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), instanceType));
+
+                Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), instanceType)); 
+
                 return false;
             }
             else
@@ -266,6 +268,11 @@ namespace Netx.Service.Builder
             return this;
         }
 
+        public INetxServBuilder AddInitialization<T>() where T:class, Initialization
+        {
+            Container.AddScoped<Initialization, T>();
+            return this;
+        }
 
 
 

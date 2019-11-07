@@ -31,7 +31,7 @@ namespace Netx
                 var getImplementation= implementationType.GetMethod("GetImplementation", BindingFlags.Static| BindingFlags.Public);
 
                 var method= ObjectMethodExecutor.Create(getImplementation, null!);
-                FodyType.Add(interfaceType, method);
+                FodyType.TryAdd(interfaceType, method);
 
                 return (T)method.Execute(null!, new object[] { this });              
 

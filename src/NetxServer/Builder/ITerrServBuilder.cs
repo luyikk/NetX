@@ -35,5 +35,6 @@ namespace Netx.Service.Builder
         INetxServBuilder RegisterService(Assembly assembly);
         INetxServBuilder RegisterService(Type controller_instance_type);
         INetxServBuilder RegisterDescriptors(Action<IServiceCollection> serviceDescriptors);
+        INetxServBuilder AddInitialization<T>() where T : class, Initialization;
     }
 }
