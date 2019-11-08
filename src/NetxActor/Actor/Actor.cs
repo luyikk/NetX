@@ -155,14 +155,14 @@ namespace Netx.Actor
                                             registerdict.Add(tag.CmdTag, sr);
                                         else
                                         {
-                                            Log.Error($"Register actor service {method.Name},cmd:{tag.CmdTag} repeat");
+                                            Log.ErrorFormat("Register actor service {Name},cmd:{CmdTag} repeat", method.Name, tag.CmdTag);
                                             registerdict[tag.CmdTag] = sr;
                                         }
                                     }
                                 }
                             }
                             else
-                                Log.Error($"Register Actor Service Return Type Err:{method.Name},Use void, Task or Task<T>");
+                                Log.ErrorFormat("Register Actor Service Return Type Err:{Name},Use void, Task or Task<T>", method.Name);
                         }
 
 
@@ -204,13 +204,13 @@ namespace Netx.Actor
                                     registerdict.Add(tag.CmdTag, sr);
                                 else
                                 {
-                                    Log.Error($"Register actor service {method.Name},cmd:{tag.CmdTag} repeat");
+                                    Log.ErrorFormat("Register actor service {Name},cmd:{CmdTag} repeat", method.Name, tag.CmdTag);
                                     registerdict[tag.CmdTag] = sr;
                                 }
                             }
                         }
                         else
-                            Log.Error($"Register Actor Service Return Type Err:{method.Name},Use void, Task or Task<T>");
+                            Log.ErrorFormat("Register Actor Service Return Type Err:{Name},Use void, Task or Task<T>", method.Name);
                     }
                 }
 

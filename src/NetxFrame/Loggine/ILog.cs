@@ -30,7 +30,7 @@ namespace Netx.Loggine
 
         void Trace(string content, Exception exception);
 
-        void TraceFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Trace(Exception exception, string content, params object[] args);
 
         void TraceFormat(string format, params object[] args);
 
@@ -42,7 +42,7 @@ namespace Netx.Loggine
 
         void Debug(string content, Exception exception);
 
-        void DebugFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Debug(Exception exception, string content, params object[] args);
 
         void DebugFormat(string format, params object[] args);
 
@@ -54,7 +54,7 @@ namespace Netx.Loggine
 
         void Info(string content, Exception exception);
 
-        void InfoFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Info(Exception exception, string content, params object[] args);
 
         void InfoFormat(string format, params object[] args);
 
@@ -66,7 +66,7 @@ namespace Netx.Loggine
 
         void Warn(string content, Exception exception);
 
-        void WarnFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Warn( Exception exception, string content, params object[] args);
 
         void WarnFormat(string format, params object[] args);
 
@@ -78,7 +78,7 @@ namespace Netx.Loggine
 
         void Error(string content, Exception exception);
 
-        void ErrorFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Error( Exception exception, string content, params object[] args);
 
         void ErrorFormat(string format, params object[] args);
 
@@ -90,7 +90,7 @@ namespace Netx.Loggine
 
         void Critical(string content, Exception exception);
 
-        void CriticalFormat(IFormatProvider formatProvider, string format, params object[] args);
+        void Critical(Exception exception, string content,params object[] args);
 
         void CriticalFormat(string format, params object[] args);
     }

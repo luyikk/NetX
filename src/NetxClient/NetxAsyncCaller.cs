@@ -77,17 +77,17 @@ namespace Netx.Client
                 var sr = new InstanceRegister(instance, instanceType, methodInfo);
                 if (!MethodInstanceDict.ContainsKey(cmd))
                 {
-                    Log.Info($"Add cmd:{cmd} to {sr}");
+                    Log.InfoFormat("Add cmd:{cmd} to {sr}", cmd, sr);
                     MethodInstanceDict.Add(cmd, sr);
                 }
                 else
                 {
-                    Log.Info($"Replace cmd:{cmd} to {sr}");
+                    Log.InfoFormat("Replace cmd:{cmd} to {sr}", cmd, sr);
                     MethodInstanceDict[cmd] = sr;
                 }
             }
             else
-                Log.Error($"RegisterService Return Type {methodInfo.Name} Err,Use void, Task or Task<T>");
+                Log.ErrorFormat("RegisterService Return Type {Name} Err,Use void, Task or Task<T>", methodInfo.Name);
         }
 
         /// <summary>

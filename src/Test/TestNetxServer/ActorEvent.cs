@@ -26,7 +26,7 @@ namespace TestNetxServer
 
         public override void ActorEventCompleted(object actorController, IActorMessage actorMessage)
         {
-            Log.Trace($"PushTime:{TimeHelper.GetTime(actorMessage.CompleteTime)}  Cmd:{actorMessage.Cmd} Completed");
+            Log.TraceFormat("PushTime:{time}  Cmd:{cmd} Completed", TimeHelper.GetTime(actorMessage.CompleteTime), actorMessage.Cmd);
         }
     }
 

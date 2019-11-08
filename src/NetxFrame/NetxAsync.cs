@@ -27,11 +27,15 @@ namespace Netx
                 {
                     try
                     {
-                        Log.Error($"ErrorType:{(ErrorType)result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log.ErrorFormat("ErrorType:{ErrorId} ErrMsg:\r\n{ErrorMsg}"
+                            , (ErrorType)result.ErrorId
+                            , result?.ErrorMsg??"null");
                     }
                     catch
                     {
-                        Log.Error($"ErrorType:{result.ErrorId} ErrMsg:\r\n{result.ErrorMsg}  ");
+                        Log.ErrorFormat("ErrorType:{ErrorId} ErrMsg:\r\n{ErrorMsg}"
+                            , result.ErrorId
+                            , result?.ErrorMsg ?? "null");
                     }
                 }
                 else

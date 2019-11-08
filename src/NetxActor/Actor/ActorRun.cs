@@ -81,7 +81,7 @@ namespace Netx.Actor
             if (ActorCollect.ContainsKey(cmd))
                 ActorCollect[cmd].Action(id, cmd, access, args);
             else
-                Log.Error($"not find actor service cmd:{cmd}");
+                Log.ErrorFormat("not find actor service cmd:{cmd}",cmd);
 
         }
 

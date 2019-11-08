@@ -68,7 +68,11 @@ namespace Netx.Client
                 }
                 else
                 {
-                    Log.WarnFormat($"call method tag :{cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}");
+                    Log.WarnFormat("call method tag :{cmd} Args Error: len {argslen}->{Length}  to\r\n  {service}"
+                        , cmd
+                        , argslen
+                        , service.ArgsType.Length
+                        , service);
                     await SendError(id, $"call method tag :{ cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
                 }
             }
@@ -140,12 +144,12 @@ namespace Netx.Client
             }
             catch (NetxException er)
             {
-                Log.Error(er);
+                Log.Error(er, "Client Method Tag:{cmd} Call Err:{Message}", cmd, er.Message);
                 await SendError(id, $"Client Method Tag:{cmd} Call Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {
-                Log.Error(er);
+                Log.Error(er, "Client Method Tag:{cmd} Call Err:{Message}", cmd, er.Message);
                 await SendError(id, $"Client Method Tag:{cmd} Call Err:{er.Message}", ErrorType.CallErr);
             }
         }

@@ -48,7 +48,7 @@ namespace Netx.Client
                 case 2000: //set session
                     {
                         var sessionid = read.ReadInt64();
-                        Log.TraceFormat($"save sessionid {sessionid}");
+                        Log.TraceFormat("save sessionid {sessionid}", sessionid);
                         Session.SaveSessionId(sessionid);
                     }
                     break;

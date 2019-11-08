@@ -17,13 +17,10 @@ namespace TestNetxServer
             .AddJsonFile("logger.json")            
             .Build();
 
-
-
             Log.Logger = new LoggerConfiguration()
-              .Enrich.FromLogContext()
+              .Enrich.FromLogContext()           
               .ReadFrom.Configuration(builtConfig)              
-              .CreateLogger();
-        
+              .CreateLogger();        
 
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
@@ -42,8 +39,9 @@ namespace TestNetxServer
                 })
                 .ConfigureLogSet(p =>
                 {
-                    p.ClearProviders();                
+                    p.ClearProviders();
                     p.AddSerilog();
+                   // p.AddConfiguration(builtConfig.GetSection("Logging"));
                 })
                 .Build();
 
@@ -51,6 +49,8 @@ namespace TestNetxServer
             service.Start(); //开始服务
 
             Console.ReadLine();
+
+            Log.CloseAndFlush();
         }
     }
 }

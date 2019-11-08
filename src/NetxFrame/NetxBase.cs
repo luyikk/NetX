@@ -132,7 +132,7 @@ namespace Netx
             ManualResetValueTaskSource<Result> asyncResult = new ManualResetValueTaskSource<Result>();
             if (!AsyncResultDict.TryAdd(ids, asyncResult))
             {
-                Log!.Info($"add async back have id:{ids}");
+                Log.InfoFormat("add async back have id:{ids}",ids);
                 AsyncResultDict[ids] = asyncResult;
             }
 

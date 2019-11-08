@@ -314,7 +314,11 @@ namespace Netx.Service
 
         protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
         {          
-            Log.WarnFormat($"{service} call async service:{FiberRw?.Async?.AcceptSocket?.RemoteEndPoint} not find RunType:{runtype}");
+            Log.WarnFormat("{service} call async service:{RemoteEndPoint} not find RunType:{runtype}"
+                , service
+                , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                , runtype);
+
             return SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);
         }
 

@@ -70,6 +70,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Trace, exception, content);
         }
 
+        public void Trace(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsTraceEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Trace, exception, content,args);
+        }
+
         public void TraceFormat(string format, params object[] args)
         {
             if (!this.IsTraceEnabled)
@@ -77,21 +87,10 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.TraceFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Trace, format,args);
         }
 
-        public void TraceFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsTraceEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Trace, message);
-        }
+   
 
         public void Debug(string msg)
         {
@@ -126,6 +125,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Debug, exception, content);
         }
 
+        public void Debug(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsDebugEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Debug, exception, content,args);
+        }
+
         public void DebugFormat(string format, params object[] args)
         {
             if (!this.IsDebugEnabled)
@@ -133,21 +142,10 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.DebugFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Debug, format, args);
         }
 
-        public void DebugFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsDebugEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Debug, message);
-        }
+    
 
         public void Info(string msg)
         {
@@ -182,6 +180,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Information, exception, content);
         }
 
+        public void Info(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsInfoEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Information, exception, content,args);
+        }
+
         public void InfoFormat(string format, params object[] args)
         {
             if (!this.IsInfoEnabled)
@@ -189,21 +197,10 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.InfoFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Information, format, args);
         }
 
-        public void InfoFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsInfoEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Information, message);
-        }
+     
 
         public void Warn(string msg)
         {
@@ -238,6 +235,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Warning, exception, content);
         }
 
+        public void Warn(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsWarnEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Warning, exception, content);
+        }
+
         public void WarnFormat(string format, params object[] args)
         {
             if (!this.IsWarnEnabled)
@@ -245,21 +252,9 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.WarnFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Warning, format, args);
         }
 
-        public void WarnFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsWarnEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Warning, message);
-        }
 
         public void Error(string msg)
         {
@@ -294,6 +289,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Error, exception, content);
         }
 
+        public void Error(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsErrorEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Error, exception, content, args);
+        }
+
         public void ErrorFormat(string format, params object[] args)
         {
             if (!this.IsErrorEnabled)
@@ -301,21 +306,9 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.ErrorFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Error, format, args);
         }
 
-        public void ErrorFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsErrorEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Error, message);
-        }
 
         public void Critical(string msg)
         {
@@ -351,6 +344,16 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Critical, exception, content);
         }
 
+        public void Critical(Exception exception, string content, params object[] args)
+        {
+            if (!this.IsCriticalEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Critical, exception, content,args);
+        }
+
         public void CriticalFormat(string format, params object[] args)
         {
             if (!this.IsCriticalEnabled)
@@ -358,21 +361,10 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.CriticalFormat(CultureInfo.CurrentCulture, format, args);
+            this.Logger?.Log(LogLevel.Critical, format, args);
         }
 
-        public void CriticalFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            if (!this.IsCriticalEnabled
-                || formatProvider == null
-                || string.IsNullOrEmpty(format))
-            {
-                return;
-            }
-
-            string message = string.Format(formatProvider, format, args);
-            this.Logger?.Log(LogLevel.Critical, message);
-        }
+     
     }
 
 }

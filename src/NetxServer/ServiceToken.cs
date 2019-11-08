@@ -94,7 +94,7 @@ namespace Netx.Service
                                     if(ActorTokenDict.TryRemove(timeKey.Key, out AsyncToken _))
                                     {
                                         token.Close();
-                                        Log.Trace($"session:{ token.SessionId} remove");
+                                        Log.TraceFormat("session:{SessionId} remove", token.SessionId);
                                     }
                             }
                         }
@@ -143,9 +143,10 @@ namespace Netx.Service
                     token.Disconnect();
                 }
 
-            }catch( Exception er)
+            }
+            catch( Exception er)
             {
-                Log.Error(er);
+                Log.Error(er,"Disconnect error:{message} errorid:{error}",message,erorr);
             }
         }
 

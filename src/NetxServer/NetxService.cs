@@ -50,7 +50,7 @@ namespace Netx.Service
 
         private bool ConnectionFilter(ISockAsyncEventAsServer socketAsync)
         {
-            this.Log.Trace($"IP Connect:{socketAsync?.AcceptSocket?.RemoteEndPoint}");
+            this.Log.TraceFormat("IP Connect:{IPaddress}", socketAsync?.AcceptSocket?.RemoteEndPoint?.ToString()??"null");
             return true;
         }
 
@@ -58,7 +58,7 @@ namespace Netx.Service
         {
             base.DisconnectHandler(message, socketAsync, erorr);
 
-            this.Log.TraceFormat($"IP Disconnect:{ socketAsync?.AcceptSocket?.RemoteEndPoint}");
+            this.Log.TraceFormat("IP Disconnect:{IPAddress}", socketAsync?.AcceptSocket?.RemoteEndPoint?.ToString()??"null");
             if (socketAsync != null)
             {
                 socketAsync.UserToken = null;
@@ -105,7 +105,7 @@ namespace Netx.Service
                 var cmd = await fiberRw.ReadInt32();
                 if (cmd != 1000)
                 {
-                    Log.TraceFormat($"IP:{ fiberRw.Async?.AcceptSocket?.RemoteEndPoint} not verify key");
+                    Log.TraceFormat("IP:{IPAddress} not verify key", fiberRw.Async?.AcceptSocket?.RemoteEndPoint.ToString()??"null");
                     await SendToKeyError(fiberRw, true, "not verify key!");
                     fiberRw.UserToken = null;
                     return false;
@@ -116,7 +116,7 @@ namespace Netx.Service
                 if (!string.IsNullOrEmpty(ServiceOption.ServiceName))
                     if (!ServiceOption.ServiceName.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
                     {
-                        Log.TraceFormat($"IP:{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} not find the service:{serviceName}");
+                        Log.TraceFormat("IP:{IPAddress} not find the service:{serviceName}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null", serviceName);
                         await SendToKeyError(fiberRw, true, $"not find the service!{serviceName}");
                         return false;
                     }                  
@@ -126,7 +126,7 @@ namespace Netx.Service
                 {
                     if (string.Compare(OpenKey, key, StringComparison.OrdinalIgnoreCase) != 0)
                     {
-                        Log.TraceFormat($"IP:{ fiberRw.Async?.AcceptSocket?.RemoteEndPoint} verify key error:{key}");
+                        Log.TraceFormat("IP:{IPAddress} verify key error:{key}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null",key);
                         await SendToKeyError(fiberRw, true, "verify key error!");
                         return false;
                     }
@@ -143,7 +143,7 @@ namespace Netx.Service
                             return await ResetToken(fiberRw, actorToken);
                         else
                         {
-                            Log.TraceFormat($"IP:{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} not find sessionid:{session}");
+                            Log.TraceFormat("IP:{IPaddress} not find sessionid:{session}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null",session);
                             return await RunCreateToken(fiberRw);
                         }
 
@@ -163,7 +163,7 @@ namespace Netx.Service
                             return await ResetToken(fiberRw, actorToken);
                         else
                         {
-                            Log.TraceFormat($"IP:{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} not find sessionid:{session}");
+                            Log.TraceFormat("IP:{IPAddress} not find sessionid:{session}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null",session);
                             return await RunCreateToken(fiberRw);
                         }
 
@@ -173,7 +173,7 @@ namespace Netx.Service
             }
             else
             {
-                Log.TraceFormat($"IP:{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} token not null");
+                Log.TraceFormat("IP:{IPAddress} token not null", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null");
                 await SendToKeyError(fiberRw, true, "token not null error!");
                 fiberRw.UserToken = null;
                 return false;
