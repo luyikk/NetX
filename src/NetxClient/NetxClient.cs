@@ -73,7 +73,7 @@ namespace Netx.Client
             }
             catch (NetxException er)
             {
-                Log.Error(this, er);
+                Log.Error("connect error:", er);
                 return false;
             }
         }

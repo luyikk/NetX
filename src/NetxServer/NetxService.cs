@@ -90,7 +90,7 @@ namespace Netx.Service
                 catch (System.Net.Sockets.SocketException) { break; }
                 catch (Exception er)
                 {
-                    this.Log.Error(fiberRw, er);
+                    this.Log.Error("read error", er);
                     break;
                 }
             }

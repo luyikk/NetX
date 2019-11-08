@@ -28,7 +28,7 @@ namespace Netx.Client
                 }
                 catch (Exception er)
                 {
-                    Log.Error(this, er);
+                    Log.Error("Read data error", er);
                     break;
                 }
             }

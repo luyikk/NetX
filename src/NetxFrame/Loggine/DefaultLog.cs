@@ -4,58 +4,70 @@ using Microsoft.Extensions.Logging;
 
 namespace Netx.Loggine
 {
+
     public sealed class DefaultLog : ILog
     {
         static readonly Func<object, Exception, string> MessageFormatter = Format;
-        readonly ILogger logger;
+        public ILogger Logger { get; }
 
         public DefaultLog(ILogger logger)
-        {          
-            this.logger = logger;
+        {
+            this.Logger = logger;
         }
 
         static string Format(object target, Exception exception)
-        {
-            string message = target?.ToString() ?? string.Empty;
-            return exception == null ? message : $"{message} {exception}";
-        }
+           => exception == null ? target.ToString() : $"{target} {exception}";
+
 
         public bool IsTraceEnabled =>
-            this.logger?.IsEnabled(LogLevel.Trace) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Trace) ?? false;
 
         public bool IsDebugEnabled =>
-            this.logger?.IsEnabled(LogLevel.Debug) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Debug) ?? false;
 
         public bool IsInfoEnabled =>
-            this.logger?.IsEnabled(LogLevel.Information) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Information) ?? false;
 
         public bool IsWarnEnabled =>
-            this.logger?.IsEnabled(LogLevel.Warning) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Warning) ?? false;
 
         public bool IsErrorEnabled =>
-            this.logger?.IsEnabled(LogLevel.Error) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Error) ?? false;
 
         public bool IsCriticalEnabled =>
-            this.logger?.IsEnabled(LogLevel.Critical) ?? false;
+            this.Logger?.IsEnabled(LogLevel.Critical) ?? false;
 
-        public void Trace(object obj)
+        public void Trace(string msg)
         {
             if (!this.IsTraceEnabled)
             {
                 return;
             }
 
-            this.Trace(obj, null);
+            this.Logger?.Log(LogLevel.Trace, msg);
         }
 
-        public void Trace(object obj, Exception? exception)
+        public void Trace(object obj)
+         => Trace(obj.ToString());
+
+        public void Trace(Exception exception)
         {
             if (!this.IsTraceEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Trace, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Trace, exception, exception.Message);
+        }
+
+        public void Trace(string content, Exception exception)
+        {
+            if (!this.IsTraceEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Trace, exception, content);
         }
 
         public void TraceFormat(string format, params object[] args)
@@ -78,27 +90,40 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Trace, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Trace, message);
+        }
+
+        public void Debug(string msg)
+        {
+            if (!this.IsDebugEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Debug, msg);
         }
 
         public void Debug(object obj)
+            => Debug(obj.ToString());
+
+        public void Debug(Exception exception)
         {
             if (!this.IsDebugEnabled)
             {
                 return;
             }
 
-            this.Debug(obj, null);
+            this.Logger?.Log(LogLevel.Debug, exception, exception.Message);
         }
 
-        public void Debug(object obj, Exception? exception)
+        public void Debug(string content, Exception exception)
         {
             if (!this.IsDebugEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Debug, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Debug, exception, content);
         }
 
         public void DebugFormat(string format, params object[] args)
@@ -121,27 +146,40 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Debug, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Debug, message);
+        }
+
+        public void Info(string msg)
+        {
+            if (!this.IsInfoEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Information, msg);
         }
 
         public void Info(object obj)
+            => Info(obj.ToString());
+
+        public void Info(Exception exception)
         {
             if (!this.IsInfoEnabled)
             {
                 return;
             }
 
-            this.Info(obj, null);
+            this.Logger?.Log(LogLevel.Information, exception, exception.Message);
         }
 
-        public void Info(object obj, Exception? exception)
+        public void Info(string content, Exception exception)
         {
             if (!this.IsInfoEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Information, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Information, exception, content);
         }
 
         public void InfoFormat(string format, params object[] args)
@@ -164,27 +202,40 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Debug, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Information, message);
+        }
+
+        public void Warn(string msg)
+        {
+            if (!this.IsWarnEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Warning, msg);
         }
 
         public void Warn(object obj)
+            => Warn(obj.ToString());
+
+        public void Warn(Exception exception)
         {
             if (!this.IsWarnEnabled)
             {
                 return;
             }
 
-            this.Warn(obj, null);
+            this.Logger?.Log(LogLevel.Warning, exception, exception.Message);
         }
 
-        public void Warn(object obj, Exception? exception)
+        public void Warn(string content, Exception exception)
         {
             if (!this.IsWarnEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Warning, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Warning, exception, content);
         }
 
         public void WarnFormat(string format, params object[] args)
@@ -207,27 +258,40 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Warning, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Warning, message);
+        }
+
+        public void Error(string msg)
+        {
+            if (!this.IsErrorEnabled)
+            {
+                return;
+            }
+
+            this.Logger?.Log(LogLevel.Error, msg);
         }
 
         public void Error(object obj)
+            => Error(obj.ToString());
+
+        public void Error(Exception exception)
         {
             if (!this.IsErrorEnabled)
             {
                 return;
             }
 
-            this.Error(obj, null);
+            this.Logger?.Log(LogLevel.Error, exception, exception.Message);
         }
 
-        public void Error(object obj, Exception? exception)
+        public void Error(string content, Exception exception)
         {
             if (!this.IsErrorEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Error, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Error, exception, content);
         }
 
         public void ErrorFormat(string format, params object[] args)
@@ -250,27 +314,41 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Error, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Error, message);
+        }
+
+        public void Critical(string msg)
+        {
+            if (!this.IsCriticalEnabled)
+            {
+                return;
+            }
+
+
+            this.Logger?.Log(LogLevel.Critical, msg);
         }
 
         public void Critical(object obj)
+            => Critical(obj.ToString());
+
+        public void Critical(Exception exception)
         {
             if (!this.IsCriticalEnabled)
             {
                 return;
             }
 
-            this.Critical(obj, null);
+            this.Logger?.Log(LogLevel.Critical, exception, exception.Message);
         }
 
-        public void Critical(object obj, Exception? exception)
+        public void Critical(string content, Exception exception)
         {
             if (!this.IsCriticalEnabled)
             {
                 return;
             }
 
-            this.logger?.Log(LogLevel.Critical, 0, obj, exception, MessageFormatter);
+            this.Logger?.Log(LogLevel.Critical, exception, content);
         }
 
         public void CriticalFormat(string format, params object[] args)
@@ -293,7 +371,7 @@ namespace Netx.Loggine
             }
 
             string message = string.Format(formatProvider, format, args);
-            this.logger?.Log(LogLevel.Critical, 0, message, null, MessageFormatter);
+            this.Logger?.Log(LogLevel.Critical, message);
         }
     }
 
