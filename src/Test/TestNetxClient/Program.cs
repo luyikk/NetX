@@ -13,7 +13,7 @@ namespace TestNetxClient
             var client = new NetxSClientBuilder()
              .ConfigConnection(p => //配置服务器IP
              {
-                 p.Host = "127.0.0.1";
+                 p.Host = "107.182.21.75";
                  p.Port = 1006;
                  p.VerifyKey = "123123";
              })

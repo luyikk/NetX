@@ -20,7 +20,8 @@ namespace TestNetxServer
             Log.Logger = new LoggerConfiguration()
               .Enrich.FromLogContext()           
               .ReadFrom.Configuration(builtConfig)              
-              .CreateLogger();        
+              .CreateLogger();
+       
 
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
