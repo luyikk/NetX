@@ -71,7 +71,7 @@ namespace Netx.Actor.Builder
         public IActorBuilder RegisterService<ActorType>()
             where ActorType : ActorController
         {
-            Container.AddScoped<ActorController, ActorType>();
+            Container.AddSingleton<ActorController, ActorType>();
             return this;
         }
 
