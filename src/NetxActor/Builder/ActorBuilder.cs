@@ -95,7 +95,7 @@ namespace Netx.Actor.Builder
         /// <returns></returns>
         public IActorBuilder RegisterService(Type controller_instance_type)
         {
-            Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), controller_instance_type));
+            Container.Add(ServiceDescriptor.Singleton(typeof(ActorController), controller_instance_type));
             return this;
         }
 
