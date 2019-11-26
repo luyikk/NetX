@@ -77,7 +77,7 @@ namespace Netx.Actor
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
         {
-            this.ActorScheduler = actorScheduler;
+         
          
             this.ActorGet = actorGet;
             this.ActorController = instance;
@@ -88,8 +88,17 @@ namespace Netx.Actor
 
             foreach (var attr in options)
                 if (attr is ActorOptionAttribute option)
-                    Option = option;         
-              
+                    Option = option;
+
+            this.ActorScheduler = Option.SchedulerType switch
+            {
+                SchedulerType.None=> actorScheduler,
+                SchedulerType.LineByLine=>ActorScheduler.LineByLine,
+                SchedulerType.TaskFactory=> ActorScheduler.TaskFactory,
+                SchedulerType.TaskRun=>ActorScheduler.TaskRun,
+                _=> actorScheduler
+            };
+
 
             maxQueuelen = Option.MaxQueueCount;
 

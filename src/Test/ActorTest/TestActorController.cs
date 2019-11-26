@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ActorTest
 {
+    [ActorOption(maxQueueCount: 1000, ideltime: 3000)]
     public class TestActorController:ActorController
     {
         public ILog Log { get; }
