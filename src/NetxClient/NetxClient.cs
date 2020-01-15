@@ -54,9 +54,16 @@ namespace Netx.Client
 
         public void Close()
         {
-            IsConnect = false;
-            SocketClient?.ShutdownBoth();
-            SocketClient?.Dispose();
+            try
+            {
+                IsConnect = false;
+                SocketClient?.ShutdownBoth();
+                SocketClient?.Dispose();
+            }
+            catch (ObjectDisposedException)
+            {
+
+            }
         }
 
         protected override bool ConnectIt()
