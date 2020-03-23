@@ -7,11 +7,11 @@ namespace Netx
 {
     public interface IMethodController
     {
-        INetxSClient? Current { get; set; }       
+        INetxSClientBase? Current { get; set; }       
     }
 
     public class MethodControllerBase : IMethodController
     {
-        public INetxSClient? Current { get; set; }      
+        public INetxSClientBase? Current { get; set; }      
     }
 }

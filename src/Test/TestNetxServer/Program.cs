@@ -36,6 +36,7 @@ namespace TestNetxServer
                 {
                     p.MaxConnectCout = 100;
                     p.Port = 1006;
+                    p.MaxPackerSize = 256 * 1024;
                    
                 })
                 .ConfigureLogSet(p =>

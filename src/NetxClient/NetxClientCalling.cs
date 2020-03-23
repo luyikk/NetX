@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Netx.Client
 {
-    public abstract class NetxClientCalling : NetxAsyncRegisterInstance, INetxSClient
+    public abstract class NetxClientCalling : NetxAsyncRegisterInstance, INetxSClientBase
     {
         public NetxClientCalling(IServiceProvider container)
           : base(container)

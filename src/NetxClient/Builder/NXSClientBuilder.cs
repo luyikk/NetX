@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Netx.Interface;
 using System;
 using System.Buffers;
@@ -22,7 +23,18 @@ namespace Netx.Client
         {
             Container = new ServiceCollection();
             Container.AddOptions();
-            Container.AddTransient<SocketClient, SocketClient>();
+            Container.AddTransient<SocketClient, SocketClient>(p=>
+            {
+               var config = p.GetRequiredService<IOptions<ConnectOption>>().Value;
+
+                return new SocketClient(buffer_size: config.BufferSize,
+                    maxPackerSize: config.MaxPackerSize,
+                    memPool: p.GetRequiredService<MemoryPool<byte>>(), 
+                    sync_send:p.GetRequiredService<ISend>(),
+                    async_send: p.GetRequiredService<IAsyncSend>(), 
+                    obj_Format: p.GetRequiredService<ISerialization>(), 
+                    encode:p.GetRequiredService<Encoding>());
+            });
             ConfigureDefaults();
         }
 
@@ -65,7 +77,10 @@ namespace Netx.Client
             Container.AddTransient<MemoryPool<byte>>(p =>
             {
                 if (func is null)
-                    return new Thruster.FastMemoryPool<byte>();
+                {
+                    var config = p.GetRequiredService<IOptions<ConnectOption>>().Value;
+                    return new Thruster.FastMemoryPool<byte>(config.MaxPackerSize);
+                }
                 else
                     return func();
             });
@@ -163,7 +178,7 @@ namespace Netx.Client
             return this;
         }
 
-        public NetxSClient Build()
+        public INetxSClient Build()
         {
             if (Provider is null)
             {

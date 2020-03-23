@@ -8,7 +8,7 @@ namespace Client
 {
     public class ClientController : IMethodController,IClient,IClientNew
     {
-        public INetxSClient Current { get; set; }
+        public INetxSClientBase Current { get; set; }
 
         public T Get<T>() => Current.Get<T>();
 

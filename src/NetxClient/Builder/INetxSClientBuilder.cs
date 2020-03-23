@@ -14,7 +14,7 @@ namespace Netx.Client
         IServiceCollection Container { get; }
         IServiceProvider? Provider { get; }
 
-        NetxSClient Build();
+        INetxSClient Build();
         INetxSClientBuilder ConfigSessionStore(Func<ISessionStore>? func = null);
         INetxSClientBuilder ConfigConnection(Action<ConnectOption>? config = null);
         INetxSClientBuilder ConfigEncode(Func<Encoding>? func = null);

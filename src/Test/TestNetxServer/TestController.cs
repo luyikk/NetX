@@ -105,7 +105,10 @@ namespace TestNetxServer
           
         }
 
-   
+
+        [TAG(1011)]
+        public Task<List<Guid>> TestMaxBuffer(List<Guid> data)
+            => Task.FromResult(data);
 
         public override void Disconnect()
         {

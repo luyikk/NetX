@@ -16,6 +16,8 @@ namespace Netx.Client
 
         public int BufferSize { get; set; } = 4096;
 
+        public int MaxPackerSize { get; set; } = 128 * 1024;
+
         public int ConnectedTimeOut { get; set; } = 10000;
 
         public int RequestTimeOut { get; set; } = 20000;

@@ -58,5 +58,8 @@ namespace TestNetxClient
 
         [TAG(1006)]
         void Finsh();
+
+        [TAG(1011)]
+        Task<List<Guid>> TestMaxBuffer(List<Guid> data);
     }
 }

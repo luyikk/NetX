@@ -26,7 +26,7 @@ namespace Netx.Client
         {
             SocketClient = Container.GetRequiredService<SocketClient>();
             SocketClient.BinaryInput += SocketClient_BinaryInput;
-            SocketClient.Disconnect += SocketClient_Disconnect;
+            SocketClient.Disconnect += SocketClient_Disconnect;           
         }
 
         private void Init()

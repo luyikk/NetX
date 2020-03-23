@@ -10,7 +10,8 @@ namespace TestNetxServer
     {
         AddOne=2000,
         Add=2001,
-        RecursiveTest=2002
+        RecursiveTest=2002,
+       
     }
     
     /// <summary>
@@ -27,5 +28,8 @@ namespace TestNetxServer
 
         [TAG(ClientCmdTag.RecursiveTest)]
         Task<int> Recursive(int a);
+
+    
+      
     }
 }

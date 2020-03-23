@@ -22,8 +22,8 @@ namespace TestServer
                 .ConfigNetWork(p =>
                 {                   
                     p.MaxConnectCout = 100;
-                    p.Port = 1005;                
-
+                    p.Port = 1005;
+                    p.MaxPackerSize = 256 * 1024;
                 })
                 .ConfigBase(p=>
                 {                    
