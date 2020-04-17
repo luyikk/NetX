@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources;
 using System.Threading.Tasks.Sources.Copy;
 
 namespace Netx.Actor
@@ -68,12 +69,14 @@ namespace Netx.Actor
 
         public override void Completed(object? result)
         {
-            TaskSource.SetResult((T)result!);
+            if (TaskSource.GetStatus(TaskSource.Version) == ValueTaskSourceStatus.Pending)
+                TaskSource.SetResult((T)result!);
         }
 
         public override void SetException(Exception error)
         {
-            TaskSource.SetException(error);
+            if (TaskSource.GetStatus(TaskSource.Version) == ValueTaskSourceStatus.Pending)
+                TaskSource.SetException(error);
         }
 
         public override string ToString()

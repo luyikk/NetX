@@ -2,6 +2,7 @@
 using Netx.Loggine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources;
 using System.Threading.Tasks.Sources.Copy;
 using ZYSocket;
 using ZYSocket.FiberStream;
@@ -20,7 +21,10 @@ namespace Netx
         protected virtual void AsyncBackResult(Result result)
         {
             if (AsyncResultDict.TryRemove(result.Id, out ManualResetValueTaskSource<Result> asyncback))
-                asyncback.SetResult(result);
+            {
+                if (asyncback.GetStatus(asyncback.Version) == ValueTaskSourceStatus.Pending)
+                    asyncback.SetResult(result);
+            }
             else
             {
                 if (result.IsError)
@@ -29,7 +33,7 @@ namespace Netx
                     {
                         Log.ErrorFormat("ErrorType:{ErrorId} ErrMsg:\r\n{ErrorMsg}"
                             , (ErrorType)result.ErrorId
-                            , result?.ErrorMsg??"null");
+                            , result?.ErrorMsg ?? "null");
                     }
                     catch
                     {
