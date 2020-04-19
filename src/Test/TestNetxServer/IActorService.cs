@@ -10,7 +10,7 @@ namespace TestNetxServer
     {
         Add=2000,
         ShowMsg=3000,
-        GetData=4000
+        GetData=4000      
     }
 
     [Build]
@@ -24,5 +24,6 @@ namespace TestNetxServer
 
         [TAG(ActorCmdTag.GetData)]
         Task<string> GetData();
+
     }
 }

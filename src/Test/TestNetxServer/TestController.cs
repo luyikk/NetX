@@ -29,8 +29,6 @@ namespace TestNetxServer
         [TAG(1000)]
         public  Task<int> Add(int a,int b)
         {
-
-
             return Task.FromResult(a + b);
         }
 
@@ -109,6 +107,21 @@ namespace TestNetxServer
         [TAG(1011)]
         public Task<List<Guid>> TestMaxBuffer(List<Guid> data)
             => Task.FromResult(data);
+
+        [TAG(5000)]
+        public void TestErr()
+        {
+            throw new Exception("test sync err");
+        }
+
+        [TAG(5001)]
+        public async void TestAsyncErr()
+        {
+            await Task.Delay(2000);
+            //throw new Exception("test async err");
+
+            // async method need try catch
+        }
 
         public override void Disconnect()
         {

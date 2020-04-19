@@ -101,6 +101,11 @@ namespace TestNetxClient
             {
                 client.Log.Error(er.Message);
             }
+         
+            server.TestErr();
+
+            server.TestAsyncErr();
+
 
 
             server.RunMsg("close");

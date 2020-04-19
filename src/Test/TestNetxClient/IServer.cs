@@ -14,7 +14,8 @@ namespace TestNetxClient
         RotueToActorAdd=1001,
         ClientAddOne=1003,
         ClientAdd=1004,
-        Msg=3000
+        Msg=3000,
+        TestErr = 5000
     }
 
     /// <summary>
@@ -61,5 +62,11 @@ namespace TestNetxClient
 
         [TAG(1011)]
         Task<List<Guid>> TestMaxBuffer(List<Guid> data);
+
+        [TAG(CmdTagDef.TestErr)]
+        void TestErr();
+
+        [TAG(5001)]
+        void TestAsyncErr();
     }
 }

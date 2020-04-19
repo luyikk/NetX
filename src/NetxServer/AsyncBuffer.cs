@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using ZYSocket;
@@ -262,26 +263,36 @@ namespace Netx.Service
         /// <returns></returns>
         protected virtual async Task SendError(long id, string msg, ErrorType errorType)
         {
-
-            if (FiberRw != null)
+            try
             {
-                using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                if (FiberRw != null)
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2500);
-                    wr.Write(id);
-                    wr.Write(true);
-                    wr.Write((int)errorType);
-                    wr.Write(msg);
-                    return wr.Flush();
-                }
+                    using var wr = new WriteBytes(FiberRw);
+                    Task<int> WSend()
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2500);
+                        wr.Write(id);
+                        wr.Write(true);
+                        wr.Write((int)errorType);
+                        wr.Write(msg);
+                        return wr.Flush();
+                    }
 
-                await await FiberRw.Sync.Ask(WSend);
+                    await await FiberRw.Sync.Ask(WSend);
+                }
+                else
+                {
+                    Log.Error("Send fail,is not fiber");
+                }
             }
-            else
+            catch (SocketException)
             {
-                Log.Error("Send fail,is not fiber");               
+
+            }
+            catch(Exception er)
+            {
+                Log.Error(er);
             }
         }
 
