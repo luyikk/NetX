@@ -1,5 +1,6 @@
 ﻿using Netx.Interface;
 using Netx.Loggine;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
@@ -131,7 +132,14 @@ namespace Netx
                             {
                                 Task.Factory.StartNew(() =>
                                 {
-                                    AsyncBackResult(new Result() { Id = keyTime.Key, ErrorMsg = "time out", ErrorId = (int)ErrorType.TimeOut });
+                                    try
+                                    {
+                                        AsyncBackResult(new Result() { Id = keyTime.Key, ErrorMsg = "time out", ErrorId = (int)ErrorType.TimeOut });
+                                    }
+                                    catch (Exception er)
+                                    {
+                                        Log.Error(er);
+                                    }
                                 });
                             }
                         }

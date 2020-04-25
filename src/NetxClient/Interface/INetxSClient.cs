@@ -10,11 +10,11 @@ namespace Netx
 
     public interface INetxSClientBase
     {
-      
+        bool IsConnect { get; }
         IServiceProvider Container { get; }
         ILog Log { get; }
         T Get<T>();
-        ILogger GetLogger<T>();        
+        ILogger GetLogger<T>();
         void Action(int cmdTag, params object[] args);
         Task AsyncAction(int cmdTag, params object[] args);
         Task<IResult> AsyncFunc(int cmdTag, params object[] args);

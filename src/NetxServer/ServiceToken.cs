@@ -49,15 +49,22 @@ namespace Netx.Service
 
         private async void RemoveRun()
         {
-            while (true)
+            try
             {
-                await Task.Delay(ServiceOption.ClearCheckTime);
+                while (true)
+                {
+                    await Task.Delay(ServiceOption.ClearCheckTime);
 
-                if (ServiceOption.ClearSessionTime > 0)
-                    CheckSessionTimeOut();
+                    if (ServiceOption.ClearSessionTime > 0)
+                        CheckSessionTimeOut();
 
-                if (ServiceOption.ClearRequestTime > 0)
-                    CheckRequestTimeOut();
+                    if (ServiceOption.ClearRequestTime > 0)
+                        CheckRequestTimeOut();
+                }
+            }
+            catch(Exception er)
+            {
+                Log.Error(er);
             }
         }
 
@@ -65,8 +72,7 @@ namespace Netx.Service
         /// 检测Request超时
         /// </summary>
         private void CheckRequestTimeOut()
-        {
-            
+        {            
             foreach (var token in ActorTokenDict.Values)
                 token.RequestTimeOutHandle();
         }

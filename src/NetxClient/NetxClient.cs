@@ -13,7 +13,7 @@ namespace Netx.Client
     /// <summary>
     /// NetX 客户端
     /// </summary>
-    public class NetxSClient : NetxSslSetter, IDisposable, INetxSClient
+    public class NetxSClient : NetxSslSetter, INetxSClient
     {
         private bool Disposed=false;
 
