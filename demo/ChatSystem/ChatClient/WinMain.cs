@@ -8,7 +8,7 @@ namespace ChatClient
 {
     public partial class WinMain : Form, IMethodController, IClient
     {
-        public INetxSClient Current { get=>Dependency.Client; set { } }
+        public INetxSClientBase Current { get=>Dependency.Client; set { } }
 
 
 
