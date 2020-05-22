@@ -30,7 +30,7 @@ namespace ActorTest
 
             var lambda = Actor.Get<IActorLambda>();
             {
-                int icount = 0;            
+                int icount = 0;
 
                 List<Task> waitlist = new List<Task>();
 
@@ -39,11 +39,11 @@ namespace ActorTest
                     waitlist.Add(Task.Factory.StartNew((p) =>
                     {
                         lambda.Tell(() =>
-                        {                          
-                            icount +=(int)p;
+                        {
+                            icount += (int)p;
                         });
 
-                    },i));
+                    }, i));
                 }
 
 
@@ -52,19 +52,79 @@ namespace ActorTest
                     waitlist.Add(Task.Factory.StartNew((p) =>
                     {
                         lambda.Tell(() =>
-                        {                           
-                            icount -= (int)p;                           
+                        {
+                            icount -= (int)p;
                         });
-                    },i));
+                    }, i));
                 }
-               
+
 
                 await Task.WhenAll(waitlist);
 
                 Debug.Assert(icount == 0);
                 Console.WriteLine($"tell:{icount}");
             }
+            {
+                int icount = 0;
 
+                List<Task> waitlist = new List<Task>();
+
+
+                waitlist.Add(Task.Factory.StartNew(() =>
+                {
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        lambda.Tell((p) =>
+                        {
+                            icount += p;
+                        }, i);
+                    }
+                }));
+
+
+                waitlist.Add(Task.Factory.StartNew(() =>
+                {
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        lambda.Tell((p) =>
+                        {
+                            icount -= p;
+                        }, i);
+                    }
+                }));
+
+
+                waitlist.Add(Task.Factory.StartNew(async () =>
+                {
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        await lambda.Ask((p) =>
+                        {
+                            icount += p;
+                        }, i);
+                    }
+                }));
+
+
+                waitlist.Add(Task.Factory.StartNew(async () =>
+                {
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        await lambda.Ask((p) =>
+                        {
+                            icount -= p;
+                        }, i);
+                    }
+                }));
+
+
+
+
+                await Task.WhenAll(waitlist);
+
+                Debug.Assert(icount == 0);
+                Console.WriteLine($"tell:{icount}");
+            }
             {
                 int icount = 0;
 
@@ -73,7 +133,7 @@ namespace ActorTest
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
-                        var res = await lambda.Ask(() =>p);
+                        var res = await lambda.Ask((c) =>c,p);
                         icount -= res;
                     },i));
                 }
@@ -82,7 +142,7 @@ namespace ActorTest
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
-                        var res = await lambda.Ask(() =>p);
+                        var res = await lambda.Ask((c) =>c,p);
                         icount += res;
                     },i));
                 }
@@ -93,7 +153,6 @@ namespace ActorTest
 
                 Console.WriteLine($"tell:{icount}");
             }
-
             {
                 int icount = 0;
 

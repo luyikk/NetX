@@ -19,9 +19,25 @@ namespace Netx.Actor
             return Task.FromResult<dynamic>(func.Invoke());
         }
 
+        public Task Ask(Action<dynamic> action, dynamic arg)
+        {
+            action?.Invoke(arg);
+            return Task.CompletedTask;
+        }
+
+        public Task<dynamic> Ask(Func<dynamic, dynamic> func, dynamic arg)
+        {
+            return Task.FromResult<dynamic>(func.Invoke(arg));
+        }
+
         public void Tell(Action action)
         {
             action?.Invoke();
+        }
+
+        public void Tell(Action<dynamic> action, dynamic arg)
+        {
+            action?.Invoke(arg);
         }
     }
 }
