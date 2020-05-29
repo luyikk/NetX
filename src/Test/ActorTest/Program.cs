@@ -133,18 +133,25 @@ namespace ActorTest
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
-                        var res = await lambda.Ask((c) =>c,p);
-                        icount -= res;
-                    },i));
+                        var res = await lambda.Ask((c) =>
+                        {
+                            icount -= c;
+                            return p;
+                        }, p);
+
+                    }, i));
                 }
 
                 for (int i = 0; i < 10000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
-                        var res = await lambda.Ask((c) =>c,p);
-                        icount += res;
-                    },i));
+                        var res = await lambda.Ask((c) =>
+                        {
+                            icount += c;
+                            return p;
+                        }, p);
+                    }, i));
                 }
 
                 await Task.WhenAll(waitlist);
@@ -288,6 +295,10 @@ namespace ActorTest
             Console.WriteLine($"Count:{count} time {stop.ElapsedMilliseconds}");
 
             #endregion
+
+
+
+
 
             Console.ReadLine();
 

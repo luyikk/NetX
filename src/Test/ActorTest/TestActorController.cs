@@ -42,6 +42,13 @@ namespace ActorTest
             xa = a + b - x;
             return a + b;
         }
+
+        [TAG(20000)]
+        public async Task<int> TestWait(int a)
+        {
+            await Task.Delay(100);
+            return a;
+        }
        
     }
 }

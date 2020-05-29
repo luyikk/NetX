@@ -44,5 +44,9 @@ namespace ActorTest
 
         [TAG(10006)]
         void TestWrite(string msg);
+
+
+        [TAG(20000)]
+        Task<int> TestWait(int a);
     }
 }
