@@ -35,7 +35,7 @@ namespace Netx.Service
                 //数据包格式为0000 0 0000  00000000 0000 .....
                 //功能len(int)  标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
                 using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen();
                     wr.Cmd(2400);
@@ -47,7 +47,7 @@ namespace Netx.Service
                     {
                         WriteObj(wr, arg);
                     }
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 var result = GetResult(AddAsyncResult(Id));
@@ -77,7 +77,7 @@ namespace Netx.Service
             {
                 using var wr = new WriteBytes(FiberRw);
                 var result = GetResult(AddAsyncResult(Id));
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen();
                     wr.Cmd(2400);
@@ -89,7 +89,7 @@ namespace Netx.Service
                     {
                         WriteObj(wr, arg);
                     }
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 await await FiberRw.Sync.Ask(WSend);
@@ -156,7 +156,7 @@ namespace Netx.Service
             if (FiberRw != null)
             {
                 using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen();
                     wr.Cmd(2500);
@@ -164,7 +164,7 @@ namespace Netx.Service
                     wr.Write(false);
                     wr.Write(1);
                     wr.Write(SerializationPacker.PackSingleObject(argument));
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 await await FiberRw.Sync.Ask(WSend);
@@ -186,7 +186,7 @@ namespace Netx.Service
             if (FiberRw != null)
             {
                 using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen();
                     wr.Cmd(2500);
@@ -200,7 +200,7 @@ namespace Netx.Service
                         foreach (var item in arguments)
                             wr.Write(item);
                     }
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 await await FiberRw.Sync.Ask(WSend);
@@ -222,7 +222,7 @@ namespace Netx.Service
             if (FiberRw != null)
             {
                 using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen(); //为了兼容其他框架和其他的语言,还是发个长度吧
                     wr.Cmd(2500);
@@ -242,7 +242,7 @@ namespace Netx.Service
                             foreach (var item in result.Arguments)
                                 wr.Write(item);
                     }
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 await await FiberRw.Sync.Ask(WSend);
@@ -268,7 +268,7 @@ namespace Netx.Service
                 if (FiberRw != null)
                 {
                     using var wr = new WriteBytes(FiberRw);
-                    Task<int> WSend()
+                    Task WSend()
                     {
                         wr.WriteLen();
                         wr.Cmd(2500);
@@ -276,7 +276,7 @@ namespace Netx.Service
                         wr.Write(true);
                         wr.Write((int)errorType);
                         wr.Write(msg);
-                        return wr.Flush();
+                        return wr.FlushAsync();
                     }
 
                     await await FiberRw.Sync.Ask(WSend);
@@ -305,13 +305,13 @@ namespace Netx.Service
             if (FiberRw != null)
             {
                 using var wr = new WriteBytes(FiberRw);
-                Task<int> WSend()
+                Task WSend()
                 {
                     wr.WriteLen();
                     wr.Cmd(2000);
                     wr.Write(SessionId);
 
-                    return wr.Flush();
+                    return wr.FlushAsync();
                 }
 
                 await await FiberRw.Sync.Ask(WSend);

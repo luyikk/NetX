@@ -40,7 +40,7 @@ namespace Netx
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
 
-            Task<int> WSend()
+            Task WSend()
             {
                 //数据包格式为 0 0000  00000000 0000 .....
                 //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
@@ -54,7 +54,7 @@ namespace Netx
                     WriteObj(IWrite, arg);
                 }
 
-                return IWrite.Flush();
+                return IWrite.FlushAsync();
             }
 
             var result = GetResult(AddAsyncResult(Id));
@@ -115,7 +115,7 @@ namespace Netx
                 if (!ConnectIt())
                     throw new NetxException("not connect", ErrorType.Notconnect);
 
-            Task<int> WSend()
+            Task WSend()
             {
                 IWrite!.Write(2400);
                 IWrite!.Write((byte)1);
@@ -127,7 +127,7 @@ namespace Netx
                     WriteObj(IWrite, arg);
                 }
 
-                return IWrite!.Flush();
+                return IWrite!.FlushAsync();
             }
 
             var result = GetResult(AddAsyncResult(Id));

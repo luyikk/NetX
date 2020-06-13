@@ -52,8 +52,8 @@ namespace Netx.Service
             wrtokenerr.Write(iserr);
             wrtokenerr.Write(msg);
 
-            Task<int> WSend()
-                => wrtokenerr.Flush();
+            Task WSend()
+                => wrtokenerr.FlushAsync();
 
             await await fiberRw.Sync.Ask(WSend);
         }
@@ -65,8 +65,8 @@ namespace Netx.Service
             wrtokenerr.Cmd(1001);
             wrtokenerr.Write(msg);
 
-            Task<int> WSend()
-              => wrtokenerr.Flush();
+            Task WSend()
+              => wrtokenerr.FlushAsync();
 
             await await fiberRw.Sync.Ask(WSend);
         }
