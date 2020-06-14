@@ -159,20 +159,20 @@ namespace ChatClient
                 {
                     case 0:
                         {
-                            this.richTextBox1.AppendText($"[A]{fromusername} {DateTime.Now.ToString("T")} \r\n{msg}\r\n");
+                            this.richTextBox1.AppendText($"[A]{fromusername} {DateTime.Now:T} \r\n{msg}\r\n");
                         }
                         break;
                     case 1:
                         {
-                            this.richTextBox1.AppendText($"       [P]{fromusername} {DateTime.Now.ToString("T")} \r\n           {msg}\r\n");
+                            this.richTextBox1.AppendText($"       [P]{fromusername} {DateTime.Now:T} \r\n           {msg}\r\n");
                         }
                         break;
                     case 2:
                         {
                             if (time == 0)
-                                this.richTextBox1.AppendText($" [L]{fromusername} {DateTime.Now.ToString("T")} \r\n   {msg}\r\n");
+                                this.richTextBox1.AppendText($" [L]{fromusername} {DateTime.Now:T} \r\n   {msg}\r\n");
                             else
-                                this.richTextBox1.AppendText($" [L]{fromusername} {TimeHelper.GetTime(time).ToString("T")} \r\n   {msg}\r\n");
+                                this.richTextBox1.AppendText($" [L]{fromusername} {TimeHelper.GetTime(time):T} \r\n   {msg}\r\n");
                         }
                         break;
                 }
