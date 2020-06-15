@@ -19,7 +19,7 @@ namespace Netx
 
         public ReturnTypeMode ReturnMode { get; }
 
-        public int ArgsLen { get => ArgsType.Length; }
+        public int ArgsLen => ArgsType.Length;
 
 
         public MethodRegister(Type instenceType, MethodInfo method)

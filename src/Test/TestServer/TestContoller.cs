@@ -43,9 +43,13 @@ namespace NetxTestServer
         }
 
         public Task<HelloReply> SayHello(HelloRequest msg)
-        => Task.FromResult(new HelloReply { Message = "Hello" + msg.Name });
+        {
+            return Task.FromResult(new HelloReply { Message = "Hello" + msg.Name });
+        }
 
         public Task<string> SayHello(string msg)
-         => Task.FromResult("Hello" + msg);
+        {
+            return Task.FromResult("Hello" + msg);
+        }
     }
 }

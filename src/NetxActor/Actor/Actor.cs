@@ -29,7 +29,7 @@ namespace Netx.Actor
 
         private readonly Lazy<ConcurrentQueue<ActorMessage>> actorRunQueue;
 
-        public ConcurrentQueue<ActorMessage> ActorRunQueue { get => actorRunQueue.Value; }
+        public ConcurrentQueue<ActorMessage> ActorRunQueue => actorRunQueue.Value;
 
         public ILog Log { get; }
 
@@ -48,13 +48,11 @@ namespace Netx.Actor
 
         public bool IsSleep { get; private set; } = true;
 
-        private long lastRuntime = 0;
-
 
         /// <summary>
         /// 最后运行时间
         /// </summary>
-        public long LastRunTime { get => lastRuntime; }
+        public long LastRunTime { get; private set; } = 0;
 
         /// <summary>
         /// 是否需要休眠
@@ -66,7 +64,7 @@ namespace Netx.Actor
                 if (IsSleep)
                     return false;
 
-                return (Environment.TickCount - lastRuntime) > Option.Ideltime;
+                return (Environment.TickCount - LastRunTime) > Option.Ideltime;
 
             }
         }
@@ -291,7 +289,7 @@ namespace Netx.Actor
 
                                 msg.Completed(res);
 
-                                lastRuntime = Environment.TickCount;
+                                LastRunTime = Environment.TickCount;
 
                                 if (CompletedEvent != null)
                                     if (msg.Cmd != SleepCmd)

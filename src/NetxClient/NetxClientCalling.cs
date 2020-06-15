@@ -110,7 +110,7 @@ namespace Netx.Client
                             if (service.Instance is IMethodController controller)
                                 controller.Current = this;
 
-                            var ret_value = (object)await service.Method.ExecuteAsync(service.Instance, args);
+                            var ret_value = await service.Method.ExecuteAsync(service.Instance, args);
 
                             switch (ret_value)
                             {

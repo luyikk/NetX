@@ -6,17 +6,13 @@ namespace Netx.Loggine
 
     public sealed class DefaultLog : ILog
     {
-        static readonly Func<object, Exception, string> MessageFormatter = Format;
+        
         public ILogger Logger { get; }
 
         public DefaultLog(ILogger logger)
         {
             this.Logger = logger;
         }
-
-        static string Format(object target, Exception exception)
-           => exception == null ? target.ToString() : $"{target} {exception}";
-
 
         public bool IsTraceEnabled =>
             this.Logger?.IsEnabled(LogLevel.Trace) ?? false;
@@ -47,7 +43,9 @@ namespace Netx.Loggine
         }
 
         public void Trace(object obj)
-         => Trace(obj.ToString());
+        {
+            Trace(obj.ToString());
+        }
 
         public void Trace(Exception exception)
         {
@@ -102,7 +100,9 @@ namespace Netx.Loggine
         }
 
         public void Debug(object obj)
-            => Debug(obj.ToString());
+        {
+            Debug(obj.ToString());
+        }
 
         public void Debug(Exception exception)
         {
@@ -157,7 +157,9 @@ namespace Netx.Loggine
         }
 
         public void Info(object obj)
-            => Info(obj.ToString());
+        {
+            Info(obj.ToString());
+        }
 
         public void Info(Exception exception)
         {
@@ -212,7 +214,9 @@ namespace Netx.Loggine
         }
 
         public void Warn(object obj)
-            => Warn(obj.ToString());
+        {
+            Warn(obj.ToString());
+        }
 
         public void Warn(Exception exception)
         {
@@ -266,7 +270,9 @@ namespace Netx.Loggine
         }
 
         public void Error(object obj)
-            => Error(obj.ToString());
+        {
+            Error(obj.ToString());
+        }
 
         public void Error(Exception exception)
         {
@@ -321,7 +327,9 @@ namespace Netx.Loggine
         }
 
         public void Critical(object obj)
-            => Critical(obj.ToString());
+        {
+            Critical(obj.ToString());
+        }
 
         public void Critical(Exception exception)
         {

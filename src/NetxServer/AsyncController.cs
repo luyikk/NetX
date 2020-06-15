@@ -4,12 +4,22 @@
     {
         internal AsyncToken? Async { get; set; }
 
-        protected AsyncToken? Current { get => Async; }
+        protected AsyncToken? Current => Async;
 
-        public T? Get<T>() where T : class => Current?.Get<T>();
-        public T? Actor<T>() where T : class => Current?.Actor<T>();
+        public T? Get<T>() where T : class
+        {
+            return Current?.Get<T>();
+        }
 
-        public virtual object Runs__Make(int tag, object[] args) => null!;
+        public T? Actor<T>() where T : class
+        {
+            return Current?.Actor<T>();
+        }
+
+        public virtual object Runs__Make(int tag, object[] args)
+        {
+            return null!;
+        }
 
         /// <summary>
         /// 断线处理

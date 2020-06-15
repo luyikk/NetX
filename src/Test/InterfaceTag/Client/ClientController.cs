@@ -7,9 +7,10 @@ namespace Client
     {
         public INetxSClientBase Current { get; set; }
 
-        public T Get<T>() => Current.Get<T>();
-
-
+        public T Get<T>()
+        {
+            return Current.Get<T>();
+        }
 
         public Task<int> Add(int a, int b)
         {

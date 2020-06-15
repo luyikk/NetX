@@ -10,12 +10,12 @@ namespace Netx.Service
     {
 
         private readonly Lazy<ServiceTokenFactory> LazyServiceTokenFactory;
-        protected ServiceTokenFactory TokenFactory { get => LazyServiceTokenFactory.Value; }
+        protected ServiceTokenFactory TokenFactory => LazyServiceTokenFactory.Value;
 
         protected ConcurrentDictionary<long, AsyncToken> ActorTokenDict { get; }
 
         private readonly Lazy<ConcurrentQueue<TimeKey>> disconnectRemoveList;
-        private ConcurrentQueue<TimeKey> DisconnectRemoveList { get => disconnectRemoveList.Value; }
+        private ConcurrentQueue<TimeKey> DisconnectRemoveList => disconnectRemoveList.Value;
 
 
 

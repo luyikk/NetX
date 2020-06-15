@@ -192,7 +192,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
         var il = NewMethod.Body.GetILProcessor();
 
-        NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(Int32))));
+        NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(int))));
         NewMethod.Parameters.Add(new ParameterDefinition("args", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(object[]))));
 
 
@@ -545,7 +545,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 il.Emit(OpCodes.Ldfld, obj);
                 il.Emit(OpCodes.Ldc_I4, cmd);
 
-                GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+                GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
                 for (int i = 0; i < parameters.Count; i++)
                 {
@@ -576,7 +576,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 il.Emit(OpCodes.Ldfld, obj);
                 il.Emit(OpCodes.Ldc_I4, cmd);
 
-                GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+                GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
                 for (int i = 0; i < parameters.Count; i++)
                 {
@@ -607,7 +607,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldfld, obj);
             il.Emit(OpCodes.Ldc_I4, cmd);
 
-            GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+            GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -638,7 +638,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldfld, obj);
             il.Emit(OpCodes.Ldc_I4, cmd);
 
-            GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+            GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -690,7 +690,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
             var res = new VariableDefinition(irpc.ReturnType);
             method.Body.Variables.Add(res);
-            Convert(il, ModuleDefinition.ImportReference(typeof(System.Object)), irpc.ReturnType, false);
+            Convert(il, ModuleDefinition.ImportReference(typeof(object)), irpc.ReturnType, false);
             il.Emit(OpCodes.Stloc, res);
             il.Emit(OpCodes.Ldloc, res);
 

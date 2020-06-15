@@ -119,7 +119,7 @@ namespace Netx.Service
                     }
 
                 var key = await fiberRw.ReadString();
-                if (!String.IsNullOrEmpty(OpenKey))
+                if (!string.IsNullOrEmpty(OpenKey))
                 {
                     if (string.Compare(OpenKey, key, StringComparison.OrdinalIgnoreCase) != 0)
                     {

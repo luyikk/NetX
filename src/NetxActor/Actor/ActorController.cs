@@ -5,14 +5,20 @@ namespace Netx.Actor
     public abstract class ActorController
     {
         public long OrderTime { get; internal set; }
-        public long CurrentTime { get => TimeHelper.GetTime(); }
-        public long PassTime { get => CurrentTime - OrderTime; }
+        public long CurrentTime => TimeHelper.GetTime();
+        public long PassTime => CurrentTime - OrderTime;
         public IActorGet? ActorGet { get; internal set; }
         public IActorStatus? Status { get; internal set; }
 
-        protected T? Get<T>() where T : class => ActorGet?.Get<T>();
+        protected T? Get<T>() where T : class
+        {
+            return ActorGet?.Get<T>();
+        }
 
-        public virtual object Runs__Make(int tag, object[] args) => null!;
+        public virtual object Runs__Make(int tag, object[] args)
+        {
+            return null!;
+        }
 
         /// <summary>
         /// 唤醒

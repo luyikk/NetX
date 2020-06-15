@@ -37,14 +37,14 @@ namespace Netx
         /// <summary>
         /// 用于存放异步调用时,结果反馈的回调
         /// </summary>
-        protected ConcurrentDictionary<long, ManualResetValueTaskSource<Result>> AsyncResultDict { get => asyncResultDict.Value; }
+        protected ConcurrentDictionary<long, ManualResetValueTaskSource<Result>> AsyncResultDict => asyncResultDict.Value;
 
         /// <summary>
         /// 用来超时处理
         /// </summary>
         private readonly Lazy<ConcurrentQueue<RequestKeyTime>> requestOutTimeQueue = new Lazy<ConcurrentQueue<RequestKeyTime>>(true);
 
-        protected ConcurrentQueue<RequestKeyTime> RequestOutTimeQueue { get => requestOutTimeQueue.Value; }
+        protected ConcurrentQueue<RequestKeyTime> RequestOutTimeQueue => requestOutTimeQueue.Value;
 
         /// <summary>
         /// 调用超时时间
@@ -56,7 +56,10 @@ namespace Netx
         /// </summary>
         /// <param name="cmdTag">命令</param>
         /// <param name="args">参数</param>
-        public void Action(int cmdTag, params object[] args) => SendAction(cmdTag, args);
+        public void Action(int cmdTag, params object[] args)
+        {
+            SendAction(cmdTag, args);
+        }
 
 
         /// <summary>
@@ -65,7 +68,10 @@ namespace Netx
         /// <param name="cmdTag"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task AsyncAction(int cmdTag, params object[] args) => SendAsyncAction(cmdTag, IdsManager.MakeId, args);
+        public Task AsyncAction(int cmdTag, params object[] args)
+        {
+            return SendAsyncAction(cmdTag, IdsManager.MakeId, args);
+        }
 
 
         /// <summary>
@@ -74,7 +80,10 @@ namespace Netx
         /// <param name="cmdTag">命令</param>
         /// <param name="args">参数</param>
         /// <returns>返回结果</returns>
-        public Task<IResult> AsyncFunc(int cmdTag, params object[] args) => AsyncFuncSend(cmdTag, IdsManager.MakeId, args);
+        public Task<IResult> AsyncFunc(int cmdTag, params object[] args)
+        {
+            return AsyncFuncSend(cmdTag, IdsManager.MakeId, args);
+        }
 
 
         /// <summary>

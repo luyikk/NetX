@@ -29,7 +29,7 @@ namespace Netx.Service
         /// </summary>
         protected ServiceOption ServiceOption { get; }
 
-        public string OpenKey { get => ServiceOption.VerifyKey ?? ""; }
+        public string OpenKey => ServiceOption.VerifyKey ?? "";
 
 
         public ServiceBase(IServiceProvider container)
@@ -52,7 +52,9 @@ namespace Netx.Service
             wrtokenerr.Write(msg);
 
             Task WSend()
-                => wrtokenerr.FlushAsync();
+            {
+                return wrtokenerr.FlushAsync();
+            }
 
             await await fiberRw.Sync.Ask(WSend);
         }
@@ -65,7 +67,9 @@ namespace Netx.Service
             wrtokenerr.Write(msg);
 
             Task WSend()
-              => wrtokenerr.FlushAsync();
+            {
+                return wrtokenerr.FlushAsync();
+            }
 
             await await fiberRw.Sync.Ask(WSend);
         }

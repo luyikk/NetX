@@ -19,7 +19,7 @@ namespace Netx.Service
 
         private readonly Lazy<Dictionary<Type, AsyncController>> asyncControllerInstanceDict;
 
-        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict { get => asyncControllerInstanceDict.Value; }
+        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict => asyncControllerInstanceDict.Value;
 
         public ActorRun @ActorRun { get; }
 
@@ -276,7 +276,7 @@ namespace Netx.Service
                         break;
                     case 1:
                         {
-                            await (ValueTask)ActorRun.AsyncAction(id, cmd, OpenAccess.Public, args);
+                            await ActorRun.AsyncAction(id, cmd, OpenAccess.Public, args);
                             Dispose_table(memoryOwners);
                             await SendResult(id);
                         }
@@ -430,7 +430,7 @@ namespace Netx.Service
                                     , cmd
                                     , instanceType.FullName);
 
-                                await SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er.ToString()}", ErrorType.CreateInstanceErr);
+                                await SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er}", ErrorType.CreateInstanceErr);
                                 return null;
                             }
                         }

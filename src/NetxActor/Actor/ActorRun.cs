@@ -11,7 +11,7 @@ namespace Netx.Actor
 
         private readonly Lazy<ConcurrentDictionary<int, Actor>> actorCollect;
 
-        public ConcurrentDictionary<int, Actor> ActorCollect { get => actorCollect.Value; }
+        public ConcurrentDictionary<int, Actor> ActorCollect => actorCollect.Value;
 
         public event EventHandler<IActorMessage>? CompletedEvent;
 
@@ -104,7 +104,7 @@ namespace Netx.Actor
 
 
 
-        public async override Task<IResult> AsyncFunc(int cmdTag, params object[] args)
+        public override async Task<IResult> AsyncFunc(int cmdTag, params object[] args)
         {
             var Id = IdsManager.MakeId;
 
@@ -128,7 +128,7 @@ namespace Netx.Actor
             return this.CallFunc<T>(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args).AsTask();
         }
 
-        public async override Task AsyncAction(int cmdTag, params object[] args)
+        public override async Task AsyncAction(int cmdTag, params object[] args)
         {
             await AsyncAction(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args);
         }

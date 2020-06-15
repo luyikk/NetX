@@ -80,9 +80,10 @@ namespace TestClient
             Console.ReadLine();
 
 
-            List<Task<(long m, int count)>> tasks = new List<Task<(long m, int count)>>(clientCout);
-
-            tasks.Add(Run(client0));
+            List<Task<(long m, int count)>> tasks = new List<Task<(long m, int count)>>(clientCout)
+            {
+                Run(client0)
+            };
 
             for (int i = 0; i < clientCout - 1; i++)
             {

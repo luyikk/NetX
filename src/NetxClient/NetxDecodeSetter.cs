@@ -47,7 +47,7 @@ namespace Netx.Client
                           var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
                           var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
                           return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
-                    }),
+                      }),
                     CompressType.lz4 => await socketAsync.GetFiberRwSSL(Certificate!, init: (input, output) =>
                     {
                         var lz4_input = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Decode(input, leaveOpen: true);
