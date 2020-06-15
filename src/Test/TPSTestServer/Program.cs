@@ -30,6 +30,7 @@ namespace TestServer
                     p.VerifyKey = "123123";
                     p.ClearSessionTime = 5000;
                 })       
+                .ConfigCompress(p=>p.Mode=Netx.CompressType.None)
                // .ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)                  
                 .Build();
 

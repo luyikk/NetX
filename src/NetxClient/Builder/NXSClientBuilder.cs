@@ -53,7 +53,7 @@ namespace Netx.Client
         public INetxSClientBuilder ConfigConnection(Action<ConnectOption>? config=null)
         {
             if (config != null)
-                Container.Configure<ConnectOption>(config);
+                Container.Configure(config);
 
             return this;
         }
@@ -61,7 +61,7 @@ namespace Netx.Client
 
         public INetxSClientBuilder ConfigEncode(Func<Encoding>? func = null)
         {
-            Container.AddSingleton<Encoding>(p =>
+            Container.AddSingleton(p =>
             {
                 if (func is null)
                     return Encoding.UTF8;
@@ -74,7 +74,7 @@ namespace Netx.Client
 
         public INetxSClientBuilder ConfigMemoryPool(Func<MemoryPool<byte>>? func = null)
         {
-            Container.AddTransient<MemoryPool<byte>>(p =>
+            Container.AddTransient(p =>
             {
                 if (func is null)
                 {
@@ -91,7 +91,7 @@ namespace Netx.Client
 
         public INetxSClientBuilder ConfigISend(Func<ISend>? func = null)
         {
-            Container.AddTransient<ISend>(p =>
+            Container.AddTransient(p =>
             {
                 if (func is null)
                     return new PoolSend(true);
@@ -105,7 +105,7 @@ namespace Netx.Client
 
         public INetxSClientBuilder ConfigIAsyncSend(Func<IAsyncSend>? func = null)
         {
-            Container.AddTransient<IAsyncSend>(p =>
+            Container.AddTransient(p =>
             {
                 if (func is null)
                     return new PoolSend(true);
@@ -119,7 +119,7 @@ namespace Netx.Client
         public INetxSClientBuilder ConfigSessionStore(Func<ISessionStore>? func=null)
         {
 
-            Container.AddTransient<ISessionStore>(p =>
+            Container.AddTransient(p =>
             {
                 if (func is null)
                     return new Session.SessionMemory();
@@ -131,7 +131,7 @@ namespace Netx.Client
 
         public INetxSClientBuilder ConfigObjFormat(Func<ISerialization>? func = null)
         {
-            Container.AddTransient<ISerialization>(p =>
+            Container.AddTransient(p =>
             {
                 if (func is null)
                     return new ProtobuffObjFormat();
@@ -148,7 +148,7 @@ namespace Netx.Client
             if (func is null)
                 Container.AddScoped<IIds, DefaultMakeIds>();
             else
-                Container.AddScoped<IIds>(func);
+                Container.AddScoped(func);
 
             return this;
         }
@@ -156,7 +156,14 @@ namespace Netx.Client
         public INetxSClientBuilder ConfigSSL(Action<SslOption>? config = null)
         {
             if (config != null)
-                Container.Configure<SslOption>(config);
+                Container.Configure(config);
+            return this;
+        }
+
+        public INetxSClientBuilder ConfigCompress(Action<CompressOption>? config = null)
+        {
+            if (config != null)
+                Container.Configure(config);
             return this;
         }
 
@@ -182,7 +189,7 @@ namespace Netx.Client
         {
             if (Provider is null)
             {
-                Container.TryAdd(ServiceDescriptor.Scoped<NetxSClient>(p => new NetxSClient(p)));
+                Container.TryAdd(ServiceDescriptor.Scoped(p => new NetxSClient(p)));
                 Provider = Container.BuildServiceProvider();
                 return Provider.GetRequiredService<NetxSClient>();
             }

@@ -1,0 +1,102 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+using ZYSocket;
+using ZYSocket.FiberStream;
+using ZYSocket.Server;
+
+namespace Netx.Service
+{
+
+ 
+
+    public abstract class ServiceDecodeSetter : ServiceToken
+    {
+
+        protected readonly bool is_use_ssl;
+        protected X509Certificate? Certificate { get; }
+
+        protected readonly CompressType decodeType;
+
+        public ServiceDecodeSetter(IServiceProvider container) : base(container)
+        {
+            var ssloption = container.GetRequiredService<IOptions<SslOption>>().Value;
+            if (ssloption.IsUse && ssloption.Certificate != null)
+            {
+                Certificate = ssloption.Certificate;
+                is_use_ssl = true;
+            }
+
+            var compresstion= container.GetRequiredService<IOptions<CompressOption>>().Value;
+            decodeType = compresstion.Mode;
+        }
+
+        /// <summary>
+        /// 返回FiberRw
+        /// </summary>
+        /// <param name="socketAsync"></param>
+        /// <returns></returns>
+        protected virtual async Task<IFiberRw<AsyncToken>?> GetFiberRw(ISockAsyncEventAsServer socketAsync)
+        {
+            if (is_use_ssl) //SSL Config
+            {
+                // var (fiber, msg) = await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!);
+
+                var (fiber, msg) = decodeType switch
+                {
+                    CompressType.None => await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!),
+                    CompressType.gzip => await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!, (input, output) =>
+                      {
+                          var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
+                          var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
+                          return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
+                    }),
+                    CompressType.lz4 => await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!, (input, output) =>
+                    {
+                        var lz4_input = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Decode(input, leaveOpen: true);
+                        var lz4_output = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Encode(output, leaveOpen: true);
+                        return new GetFiberRwResult(lz4_input, lz4_output); //return lz4 mode
+                    }),
+                    _ => throw new NotImplementedException()
+                };
+
+
+                if (fiber is null)
+                {
+                    if(msg!=null)
+                        Log.Error(msg);                  
+                    return null;
+                }
+                else
+                    return fiber;
+            }
+            else
+            {
+              
+                return decodeType switch
+                {
+                    CompressType.None => await socketAsync.GetFiberRw<AsyncToken>(),
+                    CompressType.gzip => await socketAsync.GetFiberRw<AsyncToken>((input, output) =>
+                    {
+                        var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
+                        var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
+                        return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
+                    }),
+                    CompressType.lz4 => await socketAsync.GetFiberRw<AsyncToken>((input, output) =>
+                    {
+                        var lz4_input = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Decode(input, leaveOpen: true);
+                        var lz4_output = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Encode(output, leaveOpen: true);
+                        return new GetFiberRwResult(lz4_input, lz4_output); //return lz4 mode
+                    }),
+                    _ => throw new NotImplementedException()
+                };
+            }
+               
+        }
+    }
+}

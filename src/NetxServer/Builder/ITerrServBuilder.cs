@@ -30,6 +30,7 @@ namespace Netx.Service.Builder
         INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null);
         INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null);
         INetxServBuilder ConfigSSL(Action<SslOption>? config = null);
+        INetxServBuilder ConfigCompress(Action<CompressOption>? config = null);
         INetxServBuilder ConfigBase(Action<ServiceOption>? config = null);
         INetxServBuilder AddActorEvent<T>() where T : ActorEventBase;
         INetxServBuilder RegisterService(Assembly assembly);

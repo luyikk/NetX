@@ -23,7 +23,8 @@ namespace Netx.Client
         INetxSClientBuilder ConfigISend(Func<ISend>? func = null);
         INetxSClientBuilder ConfigMemoryPool(Func<MemoryPool<byte>>? func = null);
         INetxSClientBuilder ConfigObjFormat(Func<ISerialization>? func = null);
-        INetxSClientBuilder ConfigSSL(Action<SslOption>? config = null);     
+        INetxSClientBuilder ConfigSSL(Action<SslOption>? config = null);
+        INetxSClientBuilder ConfigCompress(Action<CompressOption>? config = null);
         INetxSClientBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null);
         void Dispose();
     }

@@ -10,7 +10,7 @@ using ZYSocket.Server;
 
 namespace Netx.Service
 {
-    public class NetxService : ServiceSslSetter, IDisposable
+    public class NetxService : ServiceDecodeSetter, IDisposable
     {
         public ISocketServer SocketServer { get; set; }
 

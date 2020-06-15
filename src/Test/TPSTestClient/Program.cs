@@ -29,12 +29,12 @@ namespace TestClient
                     p.RequestTimeOut = 0;
                     p.MaxPackerSize = 256 * 1024;
                 })
-                //.ConfigSSL(p =>
-                //{
-                //    p.IsUse = true;
-                //    p.Certificate = certificate;
-                //})
-               
+                  //.ConfigSSL(p =>
+                  //{
+                  //    p.IsUse = true;
+                  //    p.Certificate = certificate;
+                  //})
+                .ConfigCompress(p => p.Mode = Netx.CompressType.None)
                 .ConfigSessionStore(() =>
                 {
                     return new Netx.Client.Session.SessionMemory();

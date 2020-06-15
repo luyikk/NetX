@@ -231,7 +231,7 @@ namespace Netx.Service.Builder
             if (func is null)
                 Container.AddSingleton<IIds, DefaultMakeIds>();
             else
-                Container.AddSingleton<IIds>(func);
+                Container.AddSingleton(func);
 
             return this;
         }
@@ -239,9 +239,9 @@ namespace Netx.Service.Builder
         public INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null)
         {
             if (func is null)
-                Container.AddSingleton<ActorScheduler>(_=> ActorScheduler.LineByLine);
+                Container.AddSingleton(_=> ActorScheduler.LineByLine);
             else
-                Container.AddSingleton<ActorScheduler>(func);
+                Container.AddSingleton(func);
 
             return this;
         }
@@ -249,15 +249,22 @@ namespace Netx.Service.Builder
         public INetxServBuilder ConfigSSL(Action<SslOption>? config=null)
         {
             if (config != null)
-                Container.Configure<SslOption>(config);
+                Container.Configure(config);
             return this;
         }
 
 
+        public INetxServBuilder ConfigCompress(Action<CompressOption>? config = null)
+        {
+            if (config != null)
+                Container.Configure(config);
+            return this;
+        }
+
         public INetxServBuilder ConfigBase(Action<ServiceOption>? config=null)
         {
             if (config != null)
-                Container.Configure<ServiceOption>(config);
+                Container.Configure(config);
             return this;
         }
 
@@ -283,8 +290,8 @@ namespace Netx.Service.Builder
             {
                 Container.TryAdd(ServiceDescriptor.Singleton<ActorRun, ActorRun>());
                 Container.TryAdd(ServiceDescriptor.Singleton<IActorGet, ActorRun>());
-                Container.TryAdd(ServiceDescriptor.Singleton<NetxService>(p => new NetxService(p)));
-                Container.Replace(ServiceDescriptor.Singleton<ConcurrentDictionary<int, MethodRegister>>(AsyncServicesRegisterDict));
+                Container.TryAdd(ServiceDescriptor.Singleton(p => new NetxService(p)));
+                Container.Replace(ServiceDescriptor.Singleton(AsyncServicesRegisterDict));
                 Provider = Container.BuildServiceProvider();
                 return Provider.GetRequiredService<NetxService>();
             }else
