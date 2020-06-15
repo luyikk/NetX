@@ -82,7 +82,7 @@ namespace Netx.Actor
             if (ActorCollect.ContainsKey(cmd))
                 ActorCollect[cmd].Action(id, cmd, access, args);
             else
-                Log.ErrorFormat("not find actor service cmd:{cmd}",cmd);
+                Log.ErrorFormat("not found actor service cmd:{cmd}",cmd);
 
         }
 
@@ -91,7 +91,7 @@ namespace Netx.Actor
             if (ActorCollect.TryGetValue(cmd, out Actor m))
                 return m.AsyncAction(id, cmd, access, args);
             else
-                throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
+                throw new NetxException($"not found actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
         public ValueTask<T> CallFunc<T>(long id, int cmd, OpenAccess access, params object[] args)
@@ -99,7 +99,7 @@ namespace Netx.Actor
             if (ActorCollect.TryGetValue(cmd, out Actor m))
                 return m.AsyncFunc<T>(id, cmd, access, args);
             else
-                throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
+                throw new NetxException($"not found actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
 

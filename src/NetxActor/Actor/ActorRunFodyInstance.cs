@@ -29,7 +29,7 @@ namespace Netx.Actor
                 var assembly = interfaceType.Assembly;
                 var implementationType = assembly.GetType(interfaceType.FullName + "_Builder_Netx_Implementation");
                 if (implementationType == null)
-                    throw new NetxException($"not find with {interfaceType.FullName} the Implementation", ErrorType.FodyInstallErr);
+                    throw new NetxException($"not found with {interfaceType.FullName} the Implementation", ErrorType.FodyInstallErr);
 
 
                 var getImplementation = implementationType.GetMethod("GetImplementation", BindingFlags.Static | BindingFlags.Public);

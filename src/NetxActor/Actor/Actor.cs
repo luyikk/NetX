@@ -385,7 +385,7 @@ namespace Netx.Actor
                                 }
                             default:
                                 {
-                                    throw new NetxException("not find the return mode", ErrorType.ReturnModeErr);
+                                    throw new NetxException("not found the return mode", ErrorType.ReturnModeErr);
                                 }
                         }
                     }
@@ -401,7 +401,7 @@ namespace Netx.Actor
             }
             else
             {
-                return GetErrorResult($"not find actor cmd:{cmd}", result.Id);              
+                return GetErrorResult($"not found actor cmd:{cmd}", result.Id);              
             }           
         }
 
