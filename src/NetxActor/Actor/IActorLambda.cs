@@ -7,8 +7,8 @@ namespace Netx.Actor
     {
         TellArgs = -1999990111,
         Tell = -1999990112,
-        Ask = -1999990113,     
-        Func= -1999990114,
+        Ask = -1999990113,
+        Func = -1999990114,
         AskArg = -1999990115,
         FuncArg = -1999990116,
     };

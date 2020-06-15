@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Netx.Loggine
 {
@@ -66,7 +64,7 @@ namespace Netx.Loggine
 
         void Warn(string content, Exception exception);
 
-        void Warn( Exception exception, string content, params object[] args);
+        void Warn(Exception exception, string content, params object[] args);
 
         void WarnFormat(string format, params object[] args);
 
@@ -78,7 +76,7 @@ namespace Netx.Loggine
 
         void Error(string content, Exception exception);
 
-        void Error( Exception exception, string content, params object[] args);
+        void Error(Exception exception, string content, params object[] args);
 
         void ErrorFormat(string format, params object[] args);
 
@@ -90,7 +88,7 @@ namespace Netx.Loggine
 
         void Critical(string content, Exception exception);
 
-        void Critical(Exception exception, string content,params object[] args);
+        void Critical(Exception exception, string content, params object[] args);
 
         void CriticalFormat(string format, params object[] args);
     }

@@ -22,7 +22,7 @@ namespace Netx.Actor
             var loggerFactory = container.GetRequiredService<ILoggerFactory>();
             Log = new DefaultLog(loggerFactory.CreateLogger("Actor Run->"));
             IdsManager = container.GetRequiredService<IIds>();
-            SerializationPacker.Serialization = SerializationPacker.Serialization??container.GetRequiredService<ISerialization>();
+            SerializationPacker.Serialization = SerializationPacker.Serialization ?? container.GetRequiredService<ISerialization>();
             var actorscheduler = container.GetService<ActorScheduler>();
             ActorScheduler = actorscheduler ?? ActorScheduler.LineByLine;
         }
@@ -37,7 +37,7 @@ namespace Netx.Actor
 
 
         public abstract void Action(int cmdTag, params object[] args);
-      
+
 
         public object Func(int cmdTag, Type type, params object[] args)
         {

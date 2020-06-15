@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Netx
 {
-    public static  class TypeHelper
+    public static class TypeHelper
     {
         /// <summary>
         /// 检测是否是此类型或者父类是否是此类型

@@ -1,7 +1,6 @@
 ﻿using Netx.Service;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NetxTestServer
@@ -38,7 +37,7 @@ namespace NetxTestServer
                 Title = title,
                 City = city,
                 CreateTime = DateTime.Now,
-                ID= Guid.NewGuid().ToString("N")
+                ID = Guid.NewGuid().ToString("N")
 
             });
         }

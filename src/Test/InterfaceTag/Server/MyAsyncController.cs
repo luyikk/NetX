@@ -1,16 +1,13 @@
-﻿using Interfaces;
-
+﻿using Client;
+using Interfaces;
 using Netx;
 using Netx.Service;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Client;
 
 namespace Server
 {
-    public class MyAsyncController : AsyncController, IServer,IDisposable  ,IServerNew 
+    public class MyAsyncController : AsyncController, IServer, IDisposable, IServerNew
     {
         public Task<int> Add(int a, int b)
         {
@@ -40,7 +37,7 @@ namespace Server
         [TAG(2000)]
         public Task<int> Add3(int a)
         {
-            return Task.FromResult(a +3);
+            return Task.FromResult(a + 3);
         }
 
         public Task<int> Sub(int a, int b)

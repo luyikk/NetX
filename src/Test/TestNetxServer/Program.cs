@@ -1,12 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Serilog;
+using System;
+using System.Reflection;
 namespace TestNetxServer
 {
     class Program
@@ -14,19 +10,19 @@ namespace TestNetxServer
         static void Main(string[] args)
         {
             var builtConfig = new ConfigurationBuilder()
-            .AddJsonFile("logger.json")            
+            .AddJsonFile("logger.json")
             .Build();
 
             Log.Logger = new LoggerConfiguration()
-              .Enrich.FromLogContext()           
-              .ReadFrom.Configuration(builtConfig)              
+              .Enrich.FromLogContext()
+              .ReadFrom.Configuration(builtConfig)
               .CreateLogger();
-       
+
 
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .AddActorEvent<ActorEvent1>() //添加绑定事件1
                 .AddActorEvent<ActorEvent2>() //添加绑定事件2
-                .ConfigBase(p=>
+                .ConfigBase(p =>
                 {
                     p.VerifyKey = "123123";
                     p.ClearSessionTime = 50000;
@@ -37,17 +33,17 @@ namespace TestNetxServer
                     p.MaxConnectCout = 100;
                     p.Port = 1006;
                     p.MaxPackerSize = 256 * 1024;
-                   
+
                 })
                 .ConfigureLogSet(p =>
                 {
                     p.ClearProviders();
                     p.AddSerilog();
-                   // p.AddConfiguration(builtConfig.GetSection("Logging"));
+                    // p.AddConfiguration(builtConfig.GetSection("Logging"));
                 })
                 .Build();
 
-          
+
             service.Start(); //开始服务
 
             Console.ReadLine();

@@ -1,8 +1,6 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 
 public class MakeBne
@@ -21,7 +19,7 @@ public class MakeBne
     {
         this.Processor = processor;
         Start = processor.Create(OpCodes.Ldarg_1);
-        End= processor.Create(OpCodes.Ldnull);
+        End = processor.Create(OpCodes.Ldnull);
     }
 
     public List<Instruction> MakeCode()
@@ -57,8 +55,8 @@ public class MakeBne
             }
 
             int size = 0;
-            foreach (var il in codes)            
-                size += il.GetSize();           
+            foreach (var il in codes)
+                size += il.GetSize();
 
             if (size > 120)
                 codes[2] = Processor.Create(OpCodes.Bne_Un, Next);
@@ -90,7 +88,7 @@ public class MakeBne
 
             codes.Add(Processor.Create(OpCodes.Call, Method));
 
-            if(Method.ReturnType.Name!= "Void")
+            if (Method.ReturnType.Name != "Void")
                 codes.Add(Processor.Create(OpCodes.Ret));
 
             int size = 0;

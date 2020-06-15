@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Netx.Interface;
 using System.IO;
-using System.Text;
-using Netx.Interface;
 
 namespace Netx.Client.Session
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Netx
 {
@@ -86,12 +85,12 @@ namespace Netx
         }
 
         public Result()
-        {           
+        {
             Arguments = new List<byte[]>();
         }
 
         public Result(List<byte[]> args)
-        {          
+        {
             if (args != null)
                 Arguments = args;
             else
@@ -105,8 +104,8 @@ namespace Netx
             {
                 Arguments = new List<byte[]>();
                 foreach (var arg in args)
-                    Arguments.Add(SerializationPacker.PackSingleObject(arg));            
-            }         
+                    Arguments.Add(SerializationPacker.PackSingleObject(arg));
+            }
         }
 
         /// <summary>

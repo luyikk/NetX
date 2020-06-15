@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO.Compression;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.FiberStream;
@@ -40,15 +38,15 @@ namespace Netx.Client
         protected virtual async Task<IFiberRw?> GetFiberRw(ISockAsyncEventAsClient socketAsync)
         {
             if (is_use_ssl) //SSL Config
-            {             
+            {
                 var result = decodeType switch
                 {
                     CompressType.None => await socketAsync.GetFiberRwSSL(Certificate!),
-                    CompressType.gzip => await socketAsync.GetFiberRwSSL(Certificate!,init:(input, output) =>
-                    {
-                        var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
-                        var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
-                        return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
+                    CompressType.gzip => await socketAsync.GetFiberRwSSL(Certificate!, init: (input, output) =>
+                      {
+                          var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
+                          var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
+                          return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
                     }),
                     CompressType.lz4 => await socketAsync.GetFiberRwSSL(Certificate!, init: (input, output) =>
                     {
@@ -87,7 +85,7 @@ namespace Netx.Client
                     }),
                     _ => throw new NotImplementedException()
                 };
-            }            
+            }
         }
 
     }

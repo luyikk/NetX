@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Netx.Actor;
-using Netx.Interface;
-using Netx.Loggine;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
@@ -22,18 +19,18 @@ namespace Netx.Service
 
         private readonly Lazy<Dictionary<Type, AsyncController>> asyncControllerInstanceDict;
 
-        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict { get => asyncControllerInstanceDict.Value; }     
+        public Dictionary<Type, AsyncController> AsyncControllerInstanceDict { get => asyncControllerInstanceDict.Value; }
 
-        public ActorRun @ActorRun { get; }       
+        public ActorRun @ActorRun { get; }
 
         public AsyncToken(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, ConcurrentDictionary<int, MethodRegister> asyncServicesRegisterDict, long sessionId)
             : base(container, fiberRw, sessionId)
         {
-            this.RequestOutTime= container.GetRequiredService<IOptions<ServiceOption>>().Value.ClearRequestTime;
+            this.RequestOutTime = container.GetRequiredService<IOptions<ServiceOption>>().Value.ClearRequestTime;
             ActorRun = container.GetRequiredService<ActorRun>();
             AsyncServicesRegisterDict = asyncServicesRegisterDict;
             asyncControllerInstanceDict = new Lazy<Dictionary<Type, AsyncController>>();
-           
+
         }
 
 
@@ -63,7 +60,7 @@ namespace Netx.Service
                     if (FiberRw != null)
                     {
                         this.FiberRw.UserToken = null;
-                        this.FiberRw.Async?.Disconnect();                       
+                        this.FiberRw.Async?.Disconnect();
                     }
                     this.IWrite = null;
 
@@ -76,7 +73,7 @@ namespace Netx.Service
         }
 
         public void DisconnectIt()
-        {         
+        {
             FiberRw?.Async?.Disconnect();
         }
 
@@ -91,9 +88,9 @@ namespace Netx.Service
 
 
         public T Actor<T>()
-        {          
+        {
             return ActorRun.Get<T>();
-        }       
+        }
 
 
 
@@ -110,7 +107,7 @@ namespace Netx.Service
             while (isConnect)
             {
                 if (!await DataOnByLine(FiberRw!))
-                    break;               
+                    break;
             }
 
             isConnect = false;
@@ -120,7 +117,7 @@ namespace Netx.Service
         internal void Reset(IFiberRw<AsyncToken> fiberRw)
         {
             FiberRw = fiberRw;
-            isConnect = true;          
+            isConnect = true;
         }
 
 
@@ -130,16 +127,16 @@ namespace Netx.Service
 
             this.IWrite = null;
             this.FiberRw = null;
-            foreach (var controller in AsyncControllerInstanceDict.Values)            
-               controller.Disconnect(); 
+            foreach (var controller in AsyncControllerInstanceDict.Values)
+                controller.Disconnect();
         }
 
-       
+
 
         protected async Task<bool> DataOnByLine(IFiberRw<AsyncToken> fiberRw)
         {
-          
-            var cmd = await fiberRw.ReadInt32();        
+
+            var cmd = await fiberRw.ReadInt32();
 
             switch (cmd)
             {
@@ -163,7 +160,7 @@ namespace Netx.Service
                         }
 
                         return true;
-                    }               
+                    }
                 case 2500: //set result
                     {
                         await ReadResultAsync(fiberRw);
@@ -204,7 +201,7 @@ namespace Netx.Service
                 else
                 {
                     Log.WarnFormat("{RemoteEndPoint} call async service:{cmd} Args Error: len {argslen}->{Length} \r\n to {service}"
-                        , fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                        , fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                         , cmd
                         , argslen
                         , service.ArgsType.Length
@@ -216,7 +213,7 @@ namespace Netx.Service
             }
             else
             {
-                
+
                 service = ActorRun.GetCmdService(cmd);
                 if (service != null)
                 {
@@ -242,7 +239,7 @@ namespace Netx.Service
                     else
                     {
                         Log.WarnFormat("{RemoteEndPoint} call actor service:{cmd} Args Error: len {argslen}->{Length} \r\n to {service}"
-                            , fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                            , fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                             , cmd
                             , argslen
                             , service.ArgsType.Length
@@ -308,7 +305,7 @@ namespace Netx.Service
 
                 }
 
-              
+
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -316,45 +313,45 @@ namespace Netx.Service
             }
             catch (NetxException er)
             {
-                if(er.ErrorType!=ErrorType.ActorQueueMaxErr)
+                if (er.ErrorType != ErrorType.ActorQueueMaxErr)
                     Log.Error("Actor Server Err:", er);
                 await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {
-                Log.Error("Actor Server Err:",er);
+                Log.Error("Actor Server Err:", er);
                 await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
-    
-       
 
-        protected virtual async void RunCall(MethodRegister service, int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners,  params object[] args)
+
+
+        protected virtual async void RunCall(MethodRegister service, int cmd, long id, int runtype, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
             try
             {
                 var controller = await GetInstance(id, cmd, service.InstanceType);
 
-           
+
                 if (controller != null)
-                    await RunControllerService(service, controller,cmd, id, runtype, memoryOwners, args);
+                    await RunControllerService(service, controller, cmd, id, runtype, memoryOwners, args);
 
             }
-            catch(System.Net.Sockets.SocketException)
+            catch (System.Net.Sockets.SocketException)
             {
 
             }
             catch (Exception er)
             {
-                Log.Error("Async Server Err:",er);
+                Log.Error("Async Server Err:", er);
                 await SendError(id, $"Async Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
-        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller,int cmd, long id, int runType, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
+        protected virtual async Task RunControllerService(MethodRegister service, AsyncController controller, int cmd, long id, int runType, List<IMemoryOwner<byte>> memoryOwners, params object[] args)
         {
-          
+
             switch (service.ReturnMode)
             {
 
@@ -369,7 +366,7 @@ namespace Netx.Service
                 case ReturnTypeMode.Task:
                     if (runType == 1)
                     {
-                        await (dynamic) controller.Runs__Make(cmd, args);
+                        await (dynamic)controller.Runs__Make(cmd, args);
                         Dispose_table(memoryOwners);
                         await SendResult(id);
                         return;
@@ -390,8 +387,8 @@ namespace Netx.Service
                                 }
                             default:
                                 {
-                                   
-                                    await SendResult(id, ret_value);                                   
+
+                                    await SendResult(id, ret_value);
                                     return;
                                 }
 
@@ -428,8 +425,8 @@ namespace Netx.Service
                             }
                             catch (InvalidOperationException er)
                             {
-                                Log.Warn(er,"{RemoteEndPoint} call async service:{cmd}  not create instance from {FullName}"
-                                    , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                                Log.Warn(er, "{RemoteEndPoint} call async service:{cmd}  not create instance from {FullName}"
+                                    , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                                     , cmd
                                     , instanceType.FullName);
 
@@ -440,7 +437,7 @@ namespace Netx.Service
                         else
                         {
                             Log.WarnFormat("{RemoteEndPoint} call async service:{cmd}  Constructor  not is public"
-                                , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                                , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                                 , cmd);
 
                             await SendError(id, $"call async service:{cmd} Constructor not is public", ErrorType.ConstructorsErr);
@@ -450,7 +447,7 @@ namespace Netx.Service
                     else
                     {
                         Log.WarnFormat("{RemoteEndPoint} call async service:{cmd}  Constructor  not is Generic"
-                            , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                            , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                             , cmd);
                         await SendError(id, $"call async service:{cmd} Constructor not is Generic", ErrorType.ConstructorsErr);
                         return null;
@@ -459,7 +456,7 @@ namespace Netx.Service
                 else
                 {
                     Log.WarnFormat("{RemoteEndPoint} call async service:{cmd} Constructor count error,need use 1 Constructor "
-                        , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                        , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                         , cmd);
                     await SendError(id, $"call async service:{cmd} Constructor count error,need use 1 Constructor", ErrorType.ConstructorsErr);
                     return null;
@@ -470,6 +467,6 @@ namespace Netx.Service
 
         }
 
-     
+
     }
 }

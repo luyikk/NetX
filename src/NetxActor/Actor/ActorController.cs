@@ -10,10 +10,10 @@ namespace Netx.Actor
         public IActorGet? ActorGet { get; internal set; }
         public IActorStatus? Status { get; internal set; }
 
-        protected T? Get<T>() where T:class => ActorGet?.Get<T>();
+        protected T? Get<T>() where T : class => ActorGet?.Get<T>();
 
         public virtual object Runs__Make(int tag, object[] args) => null!;
-       
+
         /// <summary>
         /// 唤醒
         /// </summary>

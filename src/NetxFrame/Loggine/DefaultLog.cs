@@ -1,6 +1,5 @@
-﻿using System;
-using System.Globalization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace Netx.Loggine
 {
@@ -77,7 +76,7 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.Logger?.Log(LogLevel.Trace, exception, content,args);
+            this.Logger?.Log(LogLevel.Trace, exception, content, args);
         }
 
         public void TraceFormat(string format, params object[] args)
@@ -87,10 +86,10 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.Logger?.Log(LogLevel.Trace, format,args);
+            this.Logger?.Log(LogLevel.Trace, format, args);
         }
 
-   
+
 
         public void Debug(string msg)
         {
@@ -132,7 +131,7 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.Logger?.Log(LogLevel.Debug, exception, content,args);
+            this.Logger?.Log(LogLevel.Debug, exception, content, args);
         }
 
         public void DebugFormat(string format, params object[] args)
@@ -145,7 +144,7 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Debug, format, args);
         }
 
-    
+
 
         public void Info(string msg)
         {
@@ -187,7 +186,7 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.Logger?.Log(LogLevel.Information, exception, content,args);
+            this.Logger?.Log(LogLevel.Information, exception, content, args);
         }
 
         public void InfoFormat(string format, params object[] args)
@@ -200,7 +199,7 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Information, format, args);
         }
 
-     
+
 
         public void Warn(string msg)
         {
@@ -351,7 +350,7 @@ namespace Netx.Loggine
                 return;
             }
 
-            this.Logger?.Log(LogLevel.Critical, exception, content,args);
+            this.Logger?.Log(LogLevel.Critical, exception, content, args);
         }
 
         public void CriticalFormat(string format, params object[] args)
@@ -364,7 +363,7 @@ namespace Netx.Loggine
             this.Logger?.Log(LogLevel.Critical, format, args);
         }
 
-     
+
     }
 
 }

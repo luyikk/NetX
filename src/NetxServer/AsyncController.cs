@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Netx.Loggine;
-
-namespace Netx.Service
+﻿namespace Netx.Service
 {
     public abstract class AsyncController
     {
@@ -11,7 +6,7 @@ namespace Netx.Service
 
         protected AsyncToken? Current { get => Async; }
 
-        public T? Get<T>() where T:class => Current?.Get<T>();
+        public T? Get<T>() where T : class => Current?.Get<T>();
         public T? Actor<T>() where T : class => Current?.Actor<T>();
 
         public virtual object Runs__Make(int tag, object[] args) => null!;

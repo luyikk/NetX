@@ -1,14 +1,13 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Netx.Actor;
 using Netx.Interface;
+using System;
+using System.Reflection;
 using ZYSocket.Interface;
 
 namespace Netx.Actor.Builder
 {
-    public interface IActorBuilder:IDisposable
+    public interface IActorBuilder : IDisposable
     {
         IServiceCollection? Container { get; }
         IServiceProvider? Provider { get; }

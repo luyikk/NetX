@@ -1,13 +1,9 @@
-﻿using Fody;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using GenericParameterAttributes = System.Reflection.GenericParameterAttributes;
 
 public partial class ModuleWeaver
 {
@@ -236,7 +232,7 @@ public partial class ModuleWeaver
                 opCodes.Add(il.Create(OpCodes.Ldobj, argType));
             }
 
-            Convert(il, opCodes,argType, target, isAddress);
+            Convert(il, opCodes, argType, target, isAddress);
             return opCodes;
         }
         if (target.IsValueType)
@@ -286,7 +282,7 @@ public partial class ModuleWeaver
         }
         else
         {
-           
+
             if (target.IsGenericParameter)
             {
                 opCodes.Add(il.Create(OpCodes.Unbox_Any, ModuleDefinition.ImportReference(target)));
@@ -431,7 +427,7 @@ public partial class ModuleWeaver
         }
         return false;
     }
-    
+
 
     private void Ldind(ILProcessor il, TypeReference type)
     {

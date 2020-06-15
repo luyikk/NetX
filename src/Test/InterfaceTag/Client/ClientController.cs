@@ -1,12 +1,9 @@
 ﻿using Netx;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Client
 {
-    public class ClientController : IMethodController,IClient,IClientNew
+    public class ClientController : IMethodController, IClient, IClientNew
     {
         public INetxSClientBase Current { get; set; }
 
@@ -26,10 +23,10 @@ namespace Client
 
         public Task<int> AddTow(int a)
         {
-            return Task.FromResult(a+2);
+            return Task.FromResult(a + 2);
         }
 
-      
+
 
 
 

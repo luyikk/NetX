@@ -1,17 +1,12 @@
-﻿using Netx.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Netx
+﻿namespace Netx
 {
     public interface IMethodController
     {
-        INetxSClientBase? Current { get; set; }       
+        INetxSClientBase? Current { get; set; }
     }
 
     public class MethodControllerBase : IMethodController
     {
-        public INetxSClientBase? Current { get; set; }      
+        public INetxSClientBase? Current { get; set; }
     }
 }

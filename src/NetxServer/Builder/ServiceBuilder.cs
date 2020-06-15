@@ -1,20 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ZYSocket.Server.Builder;
-using Netx.Service;
-using ZYSocket.Share;
-using System.Buffers;
-using ZYSocket.Interface;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Collections.Concurrent;
-using System.Reflection;
-using System.Threading.Tasks;
-using Netx.Interface;
+using Microsoft.Extensions.Logging;
 using Netx.Actor;
+using Netx.Interface;
+using System;
+using System.Buffers;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using ZYSocket.Interface;
+using ZYSocket.Server.Builder;
+using ZYSocket.Share;
 
 namespace Netx.Service.Builder
 {
@@ -78,10 +77,10 @@ namespace Netx.Service.Builder
             bool have = false;
             if (instanceType.BaseType == typeof(AsyncController))
             {
-              
+
                 foreach (var item in instanceType.GetInterfaces())
                 {
-                    if(item.GetCustomAttribute<Build>(true) !=null)
+                    if (item.GetCustomAttribute<Build>(true) != null)
                     {
                         foreach (var imethod in item.GetMethods())
                         {
@@ -120,7 +119,7 @@ namespace Netx.Service.Builder
             else if (instanceType.BaseType == typeof(ActorController))
             {
 
-                Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), instanceType)); 
+                Container.Add(ServiceDescriptor.Scoped(typeof(ActorController), instanceType));
 
                 return false;
             }
@@ -205,14 +204,14 @@ namespace Netx.Service.Builder
             SockServConfig!.ConfigServer(config);
             return this;
         }
-        
+
 
         public INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null)
         {
             if (config is null)
             {
                 Container.AddLogging(p =>
-                {                   
+                {
                     p.AddConsole();
                     p.SetMinimumLevel(LogLevel.Trace);
                 });
@@ -223,10 +222,10 @@ namespace Netx.Service.Builder
             }
 
             return this;
-        }             
+        }
 
 
-        public INetxServBuilder ConfigIIds(Func<IServiceProvider,IIds>? func = null)
+        public INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null)
         {
             if (func is null)
                 Container.AddSingleton<IIds, DefaultMakeIds>();
@@ -239,14 +238,14 @@ namespace Netx.Service.Builder
         public INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null)
         {
             if (func is null)
-                Container.AddSingleton(_=> ActorScheduler.LineByLine);
+                Container.AddSingleton(_ => ActorScheduler.LineByLine);
             else
                 Container.AddSingleton(func);
 
             return this;
         }
 
-        public INetxServBuilder ConfigSSL(Action<SslOption>? config=null)
+        public INetxServBuilder ConfigSSL(Action<SslOption>? config = null)
         {
             if (config != null)
                 Container.Configure(config);
@@ -261,7 +260,7 @@ namespace Netx.Service.Builder
             return this;
         }
 
-        public INetxServBuilder ConfigBase(Action<ServiceOption>? config=null)
+        public INetxServBuilder ConfigBase(Action<ServiceOption>? config = null)
         {
             if (config != null)
                 Container.Configure(config);
@@ -271,11 +270,11 @@ namespace Netx.Service.Builder
 
         public INetxServBuilder AddActorEvent<T>() where T : ActorEventBase
         {
-            Container.AddSingleton<ActorEventBase,T>();
+            Container.AddSingleton<ActorEventBase, T>();
             return this;
         }
 
-        public INetxServBuilder AddInitialization<T>() where T:class, Initialization
+        public INetxServBuilder AddInitialization<T>() where T : class, Initialization
         {
             Container.AddScoped<Initialization, T>();
             return this;
@@ -294,7 +293,8 @@ namespace Netx.Service.Builder
                 Container.Replace(ServiceDescriptor.Singleton(AsyncServicesRegisterDict));
                 Provider = Container.BuildServiceProvider();
                 return Provider.GetRequiredService<NetxService>();
-            }else
+            }
+            else
                 return Provider.GetRequiredService<NetxService>();
         }
 
@@ -304,6 +304,6 @@ namespace Netx.Service.Builder
                 disposable.Dispose();
         }
 
-     
+
     }
 }

@@ -1,19 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO.Compression;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.FiberStream;
-using ZYSocket.Server;
 
 namespace Netx.Service
 {
 
- 
+
 
     public abstract class ServiceDecodeSetter : ServiceToken
     {
@@ -32,7 +29,7 @@ namespace Netx.Service
                 is_use_ssl = true;
             }
 
-            var compresstion= container.GetRequiredService<IOptions<CompressOption>>().Value;
+            var compresstion = container.GetRequiredService<IOptions<CompressOption>>().Value;
             decodeType = compresstion.Mode;
         }
 
@@ -55,7 +52,7 @@ namespace Netx.Service
                           var gzip_input = new GZipStream(input, CompressionMode.Decompress, true);
                           var gzip_output = new GZipStream(output, CompressionMode.Compress, true);
                           return new GetFiberRwResult(gzip_input, gzip_output); //return gzip mode
-                    }),
+                      }),
                     CompressType.lz4 => await socketAsync.GetFiberRwSSL<AsyncToken>(Certificate!, (input, output) =>
                     {
                         var lz4_input = K4os.Compression.LZ4.AsyncStreams.LZ4Stream.Decode(input, leaveOpen: true);
@@ -68,8 +65,8 @@ namespace Netx.Service
 
                 if (fiber is null)
                 {
-                    if(msg!=null)
-                        Log.Error(msg);                  
+                    if (msg != null)
+                        Log.Error(msg);
                     return null;
                 }
                 else
@@ -77,7 +74,7 @@ namespace Netx.Service
             }
             else
             {
-              
+
                 return decodeType switch
                 {
                     CompressType.None => await socketAsync.GetFiberRw<AsyncToken>(),
@@ -96,7 +93,7 @@ namespace Netx.Service
                     _ => throw new NotImplementedException()
                 };
             }
-               
+
         }
     }
 }

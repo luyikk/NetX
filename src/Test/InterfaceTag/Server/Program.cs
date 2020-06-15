@@ -7,7 +7,7 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            var service = new Netx.Service.Builder.NetxServBuilder()          
+            var service = new Netx.Service.Builder.NetxServBuilder()
              .ConfigBase(p =>
              {
                  p.VerifyKey = "123123";
@@ -18,7 +18,7 @@ namespace Server
                 {
                     p.MaxConnectCout = 100;
                     p.Port = 3000;
-                    
+
                 })
              .Build();
             service.Start(); //开始服务

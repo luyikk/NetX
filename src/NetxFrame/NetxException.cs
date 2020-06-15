@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Netx
 {
     /// <summary>
     /// 定制异常
     /// </summary>
-    public class NetxException:Exception
+    public class NetxException : Exception
     {
         /// <summary>
         /// 错误信息
@@ -25,21 +23,21 @@ namespace Netx
         public int ErrorId { get; private set; }
 
         public NetxException(string? msg, ErrorType errorType)
-            :base(msg)
+            : base(msg)
         {
             this.ErrorMsg = msg;
             this.ErrorType = errorType;
             this.ErrorId = (int)errorType;
         }
 
-        public NetxException(string? msg,int errorId)
+        public NetxException(string? msg, int errorId)
         {
             this.ErrorMsg = msg;
             ErrorId = errorId;
             ErrorType = ErrorType.Other;
         }
 
-        public override string Message => ErrorType+":"+ErrorMsg;
+        public override string Message => ErrorType + ":" + ErrorMsg;
 
 
 
@@ -48,7 +46,7 @@ namespace Netx
             if (er == null)
                 return "";
 
-            return er.ToString() +"\r\n\r\n"+ GetExceptionToString(er.InnerException);
+            return er.ToString() + "\r\n\r\n" + GetExceptionToString(er.InnerException);
         }
 
     }

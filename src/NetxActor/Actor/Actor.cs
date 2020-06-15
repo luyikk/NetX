@@ -1,15 +1,13 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Netx.Loggine;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
-using Netx.Loggine;
 
 namespace Netx.Actor
 {
@@ -20,7 +18,6 @@ namespace Netx.Actor
         public const int Disposed = 2;
 
         public const int SleepCmd = -99998983;
-
 
         public ActorScheduler ActorScheduler { get; }
 
@@ -53,7 +50,7 @@ namespace Netx.Actor
 
         private long lastRuntime = 0;
 
-       
+
         /// <summary>
         /// 最后运行时间
         /// </summary>
@@ -76,12 +73,12 @@ namespace Netx.Actor
 
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
-        {         
-         
+        {
+
             this.ActorGet = actorGet;
             this.ActorController = instance;
 
-            var options= instance.GetType().GetCustomAttributes<ActorOptionAttribute>(false);
+            var options = instance.GetType().GetCustomAttributes<ActorOptionAttribute>(false);
             Option = new ActorOptionAttribute();
             foreach (var attr in options)
                 if (attr is ActorOptionAttribute option)
@@ -89,11 +86,11 @@ namespace Netx.Actor
 
             this.ActorScheduler = Option.SchedulerType switch
             {
-                SchedulerType.None=> actorScheduler,
-                SchedulerType.LineByLine=>ActorScheduler.LineByLine,
-                SchedulerType.TaskFactory=> ActorScheduler.TaskFactory,
-                SchedulerType.TaskRun=>ActorScheduler.TaskRun,
-                _=> actorScheduler
+                SchedulerType.None => actorScheduler,
+                SchedulerType.LineByLine => ActorScheduler.LineByLine,
+                SchedulerType.TaskFactory => ActorScheduler.TaskFactory,
+                SchedulerType.TaskRun => ActorScheduler.TaskRun,
+                _ => actorScheduler
             };
 
 
@@ -101,11 +98,11 @@ namespace Netx.Actor
             ActorController.ActorGet = ActorGet;
             ActorController.Status = this;
             this.Container = container;
-           
+
             actorRunQueue = new Lazy<ConcurrentQueue<ActorMessage>>();
             Log = new DefaultLog(container.GetRequiredService<ILoggerFactory>().CreateLogger($"Actor-{instance.GetType().Name}"));
             this.CmdDict = LoadRegister(instance.GetType());
-            
+
         }
 
 
@@ -116,7 +113,7 @@ namespace Netx.Actor
             foreach (var ainterface in instanceType.GetInterfaces())
             {
                 if (ainterface.GetCustomAttribute<Build>(true) != null)
-                {                  
+                {
                     foreach (var method in ainterface.GetMethods())
                     {
                         var attrs = method.GetCustomAttributes(true);
@@ -134,7 +131,7 @@ namespace Netx.Actor
                         if (taglist.Count > 0)
                         {
 
-                            if (method.ReturnType == null||TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void))
+                            if (method.ReturnType == null || TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void))
                             {
                                 var type = from xx in method.GetParameters()
                                            select xx.ParameterType;
@@ -144,7 +141,7 @@ namespace Netx.Actor
                                 if (methodx != null)
                                 {
 
-                                    var openattr=  methodx.GetCustomAttribute<OpenAttribute>();
+                                    var openattr = methodx.GetCustomAttribute<OpenAttribute>();
 
                                     if (openattr != null)
                                         openAccess = openattr.Access;
@@ -155,7 +152,7 @@ namespace Netx.Actor
 
                                         if (tag.CmdTag is SleepCmd)
                                         {
-                                            Log.ErrorFormat("Register Actor Service Return Type Err:{Name} CmdTag not use {tag}", method.Name,tag.CmdTag);
+                                            Log.ErrorFormat("Register Actor Service Return Type Err:{Name} CmdTag not use {tag}", method.Name, tag.CmdTag);
                                             continue;
                                         }
                                         if (!registerdict.ContainsKey(tag.CmdTag))
@@ -177,17 +174,11 @@ namespace Netx.Actor
                 }
             }
 
-
-
-
             var methods = instanceType.GetMethods();
             foreach (var method in methods)
                 if (method.IsPublic)
                 {
                     var attrs = method.GetCustomAttributes(true);
-
-
-
                     List<TAG> taglist = new List<TAG>();
                     OpenAccess openAccess = OpenAccess.Public;
                     foreach (var attr in attrs)
@@ -201,7 +192,7 @@ namespace Netx.Actor
                     if (taglist.Count > 0)
                     {
 
-                        if (method.ReturnType == null|| TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void) )
+                        if (method.ReturnType == null || TypeHelper.IsTypeOfBaseTypeIs(method.ReturnType, typeof(Task)) || method.ReturnType == typeof(void))
                         {
                             foreach (var tag in taglist)
                             {
@@ -242,7 +233,7 @@ namespace Netx.Actor
 
             try
             {
-                 Runing().Wait();
+                Runing().Wait();
             }
             catch (Exception er)
             {
@@ -260,7 +251,7 @@ namespace Netx.Actor
                 if (ActorRunQueue.Count > maxQueuelen)
                     throw new NetxException($"this actor queue count >{maxQueuelen}", ErrorType.ActorQueueMaxErr);
 
-            var sa = new ActorMessage<object>(id, cmd, access, args);            
+            var sa = new ActorMessage<object>(id, cmd, access, args);
             ActorRunQueue.Enqueue(sa);
             Runing().Wait();
             await sa.Awaiter;
@@ -284,7 +275,7 @@ namespace Netx.Actor
         }
 
 
-        private Task  Runing()
+        private Task Runing()
         {
             if (Interlocked.Exchange(ref status, Open) == Idle)
             {
@@ -317,14 +308,14 @@ namespace Netx.Actor
                                 msg.SetException(er);
                             }
                         }
-                    }                  
+                    }
                     finally
                     {
                         Interlocked.CompareExchange(ref status, Idle, Open);
                     }
                 };
 
-               return ActorScheduler.Scheduler(RunNext);
+                return ActorScheduler.Scheduler(RunNext);
             }
 
             return Task.CompletedTask;
@@ -357,7 +348,7 @@ namespace Netx.Actor
             {
                 var service = CmdDict[cmd];
 
-                if (result.Access>= service.Access)
+                if (result.Access >= service.Access)
                 {
 
                     if (service.ArgsLen == args.Length)
@@ -393,13 +384,13 @@ namespace Netx.Actor
                 }
                 else
                 {
-                    throw new NetxException($"actor cmd:{cmd} permission denied", ErrorType.PermissionDenied);                   
+                    throw new NetxException($"actor cmd:{cmd} permission denied", ErrorType.PermissionDenied);
                 }
             }
             else
             {
-                return GetErrorResult($"not found actor cmd:{cmd}", result.Id);              
-            }           
+                return GetErrorResult($"not found actor cmd:{cmd}", result.Id);
+            }
         }
 
         public object GetErrorResult(string msg, long id)
@@ -421,10 +412,10 @@ namespace Netx.Actor
             {
                 CmdDict.Clear();
 
-                while (ActorRunQueue.Count>0)                
-                    ActorRunQueue.TryDequeue(out _);                
-            }           
+                while (ActorRunQueue.Count > 0)
+                    ActorRunQueue.TryDequeue(out _);
+            }
         }
-       
+
     }
 }

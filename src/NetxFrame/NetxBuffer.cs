@@ -23,7 +23,7 @@ namespace Netx
         /// </summary>
         public bool IsConnect { get => isConnect; protected set => isConnect = value; }
 
-        public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }        
+        public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }
 
         /// <summary>
         /// 异步请求发送,将异步返回结果

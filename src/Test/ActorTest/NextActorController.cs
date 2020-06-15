@@ -10,7 +10,7 @@ namespace ActorTest
     /// <summary>
     /// 整个Actor 容器为全局唯一
     /// </summary>
-    [ActorOption(maxQueueCount:1000, ideltime: 3000)] //设置最大列队数1000, 设置多久没有订单后进入休眠状态
+    [ActorOption(maxQueueCount: 1000, ideltime: 3000)] //设置最大列队数1000, 设置多久没有订单后进入休眠状态
     public class NextActorController : ActorController
     {
         public ILog Log { get; }
@@ -37,7 +37,7 @@ namespace ActorTest
 
         [TAG(3001)]
         public Task<int> GetX()
-        {          
+        {
             return Task.FromResult(x);
         }
 
@@ -52,23 +52,23 @@ namespace ActorTest
 
 
         [TAG(10001)]
-        public  Task<User> GetUser(int Id)
+        public Task<User> GetUser(int Id)
         {
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-               return  obj.SqlExcuteSelectFirstAsync<User>("SELECT * FROM Users WHERE Id=@Id", new System.Data.SQLite.SQLiteParameter("@Id", Id));              
+                return obj.SqlExcuteSelectFirstAsync<User>("SELECT * FROM Users WHERE Id=@Id", new System.Data.SQLite.SQLiteParameter("@Id", Id));
             }
         }
 
         [TAG(10002)]
-        public async Task<bool> AddUserCoin(int Id,int coin)
+        public async Task<bool> AddUserCoin(int Id, int coin)
         {
             var user = await GetUser(Id);
             user.Coin += coin;
 
             using (ZYSQL.SQLiteExecuteXY obj = new SQLiteExecuteXY())
             {
-                if (await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync("UPDATE Users Set Coin=@Coin WHERE Id=@Id",user)==1)
+                if (await obj.SqlExcuteUpdateOrInsertOrDeleteObjectAsync("UPDATE Users Set Coin=@Coin WHERE Id=@Id", user) == 1)
                     return true;
 
                 return false;
@@ -115,7 +115,7 @@ namespace ActorTest
         {
             Log.Info("Wait 5s Next...");
             await Task.Delay(500);
-            
+
         }
 
         [TAG(10006)]

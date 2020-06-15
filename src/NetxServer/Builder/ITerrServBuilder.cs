@@ -1,11 +1,11 @@
-﻿using System;
-using System.Buffers;
-using System.Reflection;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Netx.Actor;
 using Netx.Interface;
+using System;
+using System.Buffers;
+using System.Reflection;
+using System.Text;
 using ZYSocket.Interface;
 using ZYSocket.Server.Builder;
 using ZYSocket.Share;
@@ -26,7 +26,7 @@ namespace Netx.Service.Builder
         INetxServBuilder ConfigObjFormat(Func<ISerialization>? func = null);
         INetxServBuilder ConfigNetWork(Action<SocketServerOptions>? config = null);
         INetxServBuilder ConfigureActorScheduler(Func<IServiceProvider, ActorScheduler>? func = null);
-        INetxServBuilder ConfigureDefaults();     
+        INetxServBuilder ConfigureDefaults();
         INetxServBuilder ConfigureLogSet(Action<ILoggingBuilder>? config = null);
         INetxServBuilder ConfigIIds(Func<IServiceProvider, IIds>? func = null);
         INetxServBuilder ConfigSSL(Action<SslOption>? config = null);

@@ -2,10 +2,7 @@
 using AkkaNetTpsTest;
 using EventNext;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Netx;
 using Netx.Actor;
-using Netx.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -58,7 +55,7 @@ namespace EventNext_AkkaNet
                 await AkkaTest(c);
                 await NetxTest(c);
                 await EventNextTest(c);
-               
+
             }
         }
 
@@ -72,7 +69,7 @@ namespace EventNext_AkkaNet
             var server1 = NetXActor1.Get<INetxServer>();
             var server2 = NetXActor2.Get<INetxServer>();
 
-            long start = EventCenter.Watch.ElapsedMilliseconds;         
+            long start = EventCenter.Watch.ElapsedMilliseconds;
 
             List<Task> tasks = new List<Task>();
             for (int k = 0; k < concurrent; k++)
@@ -92,7 +89,7 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                         //await NetXActor1.CallFunc<int>(i, 2, OpenAccess.Internal, i);
+                        //await NetXActor1.CallFunc<int>(i, 2, OpenAccess.Internal, i);
                         await server1.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }
@@ -115,7 +112,7 @@ namespace EventNext_AkkaNet
                 {
                     for (int i = 0; i < mFors; i++)
                     {
-                         //await NetXActor2.CallFunc<int>(i, 2, OpenAccess.Internal, i);
+                        //await NetXActor2.CallFunc<int>(i, 2, OpenAccess.Internal, i);
                         await server2.Payout(i);
                         System.Threading.Interlocked.Increment(ref mCount);
                     }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 using System.Threading.Tasks.Sources.Copy;
@@ -9,16 +7,16 @@ namespace Netx.Actor
 {
     public interface IActorMessage
     {
-         long Id { get; }
+        long Id { get; }
 
-         int Cmd { get; }       
+        int Cmd { get; }
 
-         object[] Args { get; }
+        object[] Args { get; }
 
-         long PushTime { get; set; }
-    
-         long CompleteTime { get; set; }
-     
+        long PushTime { get; set; }
+
+        long CompleteTime { get; set; }
+
     }
 
 
@@ -44,7 +42,7 @@ namespace Netx.Actor
             PushTime = TimeHelper.GetTime();
             CompleteTime = 0;
             this.Access = access;
-           
+
         }
 
         public abstract void Completed(object? result);
@@ -52,17 +50,17 @@ namespace Netx.Actor
     }
 
 
-    public class ActorMessage<T>: ActorMessage
+    public class ActorMessage<T> : ActorMessage
     {
-      
+
         internal ManualResetValueTaskSource<T> TaskSource { get; }
 
         internal ValueTask<T> Awaiter { get; }
 
         public ActorMessage(long id, int cmd, OpenAccess access, object[] args)
-            :base(id,cmd,access,args)
-        {                   
-           
+            : base(id, cmd, access, args)
+        {
+
             TaskSource = new ManualResetValueTaskSource<T>();
             Awaiter = new ValueTask<T>(TaskSource, TaskSource.Version);
         }

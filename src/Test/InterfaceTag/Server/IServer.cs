@@ -1,5 +1,4 @@
 ﻿using Netx;
-using System;
 using System.Threading.Tasks;
 
 namespace Interfaces
@@ -12,7 +11,7 @@ namespace Interfaces
     }
 
     [Build]
-    public interface IServer: IServerOld
+    public interface IServer : IServerOld
     {
         [TAG(1000)]
         Task<int> Add(int a, int b);

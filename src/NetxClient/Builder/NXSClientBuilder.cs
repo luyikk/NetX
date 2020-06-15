@@ -23,17 +23,17 @@ namespace Netx.Client
         {
             Container = new ServiceCollection();
             Container.AddOptions();
-            Container.AddTransient<SocketClient, SocketClient>(p=>
+            Container.AddTransient<SocketClient, SocketClient>(p =>
             {
-               var config = p.GetRequiredService<IOptions<ConnectOption>>().Value;
+                var config = p.GetRequiredService<IOptions<ConnectOption>>().Value;
 
                 return new SocketClient(buffer_size: config.BufferSize,
                     maxPackerSize: config.MaxPackerSize,
-                    memPool: p.GetRequiredService<MemoryPool<byte>>(), 
-                    sync_send:p.GetRequiredService<ISend>(),
-                    async_send: p.GetRequiredService<IAsyncSend>(), 
-                    obj_Format: p.GetRequiredService<ISerialization>(), 
-                    encode:p.GetRequiredService<Encoding>());
+                    memPool: p.GetRequiredService<MemoryPool<byte>>(),
+                    sync_send: p.GetRequiredService<ISend>(),
+                    async_send: p.GetRequiredService<IAsyncSend>(),
+                    obj_Format: p.GetRequiredService<ISerialization>(),
+                    encode: p.GetRequiredService<Encoding>());
             });
             ConfigureDefaults();
         }
@@ -50,7 +50,7 @@ namespace Netx.Client
             ConfigIIds();
         }
 
-        public INetxSClientBuilder ConfigConnection(Action<ConnectOption>? config=null)
+        public INetxSClientBuilder ConfigConnection(Action<ConnectOption>? config = null)
         {
             if (config != null)
                 Container.Configure(config);
@@ -116,7 +116,7 @@ namespace Netx.Client
             return this;
         }
 
-        public INetxSClientBuilder ConfigSessionStore(Func<ISessionStore>? func=null)
+        public INetxSClientBuilder ConfigSessionStore(Func<ISessionStore>? func = null)
         {
 
             Container.AddTransient(p =>

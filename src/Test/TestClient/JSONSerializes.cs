@@ -1,7 +1,5 @@
 ﻿using SpanJson;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ZYSocket.Interface;
 
 namespace NetxSerializes
@@ -20,7 +18,7 @@ namespace NetxSerializes
 
         public byte[] Serialize(object obj)
         {
-            var data= JsonSerializer.NonGeneric.Utf8.Serialize(obj);
+            var data = JsonSerializer.NonGeneric.Utf8.Serialize(obj);
             return data;
         }
     }

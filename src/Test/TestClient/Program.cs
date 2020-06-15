@@ -16,10 +16,10 @@ namespace TestClient
                    p.Port = 50054;
                    p.RequestTimeOut = 0;
                })
-               .ConfigObjFormat(()=>new NetxSerializes.JSONSerializes())
+               .ConfigObjFormat(() => new NetxSerializes.JSONSerializes())
                .Build();
 
-            var a=await client.Get<ITestServer>().SayHello(new HelloRequest { Name = "123123" });
+            var a = await client.Get<ITestServer>().SayHello(new HelloRequest { Name = "123123" });
 
             Console.WriteLine(a.Message);
             Console.ReadLine();

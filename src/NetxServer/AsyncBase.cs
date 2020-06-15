@@ -3,10 +3,6 @@ using Microsoft.Extensions.Logging;
 using Netx.Interface;
 using Netx.Loggine;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using ZYSocket;
 using ZYSocket.FiberStream;
 
 namespace Netx.Service
@@ -17,12 +13,12 @@ namespace Netx.Service
 
         public IFiberRw<AsyncToken>? FiberRw { get; protected set; }
 
-        public long SessionId { get; }      
+        public long SessionId { get; }
 
-    
+
 
         public AsyncBase(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, long sessionId)
-            :base(new DefaultLog(container.GetRequiredService<ILogger<AsyncToken>>())
+            : base(new DefaultLog(container.GetRequiredService<ILogger<AsyncToken>>())
                  , container.GetRequiredService<IIds>())
         {
             Container = container;
@@ -34,7 +30,7 @@ namespace Netx.Service
 
 
 
-    
+
 
     }
 }

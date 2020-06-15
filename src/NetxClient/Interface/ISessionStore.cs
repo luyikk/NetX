@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Netx.Interface
+﻿namespace Netx.Interface
 {
     public interface ISessionStore
     {
         long GetSessionId();
 
-        void SaveSessionId(long sessionid); 
+        void SaveSessionId(long sessionid);
     }
 }
 

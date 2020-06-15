@@ -1,7 +1,4 @@
 ﻿using Netx;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Interfaces
@@ -10,7 +7,7 @@ namespace Interfaces
     public interface IActorsSub
     {
         [TAG(10010)]
-        Task<int> Sub(int a,int b);
+        Task<int> Sub(int a, int b);
     }
 
     [Build]

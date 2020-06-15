@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Netx.Actor;
 using Netx.Loggine;
 using System;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace Netx.Service
         /// </summary>
         protected ServiceOption ServiceOption { get; }
 
-        public string OpenKey { get => ServiceOption.VerifyKey??""; }
+        public string OpenKey { get => ServiceOption.VerifyKey ?? ""; }
 
 
         public ServiceBase(IServiceProvider container)
@@ -38,7 +37,7 @@ namespace Netx.Service
             LoggerFactory = container.GetRequiredService<ILoggerFactory>();
             Log = new DefaultLog(LoggerFactory.CreateLogger("NetxService"));
             SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
-            Container = container;            
+            Container = container;
 
             ServiceOption = container.GetRequiredService<IOptions<ServiceOption>>().Value;
         }

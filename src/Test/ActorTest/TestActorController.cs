@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ActorTest
 {
     [ActorOption(maxQueueCount: 1000, ideltime: 3000)]
-    public class TestActorController:ActorController
+    public class TestActorController : ActorController
     {
         public ILog Log { get; }
 
@@ -17,7 +17,7 @@ namespace ActorTest
         }
 
         public long xa { get; private set; }
-               
+
 
         [TAG(2000)]
         public Task<int> Add(int a, int b)
@@ -29,7 +29,7 @@ namespace ActorTest
 
         [TAG(2001)]
         public Task<long> GetV()
-        {           
+        {
             return Task.FromResult(xa);
         }
 
@@ -37,7 +37,7 @@ namespace ActorTest
         [TAG(2010)]
         public async Task<int> Add2(int a, int b)
         {
-            var x= await Get<ICallServer>().AddX();         
+            var x = await Get<ICallServer>().AddX();
 
             xa = a + b - x;
             return a + b;
@@ -49,6 +49,6 @@ namespace ActorTest
             await Task.Delay(100);
             return a;
         }
-       
+
     }
 }

@@ -1,15 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Netx.Loggine;
 using System;
 using System.Collections.Concurrent;
-using Netx.Loggine;
 using ZYSocket.FiberStream;
 
 namespace Netx.Service
 {
     public class ServiceTokenFactory
     {
-              /// <summary>
+        /// <summary>
         /// 日记输出
         /// </summary>
         protected ILog Log { get; private set; }
@@ -23,14 +23,14 @@ namespace Netx.Service
         internal ServiceTokenFactory(IServiceProvider container)
         {
             Container = container;
-            Rand = new Random();         
-            Log = new DefaultLog(container.GetRequiredService<ILogger< ServiceTokenFactory>>());
+            Rand = new Random();
+            Log = new DefaultLog(container.GetRequiredService<ILogger<ServiceTokenFactory>>());
         }
 
         internal AsyncToken CreateAsynToken(IFiberRw<AsyncToken> fiberRw, ConcurrentDictionary<int, MethodRegister> asyncServicesRegisterDict)
         {
             var sessionId = MakeSessionId();
-            var token = new AsyncToken(Container, fiberRw, asyncServicesRegisterDict,sessionId);
+            var token = new AsyncToken(Container, fiberRw, asyncServicesRegisterDict, sessionId);
             Log.TraceFormat("make token sessionId:{0}", sessionId);
             return token;
         }

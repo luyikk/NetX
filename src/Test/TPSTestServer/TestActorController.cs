@@ -2,15 +2,12 @@
 using Netx;
 using Netx.Actor;
 using Netx.Loggine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TPSTestServer
 {
-   
-    public  class TestActorController:ActorController
+
+    public class TestActorController : ActorController
     {
         public ILog Log { get; }
 

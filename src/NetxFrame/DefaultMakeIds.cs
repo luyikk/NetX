@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Netx.Interface;
+using System;
 using System.Threading;
-using Netx.Interface;
 
 namespace Netx
 {
@@ -23,9 +21,9 @@ namespace Netx
 
         public DefaultMakeIds()
         {
-            string tick= (DateTime.Now.Ticks / 1000000).ToString();
-            Id =long.Parse(new Random().Next(-9000000, 9000000) + tick);         
-        }       
+            string tick = (DateTime.Now.Ticks / 1000000).ToString();
+            Id = long.Parse(new Random().Next(-9000000, 9000000) + tick);
+        }
 
 
     }

@@ -1,11 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Netx.Actor;
 using Netx.Interface;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using ZYSocket.Interface;
 
 namespace Netx.Actor.Builder
@@ -23,7 +20,7 @@ namespace Netx.Actor.Builder
                 Container = serviceDescriptors;
 
             Container.AddScoped<IActorRun, ActorRun>();
-            Container.AddOptions();           
+            Container.AddOptions();
             ConfigDefualt();
 
         }
@@ -182,7 +179,7 @@ namespace Netx.Actor.Builder
             lock (this)
             {
                 if (Provider is null)
-                {                   
+                {
                     Provider = Container.BuildServiceProvider();
                 }
             }
@@ -195,7 +192,7 @@ namespace Netx.Actor.Builder
         public void Dispose()
         {
             if (Provider is IDisposable iprovider)
-                iprovider.Dispose();           
+                iprovider.Dispose();
         }
     }
 }

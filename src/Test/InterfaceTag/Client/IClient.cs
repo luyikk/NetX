@@ -1,7 +1,4 @@
 ﻿using Netx;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Client
@@ -23,7 +20,7 @@ namespace Client
 
 
     [Build]
-    public interface IClient:IClientOld
+    public interface IClient : IClientOld
     {
         [TAG(1001)]
         Task<int> Add(int a, int b);

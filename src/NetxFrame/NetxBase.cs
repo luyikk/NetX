@@ -20,7 +20,7 @@ namespace Netx
         /// </summary>
         public ILog Log { get; protected set; }
 
-        public NetxBase(ILog log,IIds idsManager)
+        public NetxBase(ILog log, IIds idsManager)
         {
             Log = log;
             IdsManager = idsManager;
@@ -132,7 +132,7 @@ namespace Netx
             ManualResetValueTaskSource<Result> asyncResult = new ManualResetValueTaskSource<Result>();
             if (!AsyncResultDict.TryAdd(ids, asyncResult))
             {
-                Log.InfoFormat("add async back have id:{ids}",ids);
+                Log.InfoFormat("add async back have id:{ids}", ids);
                 AsyncResultDict[ids] = asyncResult;
             }
 
