@@ -76,16 +76,13 @@ namespace Netx.Actor
 
 
         public Actor(IServiceProvider container, IActorGet actorGet, ActorScheduler actorScheduler, ActorController instance)
-        {
-         
+        {         
          
             this.ActorGet = actorGet;
             this.ActorController = instance;
 
             var options= instance.GetType().GetCustomAttributes<ActorOptionAttribute>(false);
-
             Option = new ActorOptionAttribute();
-
             foreach (var attr in options)
                 if (attr is ActorOptionAttribute option)
                     Option = option;
@@ -101,7 +98,6 @@ namespace Netx.Actor
 
 
             maxQueuelen = Option.MaxQueueCount;
-
             ActorController.ActorGet = ActorGet;
             ActorController.Status = this;
             this.Container = container;
@@ -117,7 +113,6 @@ namespace Netx.Actor
         {
             Dictionary<int, ActorMethodRegister> registerdict = new Dictionary<int, ActorMethodRegister>();
 
-
             foreach (var ainterface in instanceType.GetInterfaces())
             {
                 if (ainterface.GetCustomAttribute<Build>(true) != null)
@@ -125,8 +120,6 @@ namespace Netx.Actor
                     foreach (var method in ainterface.GetMethods())
                     {
                         var attrs = method.GetCustomAttributes(true);
-
-
 
                         List<TAG> taglist = new List<TAG>();
                         OpenAccess openAccess = OpenAccess.Public;
@@ -160,6 +153,11 @@ namespace Netx.Actor
                                     {
                                         var sr = new ActorMethodRegister(instanceType, methodx, openAccess);
 
+                                        if (tag.CmdTag is SleepCmd)
+                                        {
+                                            Log.ErrorFormat("Register Actor Service Return Type Err:{Name} CmdTag not use {tag}", method.Name,tag.CmdTag);
+                                            continue;
+                                        }
                                         if (!registerdict.ContainsKey(tag.CmdTag))
                                             registerdict.Add(tag.CmdTag, sr);
                                         else
@@ -241,7 +239,6 @@ namespace Netx.Actor
 
             var sa = new ActorMessage<object>(id, cmd, access, args);
             ActorRunQueue.Enqueue(sa);
-
 
             try
             {
