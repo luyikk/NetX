@@ -1,16 +1,13 @@
 ﻿using Netx;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestNetxServer
 {
     public enum ActorCmdTag
     {
-        Add=2000,
-        ShowMsg=3000,
-        GetData=4000      
+        Add = 2000,
+        ShowMsg = 3000,
+        GetData = 4000
     }
 
     [Build]

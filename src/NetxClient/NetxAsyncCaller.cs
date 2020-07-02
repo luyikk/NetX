@@ -9,7 +9,7 @@ namespace Netx.Client
     {
         private readonly Lazy<Dictionary<int, InstanceRegister>> methodInstanceDict;
 
-        public Dictionary<int, InstanceRegister> MethodInstanceDict { get => methodInstanceDict.Value; }
+        public Dictionary<int, InstanceRegister> MethodInstanceDict => methodInstanceDict.Value;
 
         public NetxAsyncRegisterInstance(IServiceProvider container)
         : base(container)

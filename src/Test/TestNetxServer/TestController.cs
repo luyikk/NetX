@@ -4,7 +4,6 @@ using Netx.Loggine;
 using Netx.Service;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestNetxServer
@@ -27,7 +26,7 @@ namespace TestNetxServer
         /// <param name="b"></param>
         /// <returns></returns>
         [TAG(1000)]
-        public  Task<int> Add(int a,int b)
+        public Task<int> Add(int a, int b)
         {
             return Task.FromResult(a + b);
         }
@@ -39,7 +38,7 @@ namespace TestNetxServer
         /// <param name="b"></param>
         /// <returns></returns>
         [TAG(1001)]
-        public Task<int> Add2(int a,int b)
+        public Task<int> Add2(int a, int b)
         {
             //测试 去调用ACTOR 的ADD 
             return Actor<IActorService>().Add(a, b);
@@ -54,9 +53,9 @@ namespace TestNetxServer
 
 
         [TAG(1004)]
-        public Task<int> ToClientAdd(int a,int b)
+        public Task<int> ToClientAdd(int a, int b)
         {
-            return Get<IClientCalling>().Add(a,b);
+            return Get<IClientCalling>().Add(a, b);
         }
 
         /// <summary>
@@ -84,11 +83,11 @@ namespace TestNetxServer
         [TAG(1008)]
         public async Task<string> TestPermission()
         {
-            return await  Actor<IActorService>().GetData();
+            return await Actor<IActorService>().GetData();
         }
 
         [TAG(1009)]
-        public async Task<List<string>> Testnull(Guid guid,string a,int b)
+        public async Task<List<string>> Testnull(Guid guid, string a, int b)
         {
             Log.Info(guid);
             await Task.Delay(100);
@@ -100,13 +99,15 @@ namespace TestNetxServer
         {
             Log.Info("the token finsh,disconnect it");
             this.Current.DisconnectIt();
-          
+
         }
 
 
         [TAG(1011)]
         public Task<List<Guid>> TestMaxBuffer(List<Guid> data)
-            => Task.FromResult(data);
+        {
+            return Task.FromResult(data);
+        }
 
         [TAG(5000)]
         public void TestErr()

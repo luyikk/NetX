@@ -1,20 +1,19 @@
 ﻿using Netx;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestNetxClient
 {
-  
+
     public enum CmdTagDef
     {
-        AddActor=2000,
-        Add=1000,
-        RotueToActorAdd=1001,
-        ClientAddOne=1003,
-        ClientAdd=1004,
-        Msg=3000,
+        AddActor = 2000,
+        Add = 1000,
+        RotueToActorAdd = 1001,
+        ClientAddOne = 1003,
+        ClientAdd = 1004,
+        Msg = 3000,
         TestErr = 5000
     }
 

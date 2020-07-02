@@ -1,28 +1,23 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Netx;
 using Netx.Actor;
 using Netx.Actor.Builder;
-using Netx.Interface;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using ZYSocket.Interface;
-using ZYSQL;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ActorTest
 {
     class Program
     {
-       static  IServiceCollection Container = new ServiceCollection();
+        static IServiceCollection Container = new ServiceCollection();
         static async Task Main(string[] args)
         {
 
             var Actor = new ActorBuilder()
                  .UseActorLambda()
                  //.ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)
-                 .RegisterService<TestActorController>()                 
+                 .RegisterService<TestActorController>()
                  .RegisterService<NextActorController>().Build();
 
 
@@ -305,6 +300,6 @@ namespace ActorTest
 
         }
 
-       
+
     }
 }

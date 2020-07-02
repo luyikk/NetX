@@ -10,7 +10,7 @@ namespace TestNetxClient
     {
         static async Task Main(string[] args)
         {
-          
+
             var client = new NetxSClientBuilder()
              .ConfigConnection(p => //配置服务器IP
              {
@@ -19,7 +19,7 @@ namespace TestNetxClient
                  p.VerifyKey = "123123";
                  p.MaxPackerSize = 256 * 1024;
              })
-             //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
+            //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
             // .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
             .ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
              .Build();
@@ -32,13 +32,13 @@ namespace TestNetxClient
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
 
-            var data=new List<Guid>();
+            var data = new List<Guid>();
             for (int i = 0; i < 10000; i++)
                 data.Add(Guid.NewGuid());
 
             var redata = await server.TestMaxBuffer(data);
 
-            var pcs = await server.Testnull(Guid.NewGuid(),"XCM",123);
+            var pcs = await server.Testnull(Guid.NewGuid(), "XCM", 123);
 
             var cvs = await server.TestPermission();
 
@@ -101,7 +101,7 @@ namespace TestNetxClient
             {
                 client.Log.Error(er.Message);
             }
-         
+
             server.TestErr();
 
             server.TestAsyncErr();

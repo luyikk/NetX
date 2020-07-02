@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Internal;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Internal;
 
 namespace Netx
 {
@@ -20,13 +19,13 @@ namespace Netx
 
         public ReturnTypeMode ReturnMode { get; }
 
-        public int ArgsLen { get => ArgsType.Length; }
+        public int ArgsLen => ArgsType.Length;
 
 
         public MethodRegister(Type instenceType, MethodInfo method)
         {
             this.InstanceType = instenceType;
-            this.Method = ObjectMethodExecutor.Create(method,instenceType.GetTypeInfo());
+            this.Method = ObjectMethodExecutor.Create(method, instenceType.GetTypeInfo());
 
             ArgsType = (from p in method.GetParameters()
                         select p.ParameterType).ToArray();

@@ -1,7 +1,7 @@
 ﻿using Interfaces;
 using Netx.Client;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace Client
 {
@@ -23,7 +23,7 @@ namespace Client
 
             var server = client.Get<IServer>();
 
-            var r=await  server.Add(1, 2);
+            var r = await server.Add(1, 2);
             r = await server.AddOne(r);
             Console.WriteLine(r);
 
@@ -67,9 +67,10 @@ namespace Client
 
             try
             {
-                await client.Get<IActorsSub>().Sub(5,4);
+                await client.Get<IActorsSub>().Sub(5, 4);
 
-            }catch(Netx.NetxException er)
+            }
+            catch (Netx.NetxException er)
             {
                 Console.WriteLine(er.Message);
             }

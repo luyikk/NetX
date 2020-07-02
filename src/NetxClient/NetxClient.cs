@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Netx.Interface;
-using Netx.Loggine;
 using System;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.Client;
-using ZYSocket.FiberStream;
-using ZYSocket.FiberStream.Synchronization;
 
 namespace Netx.Client
 {
@@ -15,7 +11,7 @@ namespace Netx.Client
     /// </summary>
     public class NetxSClient : NetxDecodeSetter, INetxSClient
     {
-        private bool Disposed=false;
+        private bool Disposed = false;
 
         public SocketClient SocketClient { get; private set; }
 
@@ -26,7 +22,7 @@ namespace Netx.Client
         {
             SocketClient = Container.GetRequiredService<SocketClient>();
             SocketClient.BinaryInput += SocketClient_BinaryInput;
-            SocketClient.Disconnect += SocketClient_Disconnect;           
+            SocketClient.Disconnect += SocketClient_Disconnect;
         }
 
         private void Init()
@@ -101,7 +97,7 @@ namespace Netx.Client
 
             try
             {
-             
+
                 if (fiberRw == null)
                 {
                     client.SetConnected(false, "ssl error");

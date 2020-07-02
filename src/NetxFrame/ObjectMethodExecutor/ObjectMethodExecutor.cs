@@ -186,7 +186,7 @@ namespace Microsoft.Extensions.Internal
             }
             else
             {
-          
+
                 var methodCall = Expression.Call(null, methodInfo, parameters);
 
                 // methodCall is "((Ttarget) target) method((T0) parameters[0], (T1) parameters[1], ...)"

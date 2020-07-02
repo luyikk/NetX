@@ -1,7 +1,4 @@
 ﻿using Akka.Actor;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EventNext_AkkaNet
 {
@@ -41,12 +38,12 @@ namespace EventNext_AkkaNet
     public class Income
     {
 
-        public Decimal Memory { get; set; }
+        public decimal Memory { get; set; }
     }
 
     public class Payout
     {
 
-        public Decimal Memory { get; set; }
+        public decimal Memory { get; set; }
     }
 }

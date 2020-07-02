@@ -1,12 +1,9 @@
-﻿using Netx.Actor;
-using Netx.Loggine;
-using Netx.Service;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Netx;
+using Netx.Actor;
+using Netx.Loggine;
+using System;
 
 namespace TestNetxServer
 {
@@ -44,7 +41,7 @@ namespace TestNetxServer
 
         public override void ActorEventCompleted(object actorController, IActorMessage actorMessage)
         {
-            switch(actorController)
+            switch (actorController)
             {
                 case TestActorController testActorController:
                     {
@@ -52,7 +49,7 @@ namespace TestNetxServer
                     }
                     break;
             }
-           
+
         }
     }
 }

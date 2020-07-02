@@ -20,7 +20,7 @@ namespace Netx
         /// <returns></returns>
         public static byte[] PackSingleObject(object obj)
         {
-           
+
             switch (obj)
             {
                 case string arg:
@@ -32,7 +32,7 @@ namespace Netx
                 case bool arg:
                     return BitConverter.GetBytes(arg);
                 case byte arg:
-                    return new byte[] { arg };              
+                    return new byte[] { arg };
                 case short arg:
                     return BitConverter.GetBytes(arg);
                 case ushort arg:
@@ -59,7 +59,7 @@ namespace Netx
                         List<byte[]> arlist = new List<byte[]>(array.Length);
                         for (int i = 0; i < array.Length; i++)
                             arlist.Add(PackSingleObject(array.GetValue(i)));
-                
+
 
                         return Serialization.Serialize(arlist);
                     }

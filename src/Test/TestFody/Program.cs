@@ -7,7 +7,7 @@ namespace TestFody
     {
         static void Main(string[] args)
         {
-            string assemblyPath =Environment.CurrentDirectory+ "\\NetxActor.dll";
+            string assemblyPath = Environment.CurrentDirectory + "\\NetxActor.dll";
             new ModuleWeaver().ExecuteTestRun(assemblyPath, false);
         }
     }

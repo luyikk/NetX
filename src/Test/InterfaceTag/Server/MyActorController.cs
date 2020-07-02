@@ -1,15 +1,13 @@
-﻿using Netx.Actor;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Interfaces;
-using System.Threading.Tasks;
+﻿using Interfaces;
 using Netx;
+using Netx.Actor;
+using System;
+using System.Threading.Tasks;
 
 namespace Server
 {
-    [ActorOption(1000,10000)]
-    public class MyActorController : ActorController, IActors, IActorsNew,IActorsSub
+    [ActorOption(1000, 10000)]
+    public class MyActorController : ActorController, IActors, IActorsNew, IActorsSub
     {
         public Task<int> Add(int a, int b)
         {
@@ -21,11 +19,11 @@ namespace Server
             return Task.FromResult(++a);
         }
 
-       
+
         public Task<int> AddTow(int a)
         {
             return Task.FromResult(a + 2);
-        }     
+        }
 
         public void Run(string msg)
         {
@@ -44,6 +42,6 @@ namespace Server
             return Task.FromResult(a - b);
         }
 
-      
+
     }
 }

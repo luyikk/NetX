@@ -22,11 +22,11 @@ namespace Netx
         void RemoveInstance(object instacne);
     }
 
-    public interface INetxSClient: INetxSClientBase,IDisposable
+    public interface INetxSClient : INetxSClientBase, IDisposable
     {
         public event DisconnectHandler? Disconnect;
         void Open();
         Task<ConnectResult> OpenAsync();
-        void Close(); 
+        void Close();
     }
 }

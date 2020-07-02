@@ -1,15 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using Netx;
+﻿using Netx;
 using Netx.Loggine;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestNetxClient
 {
-    
-    public class ClientTestController:MethodControllerBase  //or IMethodController
+
+    public class ClientTestController : MethodControllerBase  //or IMethodController
     {
         //public INetxSClient current { get; set; }
 
@@ -17,19 +14,19 @@ namespace TestNetxClient
 
 
         [TAG(2000)]
-        public  Task<int> AddOne(int a)
+        public Task<int> AddOne(int a)
         {
             throw new Exception("Exception test");
             return Task.FromResult(++a);
         }
 
         [TAG(2001)]
-        public Task<int> Add(int a,int b)
+        public Task<int> Add(int a, int b)
         {
-            ILog log =new DefaultLog(Current.GetLogger<ClientTestController>());
-            
+            ILog log = new DefaultLog(Current.GetLogger<ClientTestController>());
+
             log.Info($"server request {a}+{b}");
-            return Task.FromResult(a+b);
+            return Task.FromResult(a + b);
         }
 
 

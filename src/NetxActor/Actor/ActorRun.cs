@@ -11,7 +11,7 @@ namespace Netx.Actor
 
         private readonly Lazy<ConcurrentDictionary<int, Actor>> actorCollect;
 
-        public ConcurrentDictionary<int, Actor> ActorCollect { get => actorCollect.Value; }
+        public ConcurrentDictionary<int, Actor> ActorCollect => actorCollect.Value;
 
         public event EventHandler<IActorMessage>? CompletedEvent;
 
@@ -55,7 +55,7 @@ namespace Netx.Actor
         {
             foreach (var controller in Container.GetServices<ActorController>())
             {
-                
+
                 var actor = new Actor(Container, this, ActorScheduler, controller);
                 actor.CompletedEvent += Actor_CompletedEvent;
                 foreach (int cmd in actor.CmdDict.Keys)
@@ -82,7 +82,7 @@ namespace Netx.Actor
             if (ActorCollect.ContainsKey(cmd))
                 ActorCollect[cmd].Action(id, cmd, access, args);
             else
-                Log.ErrorFormat("not find actor service cmd:{cmd}",cmd);
+                Log.ErrorFormat("not found actor service cmd:{cmd}", cmd);
 
         }
 
@@ -91,7 +91,7 @@ namespace Netx.Actor
             if (ActorCollect.TryGetValue(cmd, out Actor m))
                 return m.AsyncAction(id, cmd, access, args);
             else
-                throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
+                throw new NetxException($"not found actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
         public ValueTask<T> CallFunc<T>(long id, int cmd, OpenAccess access, params object[] args)
@@ -99,12 +99,12 @@ namespace Netx.Actor
             if (ActorCollect.TryGetValue(cmd, out Actor m))
                 return m.AsyncFunc<T>(id, cmd, access, args);
             else
-                throw new NetxException($"not find actor service cmd:{cmd}", ErrorType.ActorErr);
+                throw new NetxException($"not found actor service cmd:{cmd}", ErrorType.ActorErr);
         }
 
 
 
-        public async override Task<IResult> AsyncFunc(int cmdTag, params object[] args)
+        public override async Task<IResult> AsyncFunc(int cmdTag, params object[] args)
         {
             var Id = IdsManager.MakeId;
 
@@ -128,7 +128,7 @@ namespace Netx.Actor
             return this.CallFunc<T>(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args).AsTask();
         }
 
-        public async override Task AsyncAction(int cmdTag, params object[] args)
+        public override async Task AsyncAction(int cmdTag, params object[] args)
         {
             await AsyncAction(IdsManager.MakeId, cmdTag, OpenAccess.Internal, args);
         }

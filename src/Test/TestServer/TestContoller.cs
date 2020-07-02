@@ -1,7 +1,6 @@
 ﻿using Netx.Service;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NetxTestServer
@@ -38,15 +37,19 @@ namespace NetxTestServer
                 Title = title,
                 City = city,
                 CreateTime = DateTime.Now,
-                ID= Guid.NewGuid().ToString("N")
+                ID = Guid.NewGuid().ToString("N")
 
             });
         }
 
         public Task<HelloReply> SayHello(HelloRequest msg)
-        => Task.FromResult(new HelloReply { Message = "Hello" + msg.Name });
+        {
+            return Task.FromResult(new HelloReply { Message = "Hello" + msg.Name });
+        }
 
         public Task<string> SayHello(string msg)
-         => Task.FromResult("Hello" + msg);
+        {
+            return Task.FromResult("Hello" + msg);
+        }
     }
 }

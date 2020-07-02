@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Netx.Actor
@@ -11,11 +9,11 @@ namespace Netx.Actor
         int QueueCount { get; }
     }
 
-    public interface IActor : IActorStatus,IDisposable
+    public interface IActor : IActorStatus, IDisposable
     {
-             
+
         void Action(long id, int cmd, OpenAccess access, params object[] args);
-        ValueTask AsyncAction(long id, int cmd,OpenAccess access, params object[] args);
-        ValueTask<T> AsyncFunc<T>(long id, int cmd, OpenAccess access, params object[] args);      
+        ValueTask AsyncAction(long id, int cmd, OpenAccess access, params object[] args);
+        ValueTask<T> AsyncFunc<T>(long id, int cmd, OpenAccess access, params object[] args);
     }
 }

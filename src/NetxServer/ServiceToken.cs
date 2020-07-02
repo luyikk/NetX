@@ -1,25 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using ZYSocket.FiberStream;
 using ZYSocket;
-using System.Collections.Generic;
-using Microsoft.Extensions.Options;
+using ZYSocket.FiberStream;
 
 namespace Netx.Service
 {
-    public abstract class ServiceToken:ServiceInstall
+    public abstract class ServiceToken : ServiceInstall
     {
 
         private readonly Lazy<ServiceTokenFactory> LazyServiceTokenFactory;
-        protected ServiceTokenFactory TokenFactory { get => LazyServiceTokenFactory.Value; }
+        protected ServiceTokenFactory TokenFactory => LazyServiceTokenFactory.Value;
 
-        protected ConcurrentDictionary<long, AsyncToken> ActorTokenDict { get; }    
-    
+        protected ConcurrentDictionary<long, AsyncToken> ActorTokenDict { get; }
+
         private readonly Lazy<ConcurrentQueue<TimeKey>> disconnectRemoveList;
-        private ConcurrentQueue<TimeKey> DisconnectRemoveList { get => disconnectRemoveList.Value; }
+        private ConcurrentQueue<TimeKey> DisconnectRemoveList => disconnectRemoveList.Value;
 
 
 
@@ -36,12 +32,12 @@ namespace Netx.Service
         }
 
 
-        public ServiceToken(IServiceProvider container) :base(container)
+        public ServiceToken(IServiceProvider container) : base(container)
         {
             ActorTokenDict = new ConcurrentDictionary<long, AsyncToken>();
-            LazyServiceTokenFactory = new Lazy<ServiceTokenFactory>(() => new ServiceTokenFactory(container),true);
+            LazyServiceTokenFactory = new Lazy<ServiceTokenFactory>(() => new ServiceTokenFactory(container), true);
             disconnectRemoveList = new Lazy<ConcurrentQueue<TimeKey>>();
-          
+
             ServiceOption.ClearCheckTime = ServiceOption.ClearCheckTime <= 100 ? 100 : ServiceOption.ClearCheckTime;
 
             Task.Factory.StartNew(RemoveRun);
@@ -62,7 +58,7 @@ namespace Netx.Service
                         CheckRequestTimeOut();
                 }
             }
-            catch(Exception er)
+            catch (Exception er)
             {
                 Log.Error(er);
             }
@@ -72,7 +68,7 @@ namespace Netx.Service
         /// 检测Request超时
         /// </summary>
         private void CheckRequestTimeOut()
-        {            
+        {
             foreach (var token in ActorTokenDict.Values)
                 token.RequestTimeOutHandle();
         }
@@ -86,18 +82,18 @@ namespace Netx.Service
         {
             var outtime = ServiceOption.ClearSessionTime * 10000;
 
-            while (DisconnectRemoveList.Count>0)
+            while (DisconnectRemoveList.Count > 0)
             {
                 if (DisconnectRemoveList.TryPeek(out TimeKey tv))
                 {
                     if ((TimeHelper.GetTime() - tv.Time) > outtime)
                     {
-                        if(DisconnectRemoveList.TryDequeue(out TimeKey timeKey))
+                        if (DisconnectRemoveList.TryDequeue(out TimeKey timeKey))
                         {
                             if (ActorTokenDict.TryGetValue(timeKey.Key, out AsyncToken token))
                             {
                                 if (!token.IsConnect)
-                                    if(ActorTokenDict.TryRemove(timeKey.Key, out AsyncToken _))
+                                    if (ActorTokenDict.TryRemove(timeKey.Key, out AsyncToken _))
                                     {
                                         token.Close();
                                         Log.TraceFormat("session:{SessionId} remove", token.SessionId);
@@ -110,13 +106,13 @@ namespace Netx.Service
                 }
                 else
                     break;
-            }          
+            }
         }
 
 
         protected async Task<bool> RunCreateToken(IFiberRw<AsyncToken> fiberRw)
         {
-            var token = TokenFactory.CreateAsynToken(fiberRw,AsyncServicesRegisterDict);
+            var token = TokenFactory.CreateAsynToken(fiberRw, AsyncServicesRegisterDict);
 
             if (!ActorTokenDict.TryAdd(token.SessionId, token))
                 ActorTokenDict.AddOrUpdate(token.SessionId, token, (a, b) => token);
@@ -130,11 +126,11 @@ namespace Netx.Service
         {
             if (token.IsConnect)
             {
-                token.DisconnectIt();               
+                token.DisconnectIt();
                 return false;
             }
             token.Reset(fiberRw);
-            fiberRw.UserToken = token;           
+            fiberRw.UserToken = token;
             return await token.RunIt();
         }
 
@@ -150,9 +146,9 @@ namespace Netx.Service
                 }
 
             }
-            catch( Exception er)
+            catch (Exception er)
             {
-                Log.Error(er,"Disconnect error:{message} errorid:{error}",message,erorr);
+                Log.Error(er, "Disconnect error:{message} errorid:{error}", message, erorr);
             }
         }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Netx.Interface
+﻿namespace Netx.Interface
 {
     /// <summary>
     /// Id生成接口

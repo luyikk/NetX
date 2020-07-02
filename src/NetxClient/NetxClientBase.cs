@@ -1,21 +1,17 @@
-﻿using Netx.Loggine;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 using Netx.Interface;
+using Netx.Loggine;
+using System;
+using System.Threading.Tasks;
 using ZYSocket.Interface;
-using ZYSocket.FiberStream;
-using ZYSocket;
 
 namespace Netx.Client
 {
-    public abstract class  NetxClientBase: NetxFodyInstance
+    public abstract class NetxClientBase : NetxFodyInstance
     {
-      
+
         /// <summary>
         /// 连接配置
         /// </summary>
@@ -29,16 +25,16 @@ namespace Netx.Client
         /// <summary>
         /// DI 容器
         /// </summary>
-        public IServiceProvider Container { get; } 
+        public IServiceProvider Container { get; }
 
         public NetxClientBase(IServiceProvider container)
-            :base(new DefaultLog(container.GetRequiredService<ILogger<NetxSClient>>())
+            : base(new DefaultLog(container.GetRequiredService<ILogger<NetxSClient>>())
                  , container.GetRequiredService<IIds>())
         {
             Container = container;
             ConnectOption = container.GetRequiredService<IOptions<ConnectOption>>().Value;
             Session = container.GetRequiredService<ISessionStore>();
-            SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();          
+            SerializationPacker.Serialization = container.GetRequiredService<ISerialization>();
             Task.Factory.StartNew(RunRequestCheck);
         }
 

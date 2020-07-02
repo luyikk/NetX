@@ -1,13 +1,9 @@
-﻿using Fody;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using GenericParameterAttributes = System.Reflection.GenericParameterAttributes;
 
 public partial class ModuleWeaver
 {
@@ -86,49 +82,49 @@ public partial class ModuleWeaver
         if (type == null)
             return 0;   // TypeCode.Empty;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Boolean)))
+        if (type == ModuleDefinition.ImportReference(typeof(bool)))
             return 3;   // TypeCode.Boolean;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Char)))
+        if (type == ModuleDefinition.ImportReference(typeof(char)))
             return 4;   // TypeCode.Char;
 
-        if (type == ModuleDefinition.ImportReference(typeof(SByte)))
+        if (type == ModuleDefinition.ImportReference(typeof(sbyte)))
             return 5;   // TypeCode.SByte;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Byte)))
+        if (type == ModuleDefinition.ImportReference(typeof(byte)))
             return 6;   // TypeCode.Byte;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Int16)))
+        if (type == ModuleDefinition.ImportReference(typeof(short)))
             return 7;   // TypeCode.Int16;
 
-        if (type == ModuleDefinition.ImportReference(typeof(UInt16)))
+        if (type == ModuleDefinition.ImportReference(typeof(ushort)))
             return 8;   // TypeCode.UInt16;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Int32)))
+        if (type == ModuleDefinition.ImportReference(typeof(int)))
             return 9;   // TypeCode.Int32;
 
-        if (type == ModuleDefinition.ImportReference(typeof(UInt32)))
+        if (type == ModuleDefinition.ImportReference(typeof(uint)))
             return 10;  // TypeCode.UInt32;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Int64)))
+        if (type == ModuleDefinition.ImportReference(typeof(long)))
             return 11;  // TypeCode.Int64;
 
-        if (type == ModuleDefinition.ImportReference(typeof(UInt64)))
+        if (type == ModuleDefinition.ImportReference(typeof(ulong)))
             return 12;  // TypeCode.UInt64;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Single)))
+        if (type == ModuleDefinition.ImportReference(typeof(float)))
             return 13;  // TypeCode.Single;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Double)))
+        if (type == ModuleDefinition.ImportReference(typeof(double)))
             return 14;  // TypeCode.Double;
 
-        if (type == ModuleDefinition.ImportReference(typeof(Decimal)))
+        if (type == ModuleDefinition.ImportReference(typeof(decimal)))
             return 15;  // TypeCode.Decimal;
 
         if (type == ModuleDefinition.ImportReference(typeof(DateTime)))
             return 16;  // TypeCode.DateTime;
 
-        if (type == ModuleDefinition.ImportReference(typeof(String)))
+        if (type == ModuleDefinition.ImportReference(typeof(string)))
             return 18;  // TypeCode.String;
 
         var ttype = Type.GetType(type.FullName);
@@ -236,7 +232,7 @@ public partial class ModuleWeaver
                 opCodes.Add(il.Create(OpCodes.Ldobj, argType));
             }
 
-            Convert(il, opCodes,argType, target, isAddress);
+            Convert(il, opCodes, argType, target, isAddress);
             return opCodes;
         }
         if (target.IsValueType)
@@ -286,7 +282,7 @@ public partial class ModuleWeaver
         }
         else
         {
-           
+
             if (target.IsGenericParameter)
             {
                 opCodes.Add(il.Create(OpCodes.Unbox_Any, ModuleDefinition.ImportReference(target)));
@@ -431,7 +427,7 @@ public partial class ModuleWeaver
         }
         return false;
     }
-    
+
 
     private void Ldind(ILProcessor il, TypeReference type)
     {

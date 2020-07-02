@@ -23,7 +23,7 @@ namespace Netx
         /// </summary>
         public bool IsConnect { get => isConnect; protected set => isConnect = value; }
 
-        public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }        
+        public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }
 
         /// <summary>
         /// 异步请求发送,将异步返回结果
@@ -32,7 +32,7 @@ namespace Netx
         /// <param name="Id">当前批次Id用于标识批次,确保唯一</param>
         /// <param name="args">参数</param>
         /// <returns></returns>
-        protected async override Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
+        protected override async Task<IResult> AsyncFuncSend(int cmdTag, long Id, object[] args)
         {
 
             if (!IsConnect)
@@ -109,7 +109,7 @@ namespace Netx
         /// <param name="Id">Id</param>
         /// <param name="args">参数</param>
         /// <returns>异步等待Task</returns>
-        protected async override Task SendAsyncAction(int cmdTag, long Id, object[] args)
+        protected override async Task SendAsyncAction(int cmdTag, long Id, object[] args)
         {
             if (!IsConnect)
                 if (!ConnectIt())

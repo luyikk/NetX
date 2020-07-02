@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using ZYSocket;
 using ZYSocket.FiberStream;
@@ -10,7 +8,7 @@ namespace Netx.Service
 {
     public abstract class AsyncBuffer : AsyncBase
     {
-        public AsyncBuffer(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, long sessionId) : 
+        public AsyncBuffer(IServiceProvider container, IFiberRw<AsyncToken> fiberRw, long sessionId) :
             base(container, fiberRw, sessionId)
         {
 
@@ -57,7 +55,7 @@ namespace Netx.Service
             }
             else
                 throw new NullReferenceException("FiberRw is null!");
-          
+
         }
 
         /// <summary>
@@ -171,7 +169,7 @@ namespace Netx.Service
             }
             else
             {
-                Log.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");
             }
 
         }
@@ -207,7 +205,7 @@ namespace Netx.Service
             }
             else
             {
-                Log.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");
             }
 
         }
@@ -249,7 +247,7 @@ namespace Netx.Service
             }
             else
             {
-                Log.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");
             }
 
         }
@@ -290,7 +288,7 @@ namespace Netx.Service
             {
 
             }
-            catch(Exception er)
+            catch (Exception er)
             {
                 Log.Error(er);
             }
@@ -318,16 +316,16 @@ namespace Netx.Service
             }
             else
             {
-                Log.Error("Send fail,is not fiber");               
+                Log.Error("Send fail,is not fiber");
             }
         }
 
 
         protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
-        {          
+        {
             Log.WarnFormat("{service} call async service:{RemoteEndPoint} not find RunType:{runtype}"
                 , service
-                , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString()??"null"
+                , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                 , runtype);
 
             return SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);

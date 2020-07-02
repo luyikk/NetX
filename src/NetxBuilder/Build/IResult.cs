@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Netx
 {
@@ -11,7 +10,7 @@ namespace Netx
 
     public interface IResult
     {
-        IResultValue this[int index] { get; }      
+        IResultValue this[int index] { get; }
         int ErrorId { get; set; }
         string ErrorMsg { get; set; }
         IResultValue First { get; }

@@ -2,21 +2,20 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using Netx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Netx;
 
 
 public partial class ModuleWeaver : BaseModuleWeaver
 {
- 
+
     FieldDefinition obj;
 
     public override void Execute()
     {
-              
+
 
         var allinterface = GetBuildInterfaces();
 
@@ -24,12 +23,12 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
         foreach (var iface in allinterface)
         {
-            var newType = new TypeDefinition(iface.Namespace, iface.Name + "_Builder_Netx_Implementation", TypeAttributes.Public| TypeAttributes.BeforeFieldInit, TypeSystem.ObjectReference);
-            newType.Interfaces.Add(new InterfaceImplementation(iface));         
-            obj = new FieldDefinition("obj", FieldAttributes.Private, ModuleDefinition.ImportReference(typeof(INetxBuildInterface)));           
+            var newType = new TypeDefinition(iface.Namespace, iface.Name + "_Builder_Netx_Implementation", TypeAttributes.Public | TypeAttributes.BeforeFieldInit, TypeSystem.ObjectReference);
+            newType.Interfaces.Add(new InterfaceImplementation(iface));
+            obj = new FieldDefinition("obj", FieldAttributes.Private, ModuleDefinition.ImportReference(typeof(INetxBuildInterface)));
             newType.Fields.Add(obj);
 
-            var method= AddConstructor(newType);
+            var method = AddConstructor(newType);
 
             var allRpc = iface.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null);
 
@@ -57,7 +56,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     AddRpc(newType, rpc);
             }
 
-            var implementationMethod= AddGetImplementation(newType, iface, method);
+            var implementationMethod = AddGetImplementation(newType, iface, method);
 
             MethodDict.Add(iface.FullName, implementationMethod);
             ModuleDefinition.Types.Add(newType);
@@ -81,7 +80,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     try
                     {
                         //foreach (var item in method.Body.Instructions)
-                        for(int i=0;i< method.Body.Instructions.Count;i++)
+                        for (int i = 0; i < method.Body.Instructions.Count; i++)
                         {
                             var item = method.Body.Instructions[i];
 
@@ -141,7 +140,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
 
 
-  TypeDefinition GetApp()
+    TypeDefinition GetApp()
     {
         return ModuleDefinition.GetAllTypes().FirstOrDefault(p => p.IsClass && p.BaseType?.FullName == "Xamarin.Forms.Application");
     }
@@ -156,7 +155,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     TypeDefinition[] GetBuildClass()
     {
-      
+
         return ModuleDefinition.GetAllTypes().Where(p => p.IsClass && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
     }
 
@@ -172,13 +171,13 @@ public partial class ModuleWeaver : BaseModuleWeaver
     TypeDefinition[] GetActorControllers()
     {
         var all = ModuleDefinition.GetAllTypes();
-        return all.Where(p => p.IsClass && p.BaseType?.Name== "ActorController").ToArray();
+        return all.Where(p => p.IsClass && p.BaseType?.Name == "ActorController").ToArray();
     }
 
 
-   TypeDefinition[] GetBuildInterfaces()
+    TypeDefinition[] GetBuildInterfaces()
     {
-       
+
         var all = ModuleDefinition.GetAllTypes();
         return ModuleDefinition.GetAllTypes().Where(p => p.IsInterface && p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "Build") != null).ToArray();
     }
@@ -186,19 +185,19 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     void AddMethod(TypeDefinition typeDefinition)
     {
-        if (typeDefinition.Methods.FirstOrDefault(p => p.Name == "Runs__Make")!=null)
+        if (typeDefinition.Methods.FirstOrDefault(p => p.Name == "Runs__Make") != null)
             return;
-       
+
         var NewMethod = new MethodDefinition("Runs__Make", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual, ModuleDefinition.ImportReference(typeof(object)));
 
         var il = NewMethod.Body.GetILProcessor();
 
-        NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(Int32))));
+        NewMethod.Parameters.Add(new ParameterDefinition("tag", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(int))));
         NewMethod.Parameters.Add(new ParameterDefinition("args", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(object[]))));
 
-             
+
         Dictionary<int, MethodReference> methods = new Dictionary<int, MethodReference>();
-     
+
 
         foreach (var ifacer in typeDefinition.Interfaces)
         {
@@ -252,7 +251,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             }
             else
             {
-                string dllname = System.Environment.CurrentDirectory+"/"+ifacer.InterfaceType.Scope.Name + ".dll";
+                string dllname = System.Environment.CurrentDirectory + "/" + ifacer.InterfaceType.Scope.Name + ".dll";
                 try
                 {
                     var module = Mono.Cecil.ModuleDefinition.ReadModule(dllname);
@@ -324,7 +323,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         }
 
 
-        if(methods.Count > 0)
+        if (methods.Count > 0)
         {
             List<MakeBne> benList = new List<MakeBne>();
 
@@ -351,7 +350,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     benList[i].IsEnd = true;
                 }
             }
-        
+
 
             foreach (var p in benList)
             {
@@ -361,13 +360,13 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 }
             }
 
-            if(benList.Count>0)
+            if (benList.Count > 0)
                 typeDefinition.Methods.Add(NewMethod);
         }
     }
 
-  
-    private bool CheckMethod(MethodDefinition A,MethodDefinition B)
+
+    private bool CheckMethod(MethodDefinition A, MethodDefinition B)
     {
         if (A.Name != B.Name)
             return false;
@@ -383,7 +382,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         return true;
     }
 
-    public List<Instruction> MakeBneCall(ILProcessor processor,MethodDefinition method,int cmd,Instruction next)
+    public List<Instruction> MakeBneCall(ILProcessor processor, MethodDefinition method, int cmd, Instruction next)
     {
         var codes = new List<Instruction>
         {
@@ -397,7 +396,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         foreach (var parmeter in method.Parameters)
         {
             codes.Add(processor.Create(OpCodes.Ldarg_2));
-            codes.Add(processor.Create(OpCodes.Ldc_I4,i));
+            codes.Add(processor.Create(OpCodes.Ldc_I4, i));
             codes.Add(processor.Create(OpCodes.Ldelem_Ref));
             Convert(processor, codes, ModuleDefinition.ImportReference(typeof(object)), parmeter.ParameterType, false);
         }
@@ -432,10 +431,10 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     MethodDefinition AddConstructor(TypeDefinition newType)
     {
-        var method = new MethodDefinition(".ctor", MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName|MethodAttributes.HideBySig, TypeSystem.VoidReference);
+        var method = new MethodDefinition(".ctor", MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig, TypeSystem.VoidReference);
         var objectConstructor = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition.GetConstructors().First());
-     
-        method.Parameters.Add(new ParameterDefinition("netx_interface",ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(INetxBuildInterface))));
+
+        method.Parameters.Add(new ParameterDefinition("netx_interface", ParameterAttributes.HasDefault, ModuleDefinition.ImportReference(typeof(INetxBuildInterface))));
         var processor = method.Body.GetILProcessor();
         processor.Emit(OpCodes.Ldarg_0);
         processor.Emit(OpCodes.Call, objectConstructor);
@@ -476,7 +475,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     }
 
-    public GenericInstanceMethod MakeGenericInstanceMethod(MethodReference self,params TypeReference[] arguments)
+    public GenericInstanceMethod MakeGenericInstanceMethod(MethodReference self, params TypeReference[] arguments)
     {
         var reference = new GenericInstanceMethod(self);
 
@@ -484,7 +483,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         {
             reference.GenericArguments.Add(item);
         }
-       
+
 
         return reference;
     }
@@ -495,27 +494,27 @@ public partial class ModuleWeaver : BaseModuleWeaver
         var tag = irpc.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG");
         if (tag is null)
             return;
-        var cmdx =tag.ConstructorArguments.First().Value;
+        var cmdx = tag.ConstructorArguments.First().Value;
         var cmd = 0;
         switch (cmdx)
         {
             case Mono.Cecil.CustomAttributeArgument args:
-                cmd =(int) args.Value;
+                cmd = (int)args.Value;
                 break;
             default:
                 cmd = (int)cmdx;
-                break;                
+                break;
         }
 
-       
+
         var method = new MethodDefinition(irpc.Name, MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final, irpc.ReturnType);
 
         var il = method.Body.GetILProcessor();
-        
+
         var parameters = irpc.Parameters;
         var paramTypes = ParamTypes(parameters.ToArray(), false);
 
-        for(int i=0;i< paramTypes.Length;i++)
+        for (int i = 0; i < paramTypes.Length; i++)
         {
             method.Parameters.Add(new ParameterDefinition(parameters[i].Name, parameters[i].Attributes, paramTypes[i]));
         }
@@ -525,13 +524,13 @@ public partial class ModuleWeaver : BaseModuleWeaver
             throw new Exception($"not have generic parameter{irpc.FullName}");
         }
 
-        var returntype= irpc.ReturnType;
+        var returntype = irpc.ReturnType;
 
-        if(returntype.IsGenericInstance)
+        if (returntype.IsGenericInstance)
         {
             var genreturntype = returntype as GenericInstanceType;
 
-            if(genreturntype.Name!= "Task`1")
+            if (genreturntype.Name != "Task`1")
             {
                 throw new Exception($"return type error:{genreturntype.FullName}");
             }
@@ -546,7 +545,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 il.Emit(OpCodes.Ldfld, obj);
                 il.Emit(OpCodes.Ldc_I4, cmd);
 
-                GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+                GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
                 for (int i = 0; i < parameters.Count; i++)
                 {
@@ -577,7 +576,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 il.Emit(OpCodes.Ldfld, obj);
                 il.Emit(OpCodes.Ldc_I4, cmd);
 
-                GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+                GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
                 for (int i = 0; i < parameters.Count; i++)
                 {
@@ -599,7 +598,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             }
 
         }
-        else if(returntype.FullName=="System.Void")
+        else if (returntype.FullName == "System.Void")
         {
             ParametersArray args = new ParametersArray(this, il, paramTypes);
 
@@ -607,8 +606,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldfld, obj);
             il.Emit(OpCodes.Ldc_I4, cmd);
-            
-            GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+
+            GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -629,7 +628,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ret);
             newType.Methods.Add(method);
         }
-        else if(returntype.FullName== "System.Threading.Tasks.Task")
+        else if (returntype.FullName == "System.Threading.Tasks.Task")
         {
 
             ParametersArray args = new ParametersArray(this, il, paramTypes);
@@ -639,7 +638,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldfld, obj);
             il.Emit(OpCodes.Ldc_I4, cmd);
 
-            GenericArray<System.Object> argsArr = new GenericArray<System.Object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
+            GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -670,7 +669,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             il.Emit(OpCodes.Ldtoken, irpc.ReturnType);
             var ptype = ModuleDefinition.ImportReference(GetMethodInfo.GetTypeofHandler());
             il.Emit(OpCodes.Call, ptype);
-            
+
 
             GenericArray<object> argsArr = new GenericArray<object>(this, il, ParamTypes(parameters.ToArray(), true).Length);
 
@@ -691,7 +690,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
             var res = new VariableDefinition(irpc.ReturnType);
             method.Body.Variables.Add(res);
-            Convert(il, ModuleDefinition.ImportReference(typeof(System.Object)), irpc.ReturnType, false);
+            Convert(il, ModuleDefinition.ImportReference(typeof(object)), irpc.ReturnType, false);
             il.Emit(OpCodes.Stloc, res);
             il.Emit(OpCodes.Ldloc, res);
 
@@ -700,7 +699,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         }
     }
 
- 
+
 
     private static TypeReference[] ParamTypes(ParameterDefinition[] parms, bool noByRef)
     {
@@ -717,6 +716,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     public override bool ShouldCleanReference => true;
 
-   
+
 }
 

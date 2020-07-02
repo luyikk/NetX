@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Netx.Client
+﻿namespace Netx.Client
 {
     public class ConnectOption
     {
@@ -21,6 +17,6 @@ namespace Netx.Client
         public int ConnectedTimeOut { get; set; } = 10000;
 
         public int RequestTimeOut { get; set; } = 20000;
-    
+
     }
 }

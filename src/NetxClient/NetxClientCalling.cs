@@ -1,12 +1,8 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 using ZYSocket;
-using ZYSocket.FiberStream;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Netx.Client
 {
@@ -114,7 +110,7 @@ namespace Netx.Client
                             if (service.Instance is IMethodController controller)
                                 controller.Current = this;
 
-                            var ret_value = (object)await service.Method.ExecuteAsync(service.Instance, args);
+                            var ret_value = await service.Method.ExecuteAsync(service.Instance, args);
 
                             switch (ret_value)
                             {
