@@ -118,7 +118,7 @@ namespace ActorTest
                 await Task.WhenAll(waitlist);
 
                 Debug.Assert(icount == 0);
-                Console.WriteLine($"tell:{icount}");
+                Console.WriteLine($"ask:{icount}");
             }
             {
                 int icount = 0;
@@ -153,7 +153,7 @@ namespace ActorTest
 
                 Debug.Assert(icount == 0);
 
-                Console.WriteLine($"tell:{icount}");
+                Console.WriteLine($"ask:{icount}");
             }
             {
                 int icount = 0;
@@ -187,7 +187,7 @@ namespace ActorTest
 
                 Debug.Assert(icount == 0);
 
-                Console.WriteLine($"tell:{icount}");
+                Console.WriteLine($"ask:{icount}");
             }
 
             #endregion
