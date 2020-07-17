@@ -15,7 +15,12 @@ namespace ActorTest
         {
 
             var Actor = new ActorBuilder()
-                 .UseActorLambda()
+                 .UseActorLambda(p=>
+                 {                     
+                     p.LambadKeys.Add("test Tell");
+                     p.LambadKeys.Add("test Ask return value");
+                     p.LambadKeys.Add("test Ask not return");
+                 })
                  //.ConfigureActorScheduler(p=>ActorScheduler.TaskFactory)
                  .RegisterService<TestActorController>()
                  .RegisterService<NextActorController>().Build();
@@ -23,13 +28,17 @@ namespace ActorTest
 
             #region use akka model
 
-            var lambda = Actor.Get<IActorLambda>();
+            var tasks = new Task[4];
+
+            tasks[0]=Task.Run(async () =>
             {
+                var lambda = Actor.GetLambda();
+
                 int icount = 0;
 
                 List<Task> waitlist = new List<Task>();
 
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew((p) =>
                     {
@@ -42,7 +51,7 @@ namespace ActorTest
                 }
 
 
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew((p) =>
                     {
@@ -58,8 +67,12 @@ namespace ActorTest
 
                 Debug.Assert(icount == 0);
                 Console.WriteLine($"tell:{icount}");
-            }
+            });
+            tasks[1] = Task.Run(async () =>
             {
+
+                var lambda = Actor.GetLambda("test Tell");
+
                 int icount = 0;
 
                 List<Task> waitlist = new List<Task>();
@@ -67,7 +80,7 @@ namespace ActorTest
 
                 waitlist.Add(Task.Factory.StartNew(() =>
                 {
-                    for (int i = 0; i < 10000; i++)
+                    for (int i = 0; i < 100000; i++)
                     {
                         lambda.Tell((p) =>
                         {
@@ -79,7 +92,7 @@ namespace ActorTest
 
                 waitlist.Add(Task.Factory.StartNew(() =>
                 {
-                    for (int i = 0; i < 10000; i++)
+                    for (int i = 0; i < 100000; i++)
                     {
                         lambda.Tell((p) =>
                         {
@@ -91,7 +104,7 @@ namespace ActorTest
 
                 waitlist.Add(Task.Factory.StartNew(async () =>
                 {
-                    for (int i = 0; i < 10000; i++)
+                    for (int i = 0; i < 100000; i++)
                     {
                         await lambda.Ask((p) =>
                         {
@@ -103,7 +116,7 @@ namespace ActorTest
 
                 waitlist.Add(Task.Factory.StartNew(async () =>
                 {
-                    for (int i = 0; i < 10000; i++)
+                    for (int i = 0; i < 100000; i++)
                     {
                         await lambda.Ask((p) =>
                         {
@@ -111,20 +124,22 @@ namespace ActorTest
                         }, i);
                     }
                 }));
-
-
 
 
                 await Task.WhenAll(waitlist);
 
                 Debug.Assert(icount == 0);
                 Console.WriteLine($"ask:{icount}");
-            }
+            });
+            tasks[2] = Task.Run(async () =>
             {
+
+                var lambda = Actor.GetLambda("test Ask return value");
+
                 int icount = 0;
 
                 List<Task> waitlist = new List<Task>();
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
@@ -137,7 +152,7 @@ namespace ActorTest
                     }, i));
                 }
 
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                     {
@@ -154,12 +169,16 @@ namespace ActorTest
                 Debug.Assert(icount == 0);
 
                 Console.WriteLine($"ask:{icount}");
-            }
+            });
+            tasks[3] = Task.Run(async () =>
             {
+
+                var lambda = Actor.GetLambda("test Ask not return");
+
                 int icount = 0;
 
                 List<Task> waitlist = new List<Task>();
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                      {
@@ -171,7 +190,7 @@ namespace ActorTest
                      }, i));
                 }
 
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 100000; i++)
                 {
                     waitlist.Add(Task.Factory.StartNew(async (p) =>
                       {
@@ -188,9 +207,13 @@ namespace ActorTest
                 Debug.Assert(icount == 0);
 
                 Console.WriteLine($"ask:{icount}");
-            }
+            });
 
             #endregion
+
+
+            await Task.WhenAll(tasks);
+
 
             #region testsql
             var server = Actor.Get<ICallServer>();
@@ -273,12 +296,13 @@ namespace ActorTest
 
             stop.Restart();
 
+            var lambdadefault = Actor.GetLambda();
             x = 0;
             count = 0;
 
             for (int i = 0; i < 2000000; i++)
             {
-                await lambda.Ask(() => { x += i; });
+                await lambdadefault.Ask(() => { x += i; });
                 count++;
             }
 

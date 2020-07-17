@@ -153,9 +153,12 @@ namespace Netx.Actor.Builder
         /// 支持Lambda 方式
         /// </summary>
         /// <returns></returns>
-        public IActorBuilder UseActorLambda()
-        {
-            this.RegisterService<LambdaController>();
+        public IActorBuilder UseActorLambda(Action<LambdaOption>? action=null)
+        {         
+            Container.AddScoped<LambdaController>();
+            if (action != null)
+                Container.Configure(action);
+
             return this;
         }
 

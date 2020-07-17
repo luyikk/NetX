@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
@@ -8,13 +9,16 @@ namespace Netx.Actor
     public abstract class ActorRunFodyInstance : ActorRunBase
     {
 
-        public ActorRunFodyInstance(IServiceProvider container)
-            : base(container)
+        public ActorRunFodyInstance(IServiceProvider container,ILogger logger)
+            : base(container,logger)
         {
-
+            lambdaActorRuns = new Lazy<ConcurrentDictionary<string, LambdaActorRun>>();
         }
 
         protected ConcurrentDictionary<Type, ObjectMethodExecutor> FodyType { get; set; } = new ConcurrentDictionary<Type, ObjectMethodExecutor>();
+
+        private readonly Lazy<ConcurrentDictionary<string, LambdaActorRun>> lambdaActorRuns;
+        public ConcurrentDictionary<string, LambdaActorRun> LambdaActorRunCollect => lambdaActorRuns.Value;
 
         public virtual T Get<T>()
         {
@@ -41,5 +45,17 @@ namespace Netx.Actor
                 return (T)FodyType[interfaceType].Execute(null!, new object[] { this });
             }
         }
+
+
+        public virtual IActorLambda GetLambda(string key = "default")
+        {
+            if (LambdaActorRunCollect.TryGetValue(key, out var lambdaRun))
+            {
+                return lambdaRun.Get<IActorLambda>();
+            }
+            else 
+                throw new NetxException($"not found lambda Actor key:{key}",ErrorType.FodyInstallErr);
+        }
+
     }
 }

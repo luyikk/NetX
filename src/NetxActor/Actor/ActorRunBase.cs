@@ -16,11 +16,10 @@ namespace Netx.Actor
         public IIds IdsManager { get; }
         public ILog Log { get; }
 
-        public ActorRunBase(IServiceProvider container)
+        public ActorRunBase(IServiceProvider container,ILogger logger)
         {
-            Container = container;
-            var loggerFactory = container.GetRequiredService<ILoggerFactory>();
-            Log = new DefaultLog(loggerFactory.CreateLogger("Actor Run->"));
+            Container = container;       
+            Log = new DefaultLog(logger);
             IdsManager = container.GetRequiredService<IIds>();
             SerializationPacker.Serialization ??= container.GetRequiredService<ISerialization>();
             var actorscheduler = container.GetService<ActorScheduler>();

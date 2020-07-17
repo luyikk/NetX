@@ -1,36 +1,39 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Netx.Actor
 {
-
-    public class ActorRun : ActorRunFodyInstance, IActorRun
+    public class LambdaActorRun : ActorRunFodyInstance, IActorRun
     {
-
-
         private readonly Lazy<ConcurrentDictionary<int, Actor>> actorCollect;
-   
+
         public ConcurrentDictionary<int, Actor> ActorCollect => actorCollect.Value;
-      
 
         public event EventHandler<IActorMessage>? CompletedEvent;
 
-        public ActorRun(IServiceProvider container)
-            : base(container, container.GetRequiredService<ILoggerFactory>().CreateLogger("ActorRun->"))
+        public string Key { get;  }
+
+        public LambdaActorRun(string key,IServiceProvider container,LambdaController lambdaController)
+            : base(container, container.GetRequiredService<ILoggerFactory>().CreateLogger("LambdaActorRun->"))
         {
-            actorCollect = new Lazy<ConcurrentDictionary<int, Actor>>();
-          
-            Load();
+            Key = key;
+            actorCollect = new Lazy<ConcurrentDictionary<int, Actor>>();          
+            var actor = new Actor(Container, this, ActorScheduler, lambdaController);
+            actor.CompletedEvent += Actor_CompletedEvent;
+            foreach (int cmd in actor.CmdDict.Keys)
+                ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);
 
             if (ActorCollect.Count > 0)
                 Task.Factory.StartNew(SleepingHandler);
 
             foreach (var @event in container.GetServices<ActorEventBase>())
                 this.CompletedEvent += @event.ActorEventCompleted;
+
         }
 
         private async void SleepingHandler()
@@ -56,28 +59,6 @@ namespace Netx.Actor
             }
         }
 
-        private void Load()
-        {
-            foreach (var controller in Container.GetServices<ActorController>())
-            {
-                var actor = new Actor(Container, this, ActorScheduler, controller);
-                actor.CompletedEvent += Actor_CompletedEvent;
-                foreach (int cmd in actor.CmdDict.Keys)
-                    ActorCollect.AddOrUpdate(cmd, actor, (a, b) => actor);
-            }
-
-            var lambdaController = Container.GetService<LambdaController>();
-
-            if (lambdaController != null)
-            {
-                var lambdaOption = Container.GetRequiredService<IOptions<LambdaOption>>().Value;
-
-                foreach (var key in lambdaOption.LambadKeys)
-                {
-                    LambdaActorRunCollect.TryAdd(key, new LambdaActorRun(key, Container, Container.GetRequiredService<LambdaController>()));
-                }
-            }
-        }
 
         private void Actor_CompletedEvent(object sender, IActorMessage e)
         {
@@ -164,7 +145,6 @@ namespace Netx.Actor
 
             ActorCollect.Clear();
         }
-
 
     }
 }

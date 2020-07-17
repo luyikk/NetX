@@ -12,5 +12,6 @@ namespace Netx.Actor
         ValueTask<T> CallFunc<T>(long id, int cmd, OpenAccess access, params object[] args);
         MethodRegister? GetCmdService(int cmd);
         void SyncAction(long id, int cmd, OpenAccess access, params object[] args);
+        IActorLambda GetLambda(string key = "default");
     }
 }
