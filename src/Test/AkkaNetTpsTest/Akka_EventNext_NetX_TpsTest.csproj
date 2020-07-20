@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.4.7" />
     <PackageReference Include="EventNext" Version="0.9.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.6" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
   </ItemGroup>
 

@@ -14,14 +14,14 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
     <PackageReleaseNotes>NetX Frame Package</PackageReleaseNotes>
-    <Version>2.2.7</Version>
+    <Version>2.2.8</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.6" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
-    <PackageReference Include="ZYSocketShareV" Version="1.7.0" />
+    <PackageReference Include="ZYSocketShareV" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
