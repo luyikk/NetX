@@ -425,10 +425,11 @@ namespace Netx.Service
                             }
                             catch (InvalidOperationException er)
                             {
-                                Log.Warn(er, "{RemoteEndPoint} call async service:{cmd}  not create instance from {FullName}"
+                                Log.WarnFormat("{RemoteEndPoint} call async service:{cmd}  not create instance from {FullName} \r\n Err:{err}"
                                     , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                                     , cmd
-                                    , instanceType.FullName);
+                                    , instanceType.FullName
+                                    , er);
 
                                 await SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er}", ErrorType.CreateInstanceErr);
                                 return null;
