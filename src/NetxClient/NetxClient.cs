@@ -141,7 +141,7 @@ namespace Netx.Client
 
                 }
 
-                client.ShutdownBoth(true);
+                client.ShutdownBoth();
 
             }
             catch (Exception er)
@@ -153,7 +153,7 @@ namespace Netx.Client
                 else
                 {
                     Log.Error(er);
-                    client.ShutdownBoth(true);
+                    client.ShutdownBoth();
                 }
             }
         }
