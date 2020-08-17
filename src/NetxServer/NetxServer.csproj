@@ -13,14 +13,14 @@
     <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NetX;Netx;ZYSocket;</PackageTags>
-    <Version>2.3.2</Version>
+    <Version>2.3.3</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LZ4Stream" Version="1.0.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.6" />
-    <PackageReference Include="ZYSocketServerV" Version="1.7.5" />
+    <PackageReference Include="ZYSocketServerV" Version="1.7.8" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
   </ItemGroup>
   <ItemGroup>
