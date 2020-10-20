@@ -21,24 +21,25 @@ namespace Netx.Client
 
 
 
-        protected async Task Calling(ReadBytes read)
+        protected void Calling(ReadBytes read)
         {
+
             var type = read.ReadByte();
             switch (type)
             {
                 case 0: //RUN CALL NOT RES
                     {
-                        await DataOnByRead(read, 0);
+                        DataOnByRead(read, 0);
                     }
                     break;
                 case 1: //RUN CALL HAVE RES
                     {
-                        await DataOnByRead(read, 1);
+                        DataOnByRead(read, 1);
                     }
                     break;
                 case 2: // RUN CALL RETURN 
                     {
-                        await DataOnByRead(read, 2);
+                        DataOnByRead(read, 2);
                     }
                     break;
                 default:
@@ -47,7 +48,7 @@ namespace Netx.Client
 
         }
 
-        private async Task DataOnByRead(ReadBytes read, byte runtype)
+        private void DataOnByRead(ReadBytes read, byte runtype)
         {
             var cmd = read.ReadInt32();
             var id = read.ReadInt64();
@@ -69,7 +70,8 @@ namespace Netx.Client
                         , argslen
                         , service.ArgsType.Length
                         , service);
-                    await SendError(id, $"call method tag :{ cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
+
+                    AsyncSendError(id, $"call method tag :{ cmd} Args Error: len {argslen}->{service.ArgsType.Length}  to\r\n  {service}", ErrorType.ArgLenErr);
                 }
             }
         }

@@ -43,20 +43,27 @@ namespace Netx.Service
         }
 
 
-        protected async Task SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")
+        protected async void SendToKeyError(IFiberRw fiberRw, bool iserr = false, string msg = "success")
         {
-            using var wrtokenerr = new WriteBytes(fiberRw);
-            wrtokenerr.WriteLen();
-            wrtokenerr.Cmd(1000);
-            wrtokenerr.Write(iserr);
-            wrtokenerr.Write(msg);
-
-            Task WSend()
+            try
             {
-                return wrtokenerr.FlushAsync();
-            }
+                using var wrtokenerr = new WriteBytes(fiberRw);
+                wrtokenerr.WriteLen();
+                wrtokenerr.Cmd(1000);
+                wrtokenerr.Write(iserr);
+                wrtokenerr.Write(msg);
 
-            await await fiberRw.Sync.Ask(WSend);
+                Task WSend()
+                {
+                    return wrtokenerr.FlushAsync();
+                }
+
+                await await fiberRw.Sync.Ask(WSend);
+            }
+            catch (Exception er)
+            {
+                Log.Error("SendToKeyError:", er);
+            }
         }
 
         protected async Task SendToMessage(IFiberRw fiberRw, string msg)

@@ -53,7 +53,7 @@ namespace Netx.Client
                     break;
                 case 2400: //Call It
                     {
-                        await Calling(read);
+                        Calling(read);
                     }
                     break;
                 case 2500: //set result

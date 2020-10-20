@@ -259,7 +259,7 @@ namespace Netx.Service
         /// <param name="msg"></param>
         /// <param name="errorType"></param>
         /// <returns></returns>
-        protected virtual async Task SendError(long id, string msg, ErrorType errorType)
+        protected virtual async void SendError(long id, string msg, ErrorType errorType)
         {
             try
             {
@@ -283,14 +283,10 @@ namespace Netx.Service
                 {
                     Log.Error("Send fail,is not fiber");
                 }
-            }
-            catch (SocketException)
-            {
-
-            }
+            }            
             catch (Exception er)
             {
-                Log.Error(er);
+                Log.Error("SendError", er);
             }
         }
 
@@ -298,37 +294,44 @@ namespace Netx.Service
         /// 发送Session
         /// </summary>
         /// <returns></returns>
-        public virtual async Task SendSessionId()
+        public virtual async void SendSessionId()
         {
-            if (FiberRw != null)
+            try
             {
-                using var wr = new WriteBytes(FiberRw);
-                Task WSend()
+                if (FiberRw != null)
                 {
-                    wr.WriteLen();
-                    wr.Cmd(2000);
-                    wr.Write(SessionId);
+                    using var wr = new WriteBytes(FiberRw);
+                    Task WSend()
+                    {
+                        wr.WriteLen();
+                        wr.Cmd(2000);
+                        wr.Write(SessionId);
 
-                    return wr.FlushAsync();
+                        return wr.FlushAsync();
+                    }
+
+                    await await FiberRw.Sync.Ask(WSend);
                 }
-
-                await await FiberRw.Sync.Ask(WSend);
+                else
+                {
+                    Log.Error("Send fail,is not fiber");
+                }
             }
-            else
+            catch(Exception er)
             {
-                Log.Error("Send fail,is not fiber");
+                Log.Error("SendSessionId:", er);
             }
         }
 
 
-        protected virtual Task SendNotRunType(MethodRegister service, long id, int runtype)
+        protected virtual void SendNotRunType(MethodRegister service, long id, int runtype)
         {
             Log.WarnFormat("{service} call async service:{RemoteEndPoint} not find RunType:{runtype}"
                 , service
                 , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                 , runtype);
 
-            return SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);
+            SendError(id, $"call async service:{service} not find RunType:{runtype}", ErrorType.NotRunType);
         }
 
     }

@@ -24,7 +24,7 @@
     <PackageReference Include="LZ4Stream" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.6" />
-    <PackageReference Include="ZYSocketClientV" Version="1.7.8" />
+    <PackageReference Include="ZYSocketClientV" Version="1.7.9" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
   </ItemGroup>
 

@@ -70,7 +70,24 @@ namespace Netx.Client
             await await IWrite.Sync.Ask(WSend);
         }
 
+        /// <summary>
+        /// 发送错误异步没结果模式
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="msg"></param>
+        /// <param name="errorType"></param>
+        protected virtual async void AsyncSendError(long id, string msg, ErrorType errorType)
+        {
+            try
+            {
+                await SendError(id, msg, errorType);
+            }
+            catch(Exception er)
+            {
+                Log.Error("AsyncSendError:", er);
+            }
 
+        }
 
 
         /// <summary>

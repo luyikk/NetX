@@ -207,7 +207,7 @@ namespace Netx.Service
                         , service.ArgsType.Length
                         , service);
 
-                    await SendError(id, $"call async service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
+                    SendError(id, $"call async service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
                     return false;
                 }
             }
@@ -244,7 +244,7 @@ namespace Netx.Service
                             , argslen
                             , service.ArgsType.Length
                             , service);
-                        await SendError(id, $"call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
+                        SendError(id, $"call actor service:{cmd} Args Error: len {argslen}->{service.ArgsType.Length}\r\n to {service}", ErrorType.ArgLenErr);
                         return false;
                     }
 
@@ -252,7 +252,7 @@ namespace Netx.Service
                 else
                 {
                     Log.WarnFormat($"{fiberRw.Async?.AcceptSocket?.RemoteEndPoint} call service:{cmd} not find cmd ");
-                    await SendError(id, $"call service:{cmd} not find the cmd,please check it", ErrorType.NotCmd);
+                    SendError(id, $"call service:{cmd} not find the cmd,please check it", ErrorType.NotCmd);
                     return false;
                 }
             }
@@ -315,12 +315,12 @@ namespace Netx.Service
             {
                 if (er.ErrorType != ErrorType.ActorQueueMaxErr)
                     Log.Error("Actor Server Err:", er);
-                await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
+                SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
             catch (Exception er)
             {
                 Log.Error("Actor Server Err:", er);
-                await SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
+                SendError(id, $"Actor Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
@@ -331,7 +331,7 @@ namespace Netx.Service
         {
             try
             {
-                var controller = await GetInstance(id, cmd, service.InstanceType);
+                var controller = GetInstance(id, cmd, service.InstanceType);
 
 
                 if (controller != null)
@@ -345,7 +345,7 @@ namespace Netx.Service
             catch (Exception er)
             {
                 Log.Error("Async Server Err:", er);
-                await SendError(id, $"Async Server Err:{er.Message}", ErrorType.CallErr);
+                SendError(id, $"Async Server Err:{er.Message}", ErrorType.CallErr);
             }
         }
 
@@ -400,11 +400,11 @@ namespace Netx.Service
 
             }
 
-            await SendNotRunType(service, id, runType);
+            SendNotRunType(service, id, runType);
         }
 
 
-        protected virtual async ValueTask<AsyncController?> GetInstance(long id, int cmd, Type instanceType)
+        protected virtual AsyncController? GetInstance(long id, int cmd, Type instanceType)
         {
             if (!AsyncControllerInstanceDict.ContainsKey(instanceType))
             {
@@ -431,7 +431,7 @@ namespace Netx.Service
                                     , instanceType.FullName
                                     , er);
 
-                                await SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er}", ErrorType.CreateInstanceErr);
+                                SendError(id, $"call async service:{cmd} not create instance from {instanceType.FullName} Error:{er}", ErrorType.CreateInstanceErr);
                                 return null;
                             }
                         }
@@ -441,7 +441,7 @@ namespace Netx.Service
                                 , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                                 , cmd);
 
-                            await SendError(id, $"call async service:{cmd} Constructor not is public", ErrorType.ConstructorsErr);
+                            SendError(id, $"call async service:{cmd} Constructor not is public", ErrorType.ConstructorsErr);
                             return null;
                         }
                     }
@@ -450,7 +450,7 @@ namespace Netx.Service
                         Log.WarnFormat("{RemoteEndPoint} call async service:{cmd}  Constructor  not is Generic"
                             , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                             , cmd);
-                        await SendError(id, $"call async service:{cmd} Constructor not is Generic", ErrorType.ConstructorsErr);
+                        SendError(id, $"call async service:{cmd} Constructor not is Generic", ErrorType.ConstructorsErr);
                         return null;
                     }
                 }
@@ -459,7 +459,7 @@ namespace Netx.Service
                     Log.WarnFormat("{RemoteEndPoint} call async service:{cmd} Constructor count error,need use 1 Constructor "
                         , FiberRw?.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null"
                         , cmd);
-                    await SendError(id, $"call async service:{cmd} Constructor count error,need use 1 Constructor", ErrorType.ConstructorsErr);
+                    SendError(id, $"call async service:{cmd} Constructor count error,need use 1 Constructor", ErrorType.ConstructorsErr);
                     return null;
                 }
             }

@@ -103,7 +103,7 @@ namespace Netx.Service
                 if (cmd != 1000)
                 {
                     Log.TraceFormat("IP:{IPAddress} not verify key", fiberRw.Async?.AcceptSocket?.RemoteEndPoint.ToString() ?? "null");
-                    await SendToKeyError(fiberRw, true, "not verify key!");
+                    SendToKeyError(fiberRw, true, "not verify key!");
                     fiberRw.UserToken = null;
                     return false;
                 }
@@ -114,7 +114,7 @@ namespace Netx.Service
                     if (!ServiceOption.ServiceName.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
                     {
                         Log.TraceFormat("IP:{IPAddress} not find the service:{serviceName}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null", serviceName);
-                        await SendToKeyError(fiberRw, true, $"not find the service!{serviceName}");
+                        SendToKeyError(fiberRw, true, $"not find the service!{serviceName}");
                         return false;
                     }
 
@@ -124,11 +124,11 @@ namespace Netx.Service
                     if (string.Compare(OpenKey, key, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         Log.TraceFormat("IP:{IPAddress} verify key error:{key}", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null", key);
-                        await SendToKeyError(fiberRw, true, "verify key error!");
+                        SendToKeyError(fiberRw, true, "verify key error!");
                         return false;
                     }
 
-                    await SendToKeyError(fiberRw, msg: "verify success");
+                    SendToKeyError(fiberRw, msg: "verify success");
 
                     var session = await fiberRw.ReadInt64();
                     if (session == 0)
@@ -149,7 +149,7 @@ namespace Netx.Service
                 else
                 {
 
-                    await SendToKeyError(fiberRw, msg: "verify success");
+                    SendToKeyError(fiberRw, msg: "verify success");
                     var session = await fiberRw.ReadInt64();
                     if (session == 0)
                         return await RunCreateToken(fiberRw);
@@ -171,7 +171,7 @@ namespace Netx.Service
             else
             {
                 Log.TraceFormat("IP:{IPAddress} token not null", fiberRw.Async?.AcceptSocket?.RemoteEndPoint?.ToString() ?? "null");
-                await SendToKeyError(fiberRw, true, "token not null error!");
+                SendToKeyError(fiberRw, true, "token not null error!");
                 fiberRw.UserToken = null;
                 return false;
 
