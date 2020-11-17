@@ -16,7 +16,7 @@
     <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
     <PackageTags>NetX</PackageTags>
     <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
-    <Version>2.3.3</Version>
+    <Version>2.3.4</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
