@@ -30,9 +30,9 @@ namespace Netx
             ArgsType = (from p in method.GetParameters()
                         select p.ParameterType).ToArray();
 
-            ReturnType = method.ReturnType;
+            ReturnType = method.ReturnType?? typeof(void);
 
-            if (ReturnType == null || ReturnType == typeof(void))
+            if (ReturnType == typeof(void))
                 ReturnMode = ReturnTypeMode.Null;
             else if (ReturnType == typeof(Task))
                 ReturnMode = ReturnTypeMode.Task;
