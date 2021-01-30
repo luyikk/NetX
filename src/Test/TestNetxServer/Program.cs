@@ -31,7 +31,7 @@ namespace TestNetxServer
                 .ConfigNetWork(p => //配置服务器SOCKET 方面的
                 {
                     p.MaxConnectCout = 100;
-                    p.Port = 1006;
+                    p.Port = 6666;
                     p.MaxPackerSize = 256 * 1024;
 
                 })

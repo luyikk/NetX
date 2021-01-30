@@ -8,7 +8,9 @@ namespace TestNetxServer
         AddOne = 2000,
         Add = 2001,
         RecursiveTest = 2002,
-
+        Print = 3000,
+        Print2 = 5000,
+        Run =4000
     }
 
     /// <summary>
@@ -26,7 +28,13 @@ namespace TestNetxServer
         [TAG(ClientCmdTag.RecursiveTest)]
         Task<int> Recursive(int a);
 
+        [TAG(ClientCmdTag.Print)]
+        void Print(int a);
 
+        [TAG(ClientCmdTag.Print2)]
+        void Print2(int a,string name);
 
+        [TAG(ClientCmdTag.Run)]
+        Task Run(string a);
     }
 }

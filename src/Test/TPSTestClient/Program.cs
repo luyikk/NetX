@@ -45,9 +45,9 @@ namespace TestClient
 
             List<Task> RunList = new List<Task>();
 
-            int cc = 100000;
+            int cc = 10000;
 
-            int threadcount = 50;
+            int threadcount = 60;
 
             var x = System.Diagnostics.Stopwatch.StartNew();
 
@@ -59,7 +59,7 @@ namespace TestClient
                     while (i < xcount)
                     {
                         int c = i + 1;
-                        i = await server.AddOne(i);
+                        i = await server.AddOne(i);                      
                         if (c != i)
                             throw new Exception("error value");
                     }
@@ -69,7 +69,7 @@ namespace TestClient
             }
 
 
-            await Task.WhenAny(RunList);
+            await Task.WhenAll(RunList);
 
             x.Stop();
 
@@ -117,7 +117,7 @@ namespace TestClient
 
             var server = client.Get<IServer>();
 
-            int count = 10000;
+            int count = 20000;
 
             var x = System.Diagnostics.Stopwatch.StartNew();
             int i = new Random().Next(-10000, 10000);
@@ -133,7 +133,7 @@ namespace TestClient
             x.Stop();
             Console.WriteLine(x.ElapsedMilliseconds);
 
-            server.PrintMsg("完成");
+            //server.PrintMsg("完成");
 
             return (x.ElapsedMilliseconds, count);
         }

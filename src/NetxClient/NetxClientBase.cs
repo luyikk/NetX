@@ -5,6 +5,7 @@ using Netx.Interface;
 using Netx.Loggine;
 using System;
 using System.Threading.Tasks;
+using ZYSocket;
 using ZYSocket.Interface;
 
 namespace Netx.Client
@@ -105,12 +106,27 @@ namespace Netx.Client
 
             Task WSend()
             {
-                IWrite!.Write(2500);
-                IWrite!.Write(id);
-                IWrite!.Write(true);
-                IWrite!.Write((int)errorType);
-                IWrite!.Write(msg);
-                return IWrite!.FlushAsync();
+                if (mode == 0)
+                {
+                    IWrite!.Write(2500);
+                    IWrite!.Write(id);
+                    IWrite!.Write(true);
+                    IWrite!.Write((int)errorType);
+                    IWrite!.Write(msg);
+                    return IWrite!.FlushAsync();
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2500);
+                    buffer.Write(id);
+                    buffer.Write(true);
+                    buffer.Write((int)errorType);
+                    buffer.Write(msg);
+                    return buffer.FlushAsync();
+
+                }
             }
 
             await await IWrite.Sync.Ask(WSend);
@@ -130,12 +146,26 @@ namespace Netx.Client
 
             Task WSend()
             {
-                IWrite!.Write(2500);
-                IWrite!.Write(id);
-                IWrite!.Write(false);
-                IWrite!.Write(1);
-                IWrite!.Write(buffer);
-                return IWrite!.FlushAsync();
+                if (mode == 0)
+                {
+                    IWrite!.Write(2500);
+                    IWrite!.Write(id);
+                    IWrite!.Write(false);
+                    IWrite!.Write(1);
+                    IWrite!.Write(buffer);
+                    return IWrite!.FlushAsync();
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2500);
+                    buffer.Write(id);
+                    buffer.Write(false);
+                    buffer.Write(1);
+                    buffer.Write(buffer);
+                    return buffer.FlushAsync();
+                }
             }
             await await IWrite.Sync.Ask(WSend);
         }
@@ -152,21 +182,41 @@ namespace Netx.Client
 
             Task WSend()
             {
-                IWrite!.Write(2500);
-                IWrite!.Write(id);
+                if (mode == 0)
+                {
 
-                IWrite!.Write(false);
+                    IWrite!.Write(2500);
+                    IWrite!.Write(id);
+                    IWrite!.Write(false);
+                    if (arguments is null)
+                        IWrite!.Write(0);
+                    else
+                    {
+                        IWrite!.Write(arguments.Length);
+                        foreach (var item in arguments)
+                            IWrite!.Write(item);
+                    }
 
-                if (arguments is null)
-                    IWrite!.Write(0);
+                    return IWrite!.FlushAsync();
+                }
                 else
                 {
-                    IWrite!.Write(arguments.Length);
-                    foreach (var item in arguments)
-                        IWrite!.Write(item);
-                }
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2500);
+                    buffer.Write(id);
+                    buffer.Write(false);
+                    if (arguments is null)
+                        buffer.Write(0);
+                    else
+                    {
+                        buffer.Write(arguments.Length);
+                        foreach (var item in arguments)
+                            buffer.Write(item);
+                    }
 
-                return IWrite!.FlushAsync();
+                    return buffer.FlushAsync();
+                }
             }
 
             await await IWrite.Sync.Ask(WSend);
@@ -184,25 +234,50 @@ namespace Netx.Client
 
             Task WSend()
             {
-                IWrite!.Write(2500);
-                IWrite!.Write(result.Id);
-
-                if (result.IsError)
+                if (mode == 0)
                 {
-                    IWrite!.Write(true);
-                    IWrite!.Write(result.ErrorId);
-                    IWrite!.Write(result.ErrorMsg ?? "");
+                    IWrite!.Write(2500);
+                    IWrite!.Write(result.Id);
+
+                    if (result.IsError)
+                    {
+                        IWrite!.Write(true);
+                        IWrite!.Write(result.ErrorId);
+                        IWrite!.Write(result.ErrorMsg ?? "");
+                    }
+                    else
+                    {
+                        IWrite!.Write(false);
+                        IWrite!.Write(result.Arguments?.Count ?? 0);
+                        if (result.Arguments != null)
+                            foreach (var item in result.Arguments)
+                                IWrite!.Write(item);
+                    }
+
+                    return IWrite.FlushAsync();
                 }
                 else
                 {
-                    IWrite!.Write(false);
-                    IWrite!.Write(result.Arguments?.Count ?? 0);
-                    if (result.Arguments != null)
-                        foreach (var item in result.Arguments)
-                            IWrite!.Write(item);
-                }
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2500);
+                    if (result.IsError)
+                    {
+                        buffer.Write(true);
+                        buffer.Write(result.ErrorId);
+                        buffer.Write(result.ErrorMsg ?? "");
+                    }
+                    else
+                    {
+                        buffer.Write(false);
+                        buffer.Write(result.Arguments?.Count ?? 0);
+                        if (result.Arguments != null)
+                            foreach (var item in result.Arguments)
+                                buffer.Write(item);
+                    }
 
-                return IWrite.FlushAsync();
+                    return buffer.FlushAsync();
+                }
             }
 
             await await IWrite.Sync.Ask(WSend);

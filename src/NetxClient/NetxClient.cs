@@ -110,31 +110,37 @@ namespace Netx.Client
                 {
 
                     await SendVerify(); //发送KEY和sessionid验证
-                    await fiberRw.ReadInt32();//丢弃长度,因为这个Socket框架不需要,留给C++ go java等语言和其他SOCKET框架用
 
-                    switch (await fiberRw.ReadInt32())
+                    using ReadBytes read = new ReadBytes(fiberRw);
+                    await read.Init();
+
+                    switch (read.ReadInt32())
                     {
                         case 1000: //key check
                             {
-                                var iserror = await fiberRw.ReadBoolean();
+                                var iserror = read.ReadBoolean();
 
                                 if (!iserror)
                                 {
-                                    Log.Trace(await fiberRw.ReadString());
+                                    Log.Trace(read.ReadString());
+
+                                    if (read.Memory.Length >= 1)                                    
+                                        if (read.ReadByte() == 1)                                        
+                                            Mode = 1;
+
                                     isConnect = true;
                                     client.SetConnected();
                                     await ReadIng(fiberRw);
                                 }
                                 else
                                 {
-                                    var msg = await fiberRw.ReadString();
+                                    var msg = read.ReadString();
                                     Log.Info(msg);
                                     client.SetConnected(false, msg);
                                 }
 
                             }
                             break;
-
                     }
 
 

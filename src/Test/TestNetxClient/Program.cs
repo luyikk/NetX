@@ -15,7 +15,7 @@ namespace TestNetxClient
              .ConfigConnection(p => //配置服务器IP
              {
                  p.Host = "127.0.0.1";
-                 p.Port = 1006;
+                 p.Port = 6666;
                  p.VerifyKey = "123123";
                  p.MaxPackerSize = 256 * 1024;
              })
@@ -29,9 +29,19 @@ namespace TestNetxClient
             client.Open(); //你可以先连接服务器,或者不连接,如果你没有OPEN 那么调用的时候
 
 
-
+         
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
 
+            var stop = System.Diagnostics.Stopwatch.StartNew();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var _ = await server.Add(1, 2); //调用RPC
+            }
+            
+
+            Console.WriteLine(stop.ElapsedMilliseconds);
+            
             var data = new List<Guid>();
             for (int i = 0; i < 10000; i++)
                 data.Add(Guid.NewGuid());
@@ -86,7 +96,7 @@ namespace TestNetxClient
                 client.Log.Error(er);
             }
 
-            var stop = System.Diagnostics.Stopwatch.StartNew(); //测试双向递归函数
+            stop = System.Diagnostics.Stopwatch.StartNew(); //测试双向递归函数
             int a = await server.RecursiveTest(1000);
             stop.Stop();
             client.Log.Info($"recursive is {a} time:{stop.ElapsedMilliseconds} ms");

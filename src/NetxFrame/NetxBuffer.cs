@@ -15,13 +15,19 @@ namespace Netx
         /// <summary>
         /// ZYSOCKET V 的fiberRw 对象用于发送接收数据
         /// </summary>
-        protected IBufferWrite? IWrite { get; set; }
+        protected IFiberRw? IWrite { get; set; }
 
         protected bool isConnect;
+
+        protected byte mode;
         /// <summary>
         /// 当前是否连接
         /// </summary>
         public bool IsConnect { get => isConnect; protected set => isConnect = value; }
+        /// <summary>
+        /// 客户端发送模式,为了兼容老旧协议
+        /// </summary>
+        public byte Mode { get => mode; protected set => mode=value; }
 
         public NetxBuffer(ILog log, IIds idsManager) : base(log, idsManager) { }
 
@@ -42,19 +48,40 @@ namespace Netx
 
             Task WSend()
             {
-                //数据包格式为 0 0000  00000000 0000 .....
-                //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
-                IWrite!.Write(2400);
-                IWrite!.Write((byte)2);
-                IWrite!.Write(cmdTag);
-                IWrite!.Write(Id);
-                IWrite!.Write(args.Length);
-                foreach (var arg in args)
+                if (mode == 0)
                 {
-                    WriteObj(IWrite, arg);
+                    //数据包格式为 0 0000  00000000 0000 .....
+                    //功能标识(byte) 函数标识(int) 当前ids(long) 参数长度(int) 每个参数序列化后的数组
+                    IWrite!.Write(2400);
+                    IWrite!.Write((byte)2);
+                    IWrite!.Write(cmdTag);
+                    IWrite!.Write(Id);
+                    IWrite!.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(IWrite, arg);
+                    }
+
+                    return IWrite.FlushAsync();
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2400);
+                    buffer.Write((byte)2);
+                    buffer.Write(cmdTag);
+                    buffer.Write(Id);
+                    buffer.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(buffer, arg);
+                    }
+
+                    return buffer.FlushAsync();
                 }
 
-                return IWrite.FlushAsync();
+
             }
 
             var result = GetResult(AddAsyncResult(Id));
@@ -85,17 +112,36 @@ namespace Netx
 
             void WSend()
             {
-                IWrite!.Write(2400);
-                IWrite!.Write((byte)0);
-                IWrite!.Write(cmdTag);
-                IWrite!.Write((long)-1);
-                IWrite!.Write(args.Length);
-                foreach (var arg in args)
+                if (mode == 0)
                 {
-                    WriteObj(IWrite, arg);
-                }
+                    IWrite!.Write(2400);
+                    IWrite!.Write((byte)0);
+                    IWrite!.Write(cmdTag);
+                    IWrite!.Write((long)-1);
+                    IWrite!.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(IWrite, arg);
+                    }
 
-                IWrite!.Flush();
+                    IWrite!.Flush();
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2400);
+                    buffer.Write((byte)0);
+                    buffer.Write(cmdTag);
+                    buffer.Write((long)-1);
+                    buffer.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(buffer, arg);
+                    }
+
+                    buffer.Flush();
+                }
 
             }
 
@@ -117,17 +163,36 @@ namespace Netx
 
             Task WSend()
             {
-                IWrite!.Write(2400);
-                IWrite!.Write((byte)1);
-                IWrite!.Write(cmdTag);
-                IWrite!.Write(Id);
-                IWrite!.Write(args.Length);
-                foreach (var arg in args)
+                if (mode == 0)
                 {
-                    WriteObj(IWrite, arg);
-                }
+                    IWrite!.Write(2400);
+                    IWrite!.Write((byte)1);
+                    IWrite!.Write(cmdTag);
+                    IWrite!.Write(Id);
+                    IWrite!.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(IWrite, arg);
+                    }
 
-                return IWrite!.FlushAsync();
+                    return IWrite!.FlushAsync();
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2400);
+                    buffer.Write((byte)1);
+                    buffer.Write(cmdTag);
+                    buffer.Write(Id);
+                    buffer.Write(args.Length);
+                    foreach (var arg in args)
+                    {
+                        WriteObj(buffer, arg);
+                    }
+
+                    return buffer.FlushAsync();
+                }
             }
 
             var result = GetResult(AddAsyncResult(Id));

@@ -19,6 +19,7 @@ namespace TestNetxServer
         {
             Log = new DefaultLog(logger);
         }
+
         /// <summary>
         /// 加法计算
         /// </summary>
@@ -26,13 +27,54 @@ namespace TestNetxServer
         /// <param name="b"></param>
         /// <returns></returns>
         [TAG(1000)]
-        public Task<int> Add(int a, int b)
-        {
-            return Task.FromResult(a + b);
+        public  Task<int> Add(int a, int b)
+        {           
+            return Task.FromResult((a + b));
         }
 
+        [TAG(999)]
+        public Task<byte[]> Add10(int a, int b)
+        {
+            return Task.FromResult(new byte[] { 1, 2, 3 });
+        }
+
+        [TAG(998)]
+        public Task<int[]> Add11(int a, int b)
+        {
+            return Task.FromResult(new int[] { 1, 2, 3 });
+        }
+
+        [TAG(999)]
+        public Task test_1()
+        {
+            return Task.CompletedTask;
+        }
+
+        [TAG(800)]
+        public Task Print(int a)
+        {
+            Get<IClientCalling>().Print(a);
+
+            return Task.CompletedTask;
+        }
+
+        [TAG(700)]
+        public async Task runtest(string a)
+        {
+            await Get<IClientCalling>().Run(a);
+        }
+
+        [TAG(600)]
+        public Task Print2(int a,string n)
+        {
+            Get<IClientCalling>().Print2(a,n);
+
+            return Task.CompletedTask;
+        }
+
+
         /// <summary>
-        /// 去调用ACTOR 加法计算
+        /// 去调用ACTOR 加法计算1003
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -72,6 +114,7 @@ namespace TestNetxServer
             else
                 return Task.FromResult(a);
         }
+
 
         [TAG(1007)]
         public async Task<bool> TestTimeOut()
@@ -119,6 +162,7 @@ namespace TestNetxServer
         public async void TestAsyncErr()
         {
             await Task.Delay(2000);
+            Console.WriteLine("nnnnnnnnnnn");
             //throw new Exception("test async err");
 
             // async method need try catch

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ZYSocket;
+using ZYSocket.Client;
 using ZYSocket.FiberStream;
 
 namespace Netx.Client
@@ -48,7 +49,7 @@ namespace Netx.Client
                     {
                         var sessionid = read.ReadInt64();
                         Log.TraceFormat("save sessionid {sessionid}", sessionid);
-                        Session.SaveSessionId(sessionid);
+                        Session.SaveSessionId(sessionid);                       
                     }
                     break;
                 case 2400: //Call It
