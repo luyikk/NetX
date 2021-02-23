@@ -38,6 +38,8 @@ namespace Netx.Service.Builder
         {
             ConfigIIds();
             ConfigureLogSet();
+            ConfigObjFormat(() => new MsgPackFormat());
+           
             return this;
         }
 
