@@ -142,7 +142,7 @@ namespace Netx.Client
             if (IWrite == null)
                 throw new NullReferenceException("IWrite is null!");
 
-            var buffer = SerializationPacker.PackSingleObject(argument);
+            var packbuffer = SerializationPacker.PackSingleObject(argument);
 
             Task WSend()
             {
@@ -152,7 +152,7 @@ namespace Netx.Client
                     IWrite!.Write(id);
                     IWrite!.Write(false);
                     IWrite!.Write(1);
-                    IWrite!.Write(buffer);
+                    IWrite!.Write(packbuffer);
                     return IWrite!.FlushAsync();
                 }
                 else
@@ -163,7 +163,7 @@ namespace Netx.Client
                     buffer.Write(id);
                     buffer.Write(false);
                     buffer.Write(1);
-                    buffer.Write(buffer);
+                    buffer.Write(packbuffer);
                     return buffer.FlushAsync();
                 }
             }
