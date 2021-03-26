@@ -19,7 +19,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.2.85" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.5" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
     <PackageReference Include="ZYSocketShareV-Portable" Version="1.6.8" />
