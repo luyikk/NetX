@@ -85,6 +85,7 @@ namespace Netx.Service
                         break;
                 }
                 catch (System.Net.Sockets.SocketException) { break; }
+                catch (System.IO.IOException) { break; }
                 catch (Exception er)
                 {
                     this.Log.Error("read error", er);

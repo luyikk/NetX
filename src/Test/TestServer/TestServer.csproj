@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
-    <PackageReference Include="SpanJson" Version="3.0.1" />
+    <PackageReference Include="SpanJson" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>

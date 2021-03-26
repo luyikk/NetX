@@ -21,6 +21,10 @@ namespace Netx.Client
                 try
                 {
                     await DataOnByLine(fiberRw);
+                }               
+                catch (System.IO.IOException)
+                {
+                    break;
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
