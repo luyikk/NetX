@@ -65,7 +65,11 @@ namespace Netx.Client
                 IWrite!.Write(ConnectOption.ServiceName ?? "");
                 IWrite!.Write(ConnectOption.VerifyKey ?? "");
                 IWrite!.Write(Session.GetSessionId());
+#if NETSTANDARD2_0
+                return IWrite!.Flush();
+#else
                 return IWrite!.FlushAsync();
+#endif
             }
 
             await await IWrite.Sync.Ask(WSend);
@@ -113,7 +117,11 @@ namespace Netx.Client
                     IWrite!.Write(true);
                     IWrite!.Write((int)errorType);
                     IWrite!.Write(msg);
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
                     return IWrite!.FlushAsync();
+#endif
                 }
                 else
                 {
@@ -124,7 +132,13 @@ namespace Netx.Client
                     buffer.Write(true);
                     buffer.Write((int)errorType);
                     buffer.Write(msg);
+#if NETSTANDARD2_0
+                    return buffer.Flush();
+#else
                     return buffer.FlushAsync();
+#endif
+
+
 
                 }
             }
@@ -153,7 +167,11 @@ namespace Netx.Client
                     IWrite!.Write(false);
                     IWrite!.Write(1);
                     IWrite!.Write(packbuffer);
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
                     return IWrite!.FlushAsync();
+#endif
                 }
                 else
                 {
@@ -164,7 +182,11 @@ namespace Netx.Client
                     buffer.Write(false);
                     buffer.Write(1);
                     buffer.Write(packbuffer);
+#if NETSTANDARD2_0
+                    return buffer.Flush();
+#else
                     return buffer.FlushAsync();
+#endif
                 }
             }
             await await IWrite.Sync.Ask(WSend);
@@ -197,7 +219,11 @@ namespace Netx.Client
                             IWrite!.Write(item);
                     }
 
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
                     return IWrite!.FlushAsync();
+#endif
                 }
                 else
                 {
@@ -215,7 +241,11 @@ namespace Netx.Client
                             buffer.Write(item);
                     }
 
+#if NETSTANDARD2_0
+                    return buffer.Flush();
+#else
                     return buffer.FlushAsync();
+#endif
                 }
             }
 
@@ -254,7 +284,11 @@ namespace Netx.Client
                                 IWrite!.Write(item);
                     }
 
-                    return IWrite.FlushAsync();
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
+                    return IWrite!.FlushAsync();
+#endif
                 }
                 else
                 {
@@ -276,7 +310,11 @@ namespace Netx.Client
                                 buffer.Write(item);
                     }
 
+#if NETSTANDARD2_0
+                    return buffer.Flush();
+#else
                     return buffer.FlushAsync();
+#endif
                 }
             }
 

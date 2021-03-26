@@ -62,7 +62,12 @@ namespace Netx
                         WriteObj(IWrite, arg);
                     }
 
-                    return IWrite.FlushAsync();
+#if NETSTANDARD2_0
+                    return IWrite.Flush();
+#else
+                     return IWrite.FlushAsync();
+#endif
+
                 }
                 else
                 {
@@ -78,7 +83,11 @@ namespace Netx
                         WriteObj(buffer, arg);
                     }
 
-                    return buffer.FlushAsync();
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
+                    return IWrite!.FlushAsync();
+#endif
                 }
 
 
@@ -174,8 +183,11 @@ namespace Netx
                     {
                         WriteObj(IWrite, arg);
                     }
-
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
                     return IWrite!.FlushAsync();
+#endif
                 }
                 else
                 {
@@ -191,7 +203,11 @@ namespace Netx
                         WriteObj(buffer, arg);
                     }
 
-                    return buffer.FlushAsync();
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
+                    return IWrite!.FlushAsync();
+#endif
                 }
             }
 

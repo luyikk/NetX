@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Netx.Client</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <Authors>luyikk</Authors>
     <Company>luyikkk</Company>
-    <Product>Netx Client Package by ios android</Product>
+    <Product>Netx Client Package by standard2</Product>
     <PackageReleaseNotes>Netx Client Package  by ios android</PackageReleaseNotes>
-    <Description>Netx Client Package  by ios android</Description>
+    <Description>Netx Client Package  by standard2</Description>
     <Copyright>luyikk</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/luyikk/NetX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
-    <Version>2.2.1</Version>
+    <Version>0.0.1</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -30,15 +30,15 @@
 
   <ItemGroup>
     <PackageReference Include="LZ4Stream" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
-    <PackageReference Include="ZYSocketClientV-Portable" Version="1.6.8" />
+    <PackageReference Include="ZYSocketClientV" Version="1.5.8" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\NetxFrame\NetxFrame-Portable.csproj" />
+    <ProjectReference Include="..\NetxFrame\NetxFrame-standard2.csproj" />
   </ItemGroup>
 
 </Project>

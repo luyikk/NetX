@@ -29,7 +29,12 @@ namespace Netx
                 var getImplementation = implementationType.GetMethod("GetImplementation", BindingFlags.Static | BindingFlags.Public);
 
                 var method = ObjectMethodExecutor.Create(getImplementation, null!);
+#if NETSTANDARD2_0
+                if (!FodyType.ContainsKey(interfaceType))
+                    FodyType.Add(interfaceType, method);
+#else
                 FodyType.TryAdd(interfaceType, method);
+#endif
 
                 return (T)method.Execute(null!, new object[] { this });
 
