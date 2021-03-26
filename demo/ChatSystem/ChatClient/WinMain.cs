@@ -79,6 +79,7 @@ namespace ChatClient
 
             try
             {
+
                 var (success, my) = await Current.Get<IServer>().CheckLogIn();
                 if (!success)
                 {

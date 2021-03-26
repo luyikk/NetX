@@ -117,8 +117,7 @@ namespace Netx.Service
             if (!ActorTokenDict.TryAdd(token.SessionId, token))
                 ActorTokenDict.AddOrUpdate(token.SessionId, token, (a, b) => token);
 
-            fiberRw.UserToken = token;
-            token.SendSessionId();
+            fiberRw.UserToken = token;           
             return await token.RunIt();
         }
 

@@ -130,6 +130,7 @@ namespace Netx.Client
 
                                     isConnect = true;
                                     client.SetConnected();
+                                    await GetSessionId();
                                     await ReadIng(fiberRw);
                                 }
                                 else

@@ -52,8 +52,6 @@ namespace Netx.Service
 
                 AsyncControllerInstanceDict.Clear();
 
-
-
                 if (this.IsConnect)
                 {
                     this.IsConnect = false;
@@ -65,9 +63,6 @@ namespace Netx.Service
                     this.IWrite = null;
 
                 }
-
-
-
 
             }
         }
@@ -140,6 +135,11 @@ namespace Netx.Service
 
             switch (cmd)
             {
+                case 2000:
+                    {
+                        await SendSessionId();
+                    }
+                    break;
                 case 2400:
                     {
                         var type = await fiberRw.ReadByte();
@@ -157,10 +157,9 @@ namespace Netx.Service
                                 {
                                     return await DataOnByRead(fiberRw, 2);
                                 }
-                        }
-
-                        return true;
+                        }                       
                     }
+                    break;
                 case 2500: //set result
                     {
                         await ReadResultAsync(fiberRw);

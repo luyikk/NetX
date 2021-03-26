@@ -294,7 +294,7 @@ namespace Netx.Service
         /// 发送Session
         /// </summary>
         /// <returns></returns>
-        public virtual async void SendSessionId()
+        public virtual async Task SendSessionId()
         {
             try
             {

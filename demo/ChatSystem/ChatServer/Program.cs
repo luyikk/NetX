@@ -7,11 +7,14 @@ using ChatServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ChatServer
 {
     class Program
     {
+        static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/server.pfx", "testPassword");
+
         static void Main()
         {
           
@@ -25,11 +28,10 @@ namespace ChatServer
                  })
                   .ConfigSSL(p =>  //配置SSL加密
                   {
-                      p.Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(
-                          $"{new System.IO.DirectoryInfo(Assembly.GetExecutingAssembly().Location).Parent}/server.pfx",
-                          "testPassword");
+                      p.Certificate = certificate;
                       p.IsUse = true;
                   })
+                  .ConfigCompress(p => p.Mode = Netx.CompressType.None)
                   .ConfigureLogSet(p=> //设置日记
                   {
                       p.AddConsole();

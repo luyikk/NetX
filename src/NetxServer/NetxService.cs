@@ -120,6 +120,7 @@ namespace Netx.Service
                     }
 
                 var key = await fiberRw.ReadString();
+                var session = await fiberRw.ReadInt64();
                 if (!string.IsNullOrEmpty(OpenKey))
                 {
                     if (string.Compare(OpenKey, key, StringComparison.OrdinalIgnoreCase) != 0)
@@ -129,9 +130,7 @@ namespace Netx.Service
                         return false;
                     }
 
-                    SendToKeyError(fiberRw, msg: "verify success");
-
-                    var session = await fiberRw.ReadInt64();
+                    SendToKeyError(fiberRw, msg: "verify success");                   
                     if (session == 0)
                         return await RunCreateToken(fiberRw);
                     else
@@ -150,8 +149,7 @@ namespace Netx.Service
                 else
                 {
 
-                    SendToKeyError(fiberRw, msg: "verify success");
-                    var session = await fiberRw.ReadInt64();
+                    SendToKeyError(fiberRw, msg: "verify success");                  
                     if (session == 0)
                         return await RunCreateToken(fiberRw);
                     else

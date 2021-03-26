@@ -95,6 +95,40 @@ namespace Netx.Client
         }
 
 
+        protected virtual async Task GetSessionId()
+        {
+
+            if (IWrite == null)
+                throw new NullReferenceException("IWrite is null!");
+
+            Task WSend()
+            {
+                if (mode == 0)
+                {
+                    IWrite!.Write(2000);
+#if NETSTANDARD2_0
+                    return IWrite!.Flush();
+#else
+                    return IWrite!.FlushAsync();
+#endif
+                }
+                else
+                {
+                    using var buffer = new WriteBytes(IWrite);
+                    buffer.WriteLen();
+                    buffer.Cmd(2000);
+#if NETSTANDARD2_0
+                    return buffer.Flush();
+#else
+                    return buffer.FlushAsync();
+#endif
+                }
+            }
+
+            await await IWrite.Sync.Ask(WSend);
+
+        }
+
         /// <summary>
         /// 发送错误
         /// </summary>

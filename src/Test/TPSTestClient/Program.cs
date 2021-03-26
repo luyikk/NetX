@@ -45,7 +45,7 @@ namespace TestClient
 
             List<Task> RunList = new List<Task>();
 
-            int cc = 10000;
+            int cc = 100;
 
             int threadcount = 60;
 
