@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
     <PackageReleaseNotes>NetX Frame Package  by ios android</PackageReleaseNotes>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
