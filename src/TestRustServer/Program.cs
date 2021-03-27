@@ -11,7 +11,7 @@ namespace TestRustServer
             var client = new NetxSClientBuilder()
              .ConfigConnection(p => //配置服务器IP
              {
-                 p.Host = "127.0.0.1";
+                 p.Host = "192.168.1.235";
                  p.Port = 6666;
                  p.VerifyKey = "123123";
                  p.MaxPackerSize = 256 * 1024;
@@ -29,10 +29,11 @@ namespace TestRustServer
             await server.Print(5);
             await server.RunTest("joy");
             var x = await server.ToClientAddOne(1);
+            Console.WriteLine("x:{0}",x);
             await server.Print2(6, "my name is");
 
             var stop = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 10000; i++)            
+            for (int i = 0; i < 100000; i++)            
                 await server.Add(1, i);
             
             var r=  await  server.RecursiveTest(10000);

@@ -79,7 +79,7 @@ namespace Netx
                         WriteObj(buffer, arg);
                     }
 
-                    return IWrite!.FlushAsync();
+                    return buffer.FlushAsync();
 
                 }
 
@@ -195,7 +195,7 @@ namespace Netx
                     }
 
 
-                    return IWrite!.FlushAsync();
+                    return buffer.FlushAsync();
                 }
             }
 
