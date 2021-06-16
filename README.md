@@ -13,6 +13,7 @@ NUGET方式:**
     
 **源代码:[github src](https://github.com/luyikk/NetX)**
 
+**RUST版:[github src](https://github.com/luyikk/rust_netx)**
 
 NetX架构图解: (举例2个例子,不包括其他的奇思妙想)
 ![NetX原理结构图](https://github.com/luyikk/NetX/blob/master/Images/NetX1.png)
