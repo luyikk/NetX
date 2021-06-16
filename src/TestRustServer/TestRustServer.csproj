@@ -13,4 +13,10 @@
     <ProjectReference Include="..\NetxClient\NetxClient.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="cert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,21 +1,29 @@
 ﻿using Netx.Client;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestRustServer
 {
     class Program
     {
+        static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/cert.pfx", "testPassword");
+
         static async Task Main(string[] args)
         {
             var client = new NetxSClientBuilder()
              .ConfigConnection(p => //配置服务器IP
              {
-                 p.Host = "192.168.1.235";
+                 p.Host = "127.0.0.1";
                  p.Port = 6666;
                  p.VerifyKey = "123123";
                  p.MaxPackerSize = 256 * 1024;
              })
+              .ConfigSSL(p =>
+              {
+                  p.IsUse = true;
+                  p.Certificate = null;
+              })
             //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
             // .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
             .ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
