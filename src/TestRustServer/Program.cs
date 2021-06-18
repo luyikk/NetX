@@ -21,7 +21,7 @@ namespace TestRustServer
              })
               .ConfigSSL(p =>
               {
-                  p.IsUse = true;
+                  p.IsUse = false;
                   p.Certificate = null;
               })
             //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
