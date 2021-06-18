@@ -2,33 +2,30 @@
 using System.Collections.Generic;
 using System.Text;
 using ZYSocket.Interface;
-using Newtonsoft.Json;
 
 namespace Netx
 {
     public class JsonFormat : ISerialization
     {
         public T Deserialize<T>(byte[] data, int offset, int length)
-        {
-            var json = Encoding.UTF8.GetString(data, offset, length);
-            var res= JsonConvert.DeserializeObject<T>(json);
+        {         
+            var res = Swifter.Json.JsonFormatter.DeserializeObject<T>(new ArraySegment<byte>(data, offset, length), Encoding.UTF8);
             if (res is null)
-                throw new InvalidOperationException($"deserialez error:{json} to type:{typeof(T).FullName} error!");
+                throw new InvalidOperationException($"deserialez to type:{typeof(T).FullName} error!");
             return res;          
         }
 
         public object Deserialize(Type type, byte[] data, int offset, int length)
         {
-            var json = Encoding.UTF8.GetString(data, offset, length);
-            var res = JsonConvert.DeserializeObject(json, type);
+            var res = Swifter.Json.JsonFormatter.DeserializeObject(new ArraySegment<byte>(data, offset, length), Encoding.UTF8,type);           
             if (res is null)
-                throw new InvalidOperationException($"deserialez error:{json} to type:{type.FullName} error!");
+                throw new InvalidOperationException($"deserialez to type:{type.FullName} error!");
             return res;
         }
 
         public byte[] Serialize(object? obj)
         {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj));
+            return Swifter.Json.JsonFormatter.SerializeObject(obj,Encoding.UTF8);
         }
     }
 }
