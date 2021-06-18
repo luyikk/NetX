@@ -2,12 +2,16 @@
 using Netx.Client;
 using System;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestNetxClient
 {
     class Program
     {
+        //static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/client.pfx", "testPassword");
+
         static async Task Main(string[] args)
         {
 
@@ -22,6 +26,27 @@ namespace TestNetxClient
             //设置SESSION 的存储方式,SESSION 用来记录你的TOKEN,方便断线重连不会丢失工作进度,我们存储在内存,也可以保存成文件
             // .ConfigSessionStore(() => new Netx.Client.Session.SessionMemory())
             .ConfigSessionStore(() => new Netx.Client.Session.SessionFile())
+            //.ConfigSSL(option =>
+            //{
+            //    option.IsUse = true;
+            //    option.SslStreamInit = async (stream) =>
+            //      {
+            //          var sslstream = new SslStream(stream, false, (sender, certificate, chain, errors) => true,
+            //            (sender, host, certificates, certificate, issuers) => certificate);
+
+            //          try
+            //          {
+            //              await sslstream.AuthenticateAsClientAsync("localhost");
+            //          }
+            //          catch (Exception er)
+            //          {
+            //              Console.WriteLine(er.Message);
+            //              return null;
+            //          }
+
+            //          return sslstream;
+            //      };
+            //})
              .Build();
 
             client.LoadInstance(new ClientTestController()); //加载客户端控制器供服务区主动调用,

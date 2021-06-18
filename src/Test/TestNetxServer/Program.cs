@@ -2,11 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using System.Net.Security;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+
 namespace TestNetxServer
 {
     class Program
     {
+       // static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/server.pfx", "testPassword");
+
         static void Main(string[] args)
         {
             var builtConfig = new ConfigurationBuilder()
@@ -41,6 +46,26 @@ namespace TestNetxServer
                     p.AddSerilog();
                     // p.AddConfiguration(builtConfig.GetSection("Logging"));
                 })
+                //.ConfigSSL(option =>
+                //{
+                //    option.IsUse = true;
+                //    option.SslStreamInit = async (stream) =>
+                //    {
+                //        var sslstream = new SslStream(stream, false);
+
+                //        try
+                //        {
+                //            await sslstream.AuthenticateAsServerAsync(certificate,false,true);
+                //        }
+                //        catch (Exception er)
+                //        {
+                //            Console.WriteLine(er.Message);
+                //            return null;
+                //        }
+
+                //        return sslstream;
+                //    };
+                //})
                 .Build();
 
 
