@@ -11,11 +11,11 @@ namespace TestServer
         {
             var service = new Netx.Service.Builder.NetxServBuilder()
                 .RegisterService(Assembly.GetExecutingAssembly())
-                .ConfigSSL(p =>
-                 {
-                     p.IsUse = true;
-                     p.Certificate = certificate;
-                 })
+                //.ConfigSSL(p =>
+                // {
+                //     p.IsUse = true;
+                //     p.Certificate = certificate;
+                // })
                 .ConfigNetWork(p =>
                 {
                     p.MaxConnectCout = 100;
