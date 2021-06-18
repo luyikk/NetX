@@ -134,7 +134,7 @@ namespace Netx.Client
             Container.AddTransient(p =>
             {
                 if (func is null)
-                    return new MsgPackFormat();
+                    return new JsonFormat();
                 else
                     return func();
             });

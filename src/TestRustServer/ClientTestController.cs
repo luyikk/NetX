@@ -23,11 +23,11 @@ namespace TestRustServer
         } 
 
         [TAG(4000)]
-        public Task Run(string name)
+        public Task<string> Run(string name)
         {
             Console.WriteLine("name:{0}",name);
             Name = name;
-            return Task.CompletedTask;
+            return Task.FromResult(name);
         }
 
         [TAG(5000)]

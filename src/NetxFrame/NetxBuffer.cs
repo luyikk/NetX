@@ -228,101 +228,102 @@ namespace Netx
         /// <param name="p">object类型参数</param>
         protected virtual void WriteObj(IBufferWrite bufferWrite, object p)
         {
-            switch (p)
-            {
-                case sbyte a:
-                    bufferWrite.Write((byte)a);
-                    break;
-                case byte a:
-                    bufferWrite.Write(a);
-                    break;
-                case short a:
-                    bufferWrite.Write(a);
-                    break;
-                case ushort a:
-                    bufferWrite.Write(a);
-                    break;
-                case int a:
-                    bufferWrite.Write(a);
-                    break;
-                case uint a:
-                    bufferWrite.Write(a);
-                    break;
-                case long a:
-                    bufferWrite.Write(a);
-                    break;
-                case ulong a:
-                    bufferWrite.Write(a);
-                    break;
-                case float a:
-                    bufferWrite.Write(a);
-                    break;
-                case double a:
-                    bufferWrite.Write(a);
-                    break;
-                case decimal a:
-                    bufferWrite.Write(Convert.ToDouble(a));
-                    break;
-                case bool a:
-                    bufferWrite.Write(a);
-                    break;
-                case byte[] a:
-                    bufferWrite.Write(a);
-                    break;
-                case string a:
-                    bufferWrite.Write(a);
-                    break;
-                case Memory<byte> a:
-                    bufferWrite.Write(a);
-                    break;
-                case ArraySegment<byte> a:
-                    bufferWrite.Write(a);
-                    break;
-                default:
-                    bufferWrite.Write(p);
-                    break;
+            //switch (p)
+            //{
+            //    case sbyte a:
+            //        bufferWrite.Write((byte)a);
+            //        break;
+            //    case byte a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case short a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case ushort a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case int a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case uint a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case long a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case ulong a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case float a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case double a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case decimal a:
+            //        bufferWrite.Write(Convert.ToDouble(a));
+            //        break;
+            //    case bool a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case byte[] a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case string a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case Memory<byte> a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    case ArraySegment<byte> a:
+            //        bufferWrite.Write(a);
+            //        break;
+            //    default:
+            //        bufferWrite.Write(p);
+            //        break;
+            //}
 
-            }
+            bufferWrite.Write(p);
         }
 
 
         protected virtual object ReadData(ReadBytes read, Type type)
         {
 
-            if (type == typeof(sbyte))
-                return (sbyte)read.ReadByte();
-            else if (type == typeof(byte))
-                return read.ReadByte();
-            else if (type == typeof(short))
-                return read.ReadInt16();
-            else if (type == typeof(ushort))
-                return read.ReadUint16();
-            else if (type == typeof(int))
-                return read.ReadInt32();
-            else if (type == typeof(uint))
-                return read.ReadUint32();
-            else if (type == typeof(long))
-                return read.ReadInt64();
-            else if (type == typeof(ulong))
-                return read.ReadUint64();
-            else if (type == typeof(double))
-                return read.ReadDouble();
-            else if (type == typeof(decimal))
-                return Convert.ToDecimal(read.ReadDouble());
-            else if (type == typeof(bool))
-                return read.ReadBoolean();
-            else if (type == typeof(byte[]))
-                return read.ReadArray();
-            else if (type == typeof(string))
-                return read.ReadString();
-            else if (type == typeof(Memory<byte>))
-                return read.ReadMemory();
-            else if (type == typeof(ArraySegment<byte>))
-            {
-                var mem = read.ReadMemory();
-                return mem.GetArray();
-            }
-            else
+            //if (type == typeof(sbyte))
+            //    return (sbyte)read.ReadByte();
+            //else if (type == typeof(byte))
+            //    return read.ReadByte();
+            //else if (type == typeof(short))
+            //    return read.ReadInt16();
+            //else if (type == typeof(ushort))
+            //    return read.ReadUint16();
+            //else if (type == typeof(int))
+            //    return read.ReadInt32();
+            //else if (type == typeof(uint))
+            //    return read.ReadUint32();
+            //else if (type == typeof(long))
+            //    return read.ReadInt64();
+            //else if (type == typeof(ulong))
+            //    return read.ReadUint64();
+            //else if (type == typeof(double))
+            //    return read.ReadDouble();
+            //else if (type == typeof(decimal))
+            //    return Convert.ToDecimal(read.ReadDouble());
+            //else if (type == typeof(bool))
+            //    return read.ReadBoolean();
+            //else if (type == typeof(byte[]))
+            //    return read.ReadArray();
+            //else if (type == typeof(string))
+            //    return read.ReadString();
+            //else if (type == typeof(Memory<byte>))
+            //    return read.ReadMemory();
+            //else if (type == typeof(ArraySegment<byte>))
+            //{
+            //    var mem = read.ReadMemory();
+            //    return mem.GetArray();
+            //}
+            //else
                 return read.ReadObject(type);
 
         }
@@ -331,43 +332,43 @@ namespace Netx
         protected virtual async Task<(object arg, IMemoryOwner<byte>? ownew)> ReadDataAsync(IBufferAsyncRead fiberR, Type type)
         {
 
-            if (type == typeof(sbyte))
-                return ((sbyte)await fiberR.ReadByte(), null);
-            else if (type == typeof(byte))
-                return (await fiberR.ReadByte(), null);
-            else if (type == typeof(short))
-                return (await fiberR.ReadInt16(), null);
-            else if (type == typeof(ushort))
-                return (await fiberR.ReadUInt16(), null);
-            else if (type == typeof(int))
-                return (await fiberR.ReadInt32(), null);
-            else if (type == typeof(uint))
-                return (await fiberR.ReadUInt32(), null);
-            else if (type == typeof(long))
-                return (await fiberR.ReadInt64(), null);
-            else if (type == typeof(ulong))
-                return (await fiberR.ReadUInt64(), null);
-            else if (type == typeof(double))
-                return (await fiberR.ReadDouble(), null);
-            else if (type == typeof(decimal))
-                return (Convert.ToDecimal(await fiberR.ReadDouble()), null);
-            else if (type == typeof(bool))
-                return (await fiberR.ReadBoolean(), null);
-            else if (type == typeof(byte[]))
-                return (await fiberR.ReadArray(), null);
-            else if (type == typeof(string))
-                return (await fiberR.ReadString(), null);
-            else if (type == typeof(Memory<byte>))
-            {
-                var mem = await fiberR.ReadMemory();
-                return (mem.Value, mem.MemoryOwner);
-            }
-            else if (type == typeof(ArraySegment<byte>))
-            {
-                var mem = await fiberR.ReadMemory();
-                return (mem.Value.GetArray(), mem.MemoryOwner);
-            }
-            else
+            //if (type == typeof(sbyte))
+            //    return ((sbyte)await fiberR.ReadByte(), null);
+            //else if (type == typeof(byte))
+            //    return (await fiberR.ReadByte(), null);
+            //else if (type == typeof(short))
+            //    return (await fiberR.ReadInt16(), null);
+            //else if (type == typeof(ushort))
+            //    return (await fiberR.ReadUInt16(), null);
+            //else if (type == typeof(int))
+            //    return (await fiberR.ReadInt32(), null);
+            //else if (type == typeof(uint))
+            //    return (await fiberR.ReadUInt32(), null);
+            //else if (type == typeof(long))
+            //    return (await fiberR.ReadInt64(), null);
+            //else if (type == typeof(ulong))
+            //    return (await fiberR.ReadUInt64(), null);
+            //else if (type == typeof(double))
+            //    return (await fiberR.ReadDouble(), null);
+            //else if (type == typeof(decimal))
+            //    return (Convert.ToDecimal(await fiberR.ReadDouble()), null);
+            //else if (type == typeof(bool))
+            //    return (await fiberR.ReadBoolean(), null);
+            //else if (type == typeof(byte[]))
+            //    return (await fiberR.ReadArray(), null);
+            //else if (type == typeof(string))
+            //    return (await fiberR.ReadString(), null);
+            //else if (type == typeof(Memory<byte>))
+            //{
+            //    var mem = await fiberR.ReadMemory();
+            //    return (mem.Value, mem.MemoryOwner);
+            //}
+            //else if (type == typeof(ArraySegment<byte>))
+            //{
+            //    var mem = await fiberR.ReadMemory();
+            //    return (mem.Value.GetArray(), mem.MemoryOwner);
+            //}
+            //else
                 return (await fiberR.ReadObject(type), null);
 
         }
