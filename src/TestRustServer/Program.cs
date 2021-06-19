@@ -41,10 +41,10 @@ namespace TestRustServer
             await server.Print2(6, "my name is");
 
             var stop = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 100000; i++)
                 await server.Add(1, i);
 
-            var r = await server.RecursiveTest(100);
+            var r = await server.RecursiveTest(100000);
             Console.WriteLine($"{r} {stop.ElapsedMilliseconds}");
 
             var res = new LogOn
