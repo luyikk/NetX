@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/luyikk/NetX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
-    <Version>0.0.4</Version>
+    <Version>0.1.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

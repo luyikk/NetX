@@ -38,7 +38,7 @@ namespace Netx.Service.Builder
         {
             ConfigIIds();
             ConfigureLogSet();
-            ConfigObjFormat(() => new JsonFormat());
+            ConfigObjFormat(() => new MsgpkgFormat());
            
             return this;
         }

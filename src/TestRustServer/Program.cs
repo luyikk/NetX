@@ -34,30 +34,30 @@ namespace TestRustServer
             client.Open(); //你可以先连接服务器,或者不连接,如果你没有OPEN 那么调用的时候
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
-           // await server.Print(5);
+                                                // await server.Print(5);
             await server.RunTest(null);
             //var x = await server.ToClientAddOne(1);
             //Console.WriteLine("x:{0}",x);
-            //await server.Print2(6, "my name is");
+            await server.Print2(6, "my name is");
 
-            //var stop = System.Diagnostics.Stopwatch.StartNew();
-            //for (int i = 0; i < 100000; i++)            
-            //    await server.Add(1, i);
-            
-            //var r=  await  server.RecursiveTest(10000);
-            //Console.WriteLine($"{r} {stop.ElapsedMilliseconds}");
+            var stop = System.Diagnostics.Stopwatch.StartNew();
+            for (int i = 0; i < 1000; i++)
+                await server.Add(1, i);
 
-            //var res = new LogOn
-            //{
-            //    Username = "username",
-            //    Password = "password"
-            //};
+            var r = await server.RecursiveTest(100);
+            Console.WriteLine($"{r} {stop.ElapsedMilliseconds}");
 
-            //var (success, msg) = await server.LogOn(res);
-            //Console.WriteLine($"{success} {msg}");
+            var res = new LogOn
+            {
+                Username = "username",
+                Password = "password"
+            };
 
-            //var res2 = await server.LogOn2(("username", "password"));
-            //Console.WriteLine($"{res2.Success} {res2.Msg}");
+            var (success, msg) = await server.LogOn(res);
+            Console.WriteLine($"{success} {msg}");
+
+            var res2 = await server.LogOn2(("username", "password"));
+            Console.WriteLine($"{res2.Success} {res2.Msg}");
 
             Console.ReadLine();
         }
