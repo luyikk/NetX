@@ -2,6 +2,7 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace TestRustServer
 {
@@ -35,16 +36,65 @@ namespace TestRustServer
 
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
                                                 // await server.Print(5);
-            await server.RunTest(null);
+
+            // 测试基本类型
+            {
+                (bool, sbyte, byte, short, ushort, int, uint) v = (true, 2, 3, 4, 5, 6, 7);
+                var t = await server.test_base_type(v);
+                if (t != v)
+                {
+                    throw new Exception("base test error");
+                }
+
+
+                (long, ulong, float, double) v1 = (8, 9, 1.1f, 2.2222);
+                var t1 = await server.test_base_type(v1);
+                if (t1 != v1)
+                {
+                    throw new Exception("base test error");
+                }
+            }
+            // 测字符串
+            {
+                (string,string,string) v = ("test", "test", null);
+                var t = await server.test_string(v);
+                if (t != v)
+                {
+                    throw new Exception("base test error");
+                }
+            }
+            //测试buff
+            {
+                (List<byte>, List<byte>, List<byte>) v = (new List<byte> { 1, 2, 3 }, new List<byte> { 1, 2, 3 }, null);
+                var t = await server.test_buff(v);
+                if (t.Item1.Count!=3||t.Item2.Count!=3||t.Item3!=null)
+                {
+                    throw new Exception("base test error");
+                }
+
+            }
+            // 测试对象
+            {
+                var v = new Foo();
+                var t = await server.test_struct(v);
+                if (!t.Equals(v))
+                {
+                    throw new Exception("base test error");
+                }
+            
+            }
+            
+
+            await server.RunTest("joy");
             //var x = await server.ToClientAddOne(1);
             //Console.WriteLine("x:{0}",x);
             await server.Print2(6, "my name is");
 
             var stop = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1000; i++)
                 await server.Add(1, i);
 
-            var r = await server.RecursiveTest(100000);
+            var r = await server.RecursiveTest(1000);
             Console.WriteLine($"{r} {stop.ElapsedMilliseconds}");
 
             var res = new LogOn

@@ -5,13 +5,11 @@ namespace TestClient
     [Build]
     public interface IServer
     {
-        [TAG(999)]
+              [TAG(999)]
         Task<int> AddOne(int a);
-
 
         [TAG(1005)]
         void PrintMsg(string msg);
-
 
         [TAG(2000)]
         Task<int> AddOneActor(int a);

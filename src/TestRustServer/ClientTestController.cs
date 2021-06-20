@@ -27,7 +27,7 @@ namespace TestRustServer
         {
             Console.WriteLine("name:{0}",name);
             Name = name;
-            return Task.FromResult(name);
+            return Task.FromResult<string>(null);
         }
 
         [TAG(5000)]
