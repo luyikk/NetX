@@ -21,24 +21,24 @@ namespace TestRustServer
 
     public class Foo
     {
-        public int v1 { get; set; }
-        public string v2 { get; set; }
-        public List<int> v3 { get; set; }
-        public (float,double,string) v4 { get; set; }
+        public int V1 { get; set; }
+        public string V2 { get; set; }
+        public List<int> V3 { get; set; }
+        public (float,double,string) V4 { get; set; }
 
         public Foo()
         {
-            v1 = 1;
-            v2 = "2";
-            v3 = new List<int> { 3, 4 };
-            v4 = (5.0f, 6.111, "6");
+            V1 = 1;
+            V2 = "2";
+            V3 = new List<int> { 3, 4 };
+            V4 = (5.0f, 6.111, "6");
         }
 
         public override bool Equals(object obj)
         {
             if (obj is Foo t)
             {
-                return t.v1 == this.v1 && t.v2 == this.v2 && t.v3.Count == this.v3.Count && t.v4 == this.v4;
+                return t.V1 == this.V1 && t.V2 == this.V2 && t.V3.Count == this.V3.Count && t.V4 == this.V4;
             }
             else
                 return false;

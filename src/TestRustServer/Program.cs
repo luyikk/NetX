@@ -37,6 +37,8 @@ namespace TestRustServer
             var server = client.Get<IServer>(); //根据接口返回 服务器调用的实例
                                                 // await server.Print(5);
 
+
+
             // 测试基本类型
             {
                 (bool, sbyte, byte, short, ushort, int, uint) v = (true, 2, 3, 4, 5, 6, 7);
@@ -83,8 +85,8 @@ namespace TestRustServer
                 }
             
             }
-            
 
+            await server.RunTest(null);
             await server.RunTest("joy");
             //var x = await server.ToClientAddOne(1);
             //Console.WriteLine("x:{0}",x);

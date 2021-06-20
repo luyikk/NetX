@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>NETX;ZYSOCKET</PackageTags>
     <PackageReleaseNotes>NetX Frame Package  by ios android</PackageReleaseNotes>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="MsgPackSerializer" Version="2.2.92" />
     <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
-    <PackageReference Include="Swifter.MessagePack.RMP" Version="1.6.3" />
     <PackageReference Include="ZYSocketShareV-Standard2" Version="0.0.1" />
   </ItemGroup>
 
