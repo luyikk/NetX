@@ -58,7 +58,7 @@ namespace TestRustServer
             }
             // 测字符串
             {
-                (string,string,string) v = ("test", "test", null);
+                (string, string, string) v = ("test", "test", null);
                 var t = await server.test_string(v);
                 if (t != v)
                 {
@@ -69,7 +69,7 @@ namespace TestRustServer
             {
                 (List<byte>, List<byte>, List<byte>) v = (new List<byte> { 1, 2, 3 }, new List<byte> { 1, 2, 3 }, null);
                 var t = await server.test_buff(v);
-                if (t.Item1.Count!=3||t.Item2.Count!=3||t.Item3!=null)
+                if (t.Item1.Count != 3 || t.Item2.Count != 3 || t.Item3 != null)
                 {
                     throw new Exception("base test error");
                 }
@@ -83,7 +83,7 @@ namespace TestRustServer
                 {
                     throw new Exception("base test error");
                 }
-            
+
             }
 
             await server.RunTest(null);
@@ -93,10 +93,10 @@ namespace TestRustServer
             await server.Print2(6, "my name is");
 
             var stop = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 100000; i++)
                 await server.Add(1, i);
 
-            var r = await server.RecursiveTest(1000);
+            var r = await server.RecursiveTest(10000);
             Console.WriteLine($"{r} {stop.ElapsedMilliseconds}");
 
             var res = new LogOn
