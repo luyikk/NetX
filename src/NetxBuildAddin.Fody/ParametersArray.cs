@@ -386,7 +386,7 @@ public partial class ModuleWeaver
         }
         catch (Exception er)
         {
-            LogInfo(er.ToString());
+            WriteInfo(er.ToString());
             return false;
         }
     }

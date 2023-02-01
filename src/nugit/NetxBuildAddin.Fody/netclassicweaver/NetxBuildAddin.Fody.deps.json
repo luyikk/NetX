@@ -9,7 +9,7 @@
     ".NETStandard,Version=v2.0/": {
       "NetxBuildAddin.Fody/1.0.4": {
         "dependencies": {
-          "FodyHelpers": "6.0.0",
+          "FodyHelpers": "6.6.4",
           "NETStandard.Library": "2.0.3",
           "NetxBuilder": "1.0.1"
         },
@@ -17,23 +17,23 @@
           "NetxBuildAddin.Fody.dll": {}
         }
       },
-      "FodyHelpers/6.0.0": {
+      "FodyHelpers/6.6.4": {
         "runtime": {
           "lib/netstandard2.0/FodyHelpers.dll": {
-            "assemblyVersion": "6.0.0.0",
-            "fileVersion": "6.0.0.0"
+            "assemblyVersion": "6.6.4.0",
+            "fileVersion": "6.6.4.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Pdb.dll": {
-            "assemblyVersion": "0.11.0.0",
-            "fileVersion": "0.11.0.0"
+            "assemblyVersion": "0.11.4.0",
+            "fileVersion": "0.11.4.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Rocks.dll": {
-            "assemblyVersion": "0.11.0.0",
-            "fileVersion": "0.11.0.0"
+            "assemblyVersion": "0.11.4.0",
+            "fileVersion": "0.11.4.0"
           },
           "lib/netstandard2.0/Mono.Cecil.dll": {
-            "assemblyVersion": "0.11.0.0",
-            "fileVersion": "0.11.0.0"
+            "assemblyVersion": "0.11.4.0",
+            "fileVersion": "0.11.4.0"
           }
         }
       },
@@ -56,12 +56,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "FodyHelpers/6.0.0": {
+    "FodyHelpers/6.6.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-akwJYJsTSRdciMxMvYapxt63oIAflC4nJ1z7h1MNs6Br2MsvcOI/Kh8GJ/R618WUjlL+VXUxnr8CgM13MvphUQ==",
-      "path": "fodyhelpers/6.0.0",
-      "hashPath": "fodyhelpers.6.0.0.nupkg.sha512"
+      "sha512": "sha512-Fz7cS9VsU+X4UOpc9w92B8PlTGre65/RxPLvj+5UQ9slauW9zlQ/K2ONSimiLYnkPMVFrMcrJQd/C1Xz+mK8tg==",
+      "path": "fodyhelpers/6.6.4",
+      "hashPath": "fodyhelpers.6.6.4.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",

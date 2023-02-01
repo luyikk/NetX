@@ -16,8 +16,17 @@
     <RepositoryType>https://github.com/luyikk/netx</RepositoryType>
     <PackageTags>NetX</PackageTags>
     <PackageReleaseNotes>Netx Actor Package</PackageReleaseNotes>
-    <Version>3.2.0</Version>
+    <Version>3.5.0</Version>
     <Nullable>enable</Nullable>
+    <UserSecretsId>aeeb7f32-feb4-435b-96aa-4d2ae9d20493</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702i;FodyPackageReference</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702i;FodyPackageReference</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,9 +37,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>

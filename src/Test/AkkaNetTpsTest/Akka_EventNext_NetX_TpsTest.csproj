@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.4.18" />
-    <PackageReference Include="EventNext" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
+    <PackageReference Include="Akka" Version="1.4.49" />
+    <PackageReference Include="EventNext" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.5.0" PrivateAssets="all"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -34,7 +34,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
             if (allRpc.FirstOrDefault(p => p.ContainsGenericParameter) != null)
             {
-                LogInfo($"not make build the '{iface.FullName}',is have generic method.");
+                WriteInfo($"not make build the '{iface.FullName}',is have generic method.");
                 continue;
             }
 
@@ -48,7 +48,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
                 if (baseallRpc.FirstOrDefault(p => p.ContainsGenericParameter) != null)
                 {
-                    LogInfo($"not make build the '{iface.FullName}',is have generic method.");
+                    WriteInfo($"not make build the '{iface.FullName}',is have generic method.");
                     continue;
                 }
 
@@ -61,7 +61,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             MethodDict.Add(iface.FullName, implementationMethod);
             ModuleDefinition.Types.Add(newType);
 
-            LogInfo($"Added Packer Type '{newType.FullName}' with Interface '{iface.FullName}'.");
+            WriteInfo($"Added Packer Type '{newType.FullName}' with Interface '{iface.FullName}'.");
 
 
         }
@@ -209,7 +209,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 if (build != null)
                 {
 
-                    LogInfo("USE INTERFACE DEF  Runs__Make");
+                    WriteInfo("USE INTERFACE DEF  Runs__Make");
 
                     foreach (var method in iface.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
                     {
@@ -244,7 +244,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                         }
                         else
                         {
-                            LogError("not find " + method.Name);
+                            WriteInfo("not find " + method.Name);
                         }
                     }
                 }
@@ -264,7 +264,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     if (build != null)
                     {
 
-                        LogInfo("USE INTERFACE DEF  Runs__Make");
+                        WriteInfo("USE INTERFACE DEF  Runs__Make");
 
                         foreach (var method in ifacec.Methods.Where(p => p.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == "TAG") != null))
                         {
@@ -287,7 +287,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                             if (childmethod != null)
                                 methods[cmd] = childmethod;
                             else
-                                LogError("not find " + method.Name);
+                                WriteInfo("not find " + method.Name);
 
                         }
                     }
@@ -295,7 +295,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 }
                 catch (System.IO.FileNotFoundException)
                 {
-                    LogError("not find " + dllname);
+                    WriteInfo("not find " + dllname);
                 }
             }
         }

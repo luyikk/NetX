@@ -30,7 +30,7 @@ namespace ActorTest
 
             var tasks = new Task[4];
 
-            tasks[0]=Task.Run(async () =>
+            tasks[0] = Task.Run(async () =>
             {
                 var lambda = Actor.GetLambda();
 
@@ -209,10 +209,10 @@ namespace ActorTest
                 Console.WriteLine($"ask:{icount}");
             });
 
-            #endregion
-
 
             await Task.WhenAll(tasks);
+
+            #endregion
 
 
             #region testsql

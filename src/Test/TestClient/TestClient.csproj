@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetxBuildAddin.Fody" Version="2.2.2" />
-    <PackageReference Include="SpanJson" Version="3.1.0" />
+    <PackageReference Include="NetxBuildAddin.Fody" Version="2.5.0" PrivateAssets="all"/>
+    <PackageReference Include="SpanJson" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
