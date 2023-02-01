@@ -13,7 +13,7 @@ namespace ChatServer
 {
     class Program
     {
-        static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/server.pfx", "testPassword");
+        //static X509Certificate certificate = new X509Certificate2(Environment.CurrentDirectory + "/server.pfx", "testPassword");
 
         static void Main()
         {
@@ -26,11 +26,11 @@ namespace ChatServer
                      p.VerifyKey = "123123";  //密码
                      p.ClearSessionTime = 60000; //Session清理时间
                  })
-                  .ConfigSSL(p =>  //配置SSL加密
-                  {
-                      p.Certificate = certificate;
-                      p.IsUse = true;
-                  })
+                  //.ConfigSSL(p =>  //配置SSL加密
+                  //{
+                  //    p.Certificate = certificate;
+                  //    p.IsUse = true;
+                  //})
                   .ConfigCompress(p => p.Mode = Netx.CompressType.None)
                   .ConfigureLogSet(p=> //设置日记
                   {
