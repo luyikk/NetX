@@ -14,10 +14,9 @@ namespace TestNetxClient
 
 
         [TAG(2000)]
-        public Task<int> AddOne(int a)
+        public Task<int> AddOne(int _)
         {
-            throw new Exception("Exception test");
-            return Task.FromResult(++a);
+            throw new Exception("Exception test");          
         }
 
         [TAG(2001)]
